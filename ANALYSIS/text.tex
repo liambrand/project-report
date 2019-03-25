@@ -1,0 +1,140 @@
+\part{Analysis}
+		\chapter{Problem Identification}
+		
+		\chapter{Developing The Robot}
+			\section{Introduction}
+			Here we will investigate the development of the actual robot chassis. For the robot to be fit for purpose it needs to be capable of two things. The first is movement, otherwise it will not be able to navigate around the environment. The second is observation, as we need data about the environment in order to build the map as well as detect any obstacles that may be in the robot's way.
+			
+			\section{Movement}
+			
+			
+			
+			\section{Observation}
+			
+			
+			
+		
+		\chapter{An Investigation Into SLAM}
+			\section{Introduction}
+			The development of a moving robot is only one half of the end product. As previously mentioned in the project's Terms of Reference the purpose of this project is also to develop a robot that is capable of self navigation and mapping. In order for this to be possible, the robot must be capable of using observations about its environment to build a map. Not only that, but it also must track its own location within this environment. This chapter aims to explore SLAM, a computing problem with research and implemented solutions that deal with exactly that.
+		
+			\section{What is SLAM?}
+			SLAM stands for Simultaneous Localization and Mapping, and is something sometimes employed by mobile robots. Localization refers to the ability for the robot to be aware of its location within an environment, for example knowing where it is within a room. Mapping simply refers to building a map of the environment, such as the room the robot is in. SLAM is performing both of these tasks at the same time. Durrant-Whyte and Bailey\citep{durrant2006simultaneous} best sum it up as the ability for a mobile robot to be placed at an unknown location in an unknown environment and then both create a consistent map of the environment and be able to accurately determine its location within this map. Similar definitions can also be found in other articles \citep{choset2001topological, dissanayake2001solution}.
+		
+			\section{Uses of SLAM in Industry}
+			There are a myriad of potential uses for SLAM, many of which can be seen within the wider industry. Commercially it has been used for products such as vacuum cleaners, Dyson for instance has a small automated vacuum cleaner called the 360 Eye which employs SLAM techniques to map the areas that it moves around and cleans. SLAM has seen many uses in archaeological contexts owing to its ability to perform exploration without risk to human life, one team \citep{clark2008archaeology} developed an underwater robot that used SLAM in order to map underwater cisterns that had been built thousands of years ago. The uses have not gone unnoticed by larger organisations. One of the research organisations within the USA?s Department of Defense has held challenges (known as the DARPA Grand Challenge) offering cash prizes as incentives to create high value research. These challenges involve organisations submitting cars that are timed as they race around certain environments. NASA have also made use of it in the past, in 2007 they used an autonomous underwater robot \citep{carnegie2007sinkhole} employing SLAM to go to the bottom of the world's deepest sinkhole. The robot used sensors to generate a sonar map of the sinkhole's inner dimensions 318 meters below the surface.  The drone also tested technologies that could be used in other more extreme underwater environments such as the oceans under the crust of Europa, one of Jupiter's moons. Interest has also been expressed in using SLAM for planetary rovers, allowing for the mapping and navigation of different planet surfaces.
+			\medskip
+		
+			\section{The SLAM Problem}
+			Let's use some key notations to help break down the essentials of the SLAM problem. \newline
+			\textbf{t} - Current time. \newline
+			\textbf{x\textsubscript{t}} - Location and orientation of vehicle. \newline
+			\textbf{u\textsubscript{t}} - Control vector, for example drive forward 1 metre.  \newline
+			\textbf{m\textsubscript{t}} - True location of \textit{i}th landmark within the environment. \newline
+			\textbf{z\textsubscript{t}} - Observation of \textit{i}th landmark taken at time \textit{t}.\newline
+			
+			From these notations we can derive some sets. \newline
+			\textbf{x\textsubscript{0:t}} = $\lbrace$ \textbf{x\textsubscript{0:t-1}}, \textbf{x\textsubscript{t}} $\rbrace$ - History of all vehicle locations. \newline
+			\textbf{u\textsubscript{0:t}} = $\lbrace$ \textbf{u\textsubscript{0:t-1}}, \textbf{u\textsubscript{t}} $\rbrace$ - History of odometrical information pertaining to teh robot's movement. \newline
+			\textbf{m} = $\lbrace$ \textbf{m\textsubscript{1}}, \textbf{m\textsubscript{2}}, ..., \textbf{m\textsubscript{n}}$\rbrace$ - Set of all landmarks. \newline
+			\textbf{z\textsubscript{0:t}} = $\lbrace$ \textbf{z\textsubscript{0:t-1}}, \textbf{z\textsubscript{t}} $\rbrace$ - Set of all landmark observations. \newline
+			
+			Ultimately we want to use the robot's control inputs and observations to receive a map of the environment and the robot's path.
+			
+			\begin{figure}
+				\includegraphics[scale=0.65]{ANALYSIS/slamdiagram.png}
+				\caption{The SLAM problem illustrated \citep{durrant2006simultaneous}}
+				\label{fig:slamillustration}
+			\end{figure}
+			
+			SLAM is generally approached probabilistically. This means that the attempted solutions factor in uncertainties within the data. Therefore, solutions to the SLAM problem will not act with exact certainties. For example, rather than saying the robot is in an exact location we would treat it as a general location it is the most likely to be in. We want the probability distribution to be an estimation of current vehicle location and landmarks based on landmark observations and control inputs or odometrical data. 
+			
+			There are variations within the SLAM problem however. At a broader level, SLAM problems generally come in one of two flavours. These are full SLAM and online SLAM. 
+
+				\subsection{Full SLAM}
+				Full SLAM involves using landmark observations and data relevant to discerning the robot's current position in order to determine the robot's entire path. It can be written as such -
+				
+				p(\textbf{X\textsubscript{0:t}}, \textbf{m} $\mid$ \textbf{Z\textsubscript{0:t}}, \textbf{U\textsubscript{0:t}})
+				
+				\subsection{Online SLAM}
+				Online SLAM differs slightly in that it seeks to determine the robot's current location rather than the robot's entire path. It can be written as such - 
+				
+				p(\textbf{x\textsubscript{0:t}}, \textbf{m} $\mid$ \textbf{Z\textsubscript{0:t}}, \textbf{U\textsubscript{0:t}})
+				
+				\subsection{SLAM Taxonomy}
+				The possible differences in the SLAM problem don't end there. Depending on different factors there are also different sub approaches to the SLAM problem. Below are some common variants.
+				
+					\subsubsection{Volumetric versus Feature-Based}
+					Volumetric SLAM samples the map as a resolution high enough to allow a photo realistic reconstruction of the environment \citep{thrun2008simultaneous}. The map gained from this is generally high dimensional, but as the area increases in size and scale the map becomes significantly more complex. Feature-based SLAM simply extracts key features from measurements, with the map being solely made up of these features. This might be used if it is decided that only key features are of interest or if large parts of the mapped space are empty, as volumetric SLAM in these cases would be storing voxels that hold no geometric data of significant value \citep{vespa2018efficient}. As you would expect, this is quicker and more efficient but discards a lot more data than volumetric. 
+					
+					\subsubsection{Topological versus Metric}
+					Topological SLAM captures key places and their connectivity to other measured locations. Metric SLAM attempts to model the environment using geometrically accurate positioning. Metric SLAM would show the accurate positioning of various environmental features, topological would show them in relation to each other (e.g. place A is adjacent to place B) \citep{thrun2008simultaneous}. A good analogy would be a bus route map (topological) that displays the different stops versus showing the bus' actual route on a geographical map of the area (metric).
+					
+					\subsubsection{Known versus Unknown Correspondence}
+					This entails relating the identity of sensed landmarks to other sensed landmarks. In known correspondence the identity of the landmarks is known, if a landmark is observed and then the robot moves and observed another landmark, the identity of the landmarks being known would let us to determine if this landmark observation is the one we saw before or a newly observed one. Unknown correspondence would simply mean that in this situation we wouldn't know.	
+					
+					\subsubsection{Static versus Dynamic}
+					Static and Dynamic here refers to the environment. Static SLAM algorithms assume that no changes will take place in the environment whereas Dynamic SLAM methods allow for these changes to take place.
+					
+					\subsubsection{Small versus Large Uncertainty}
+					The ability to represent uncertainty is another aspect. Some SLAM approaches will assume a very low uncertainty in the robot's location estimation. This might be when the robot is moving up and down a simple path, as it's much easier to guess where it's likely to be. Large amounts of uncertainty might occur however in more complex environments where locations can be reached from multiple different directions, or if the robot starts travelling in more complex paths that intersect with each other.
+					
+					
+					\subsubsection{Activate versus Passive}
+					Active SLAM involves the robot actively exploring its environment whilst it builds a map of it. Passive SLAM is when the SLAM algorithm is purely used for observation, with some other entity controls the robot's movement. 
+					
+					\subsubsection{Single-Robot versus Multirobot}
+					Single-robot simply refers to SLAM happening only on a single platform. Multirobot SLAM (sometimes known as cooperative SLAM) involves multiple robots often communicating with each other to merge their maps into a larger collective model. 
+				
+					\medskip
+					There are multiple different paradigms that can be used to solve the SLAM problem, and each of these paradigms has many different implementations. One technique that has seen usage for solving the SLAM problem in autonomous mobile robotics is the Canonical Scan Matcher, generally referred to as CSM. This is the solution that we will be looking to implement for the project.
+
+			\section{A Look At A Potential Solution}
+				\subsection{Introduction}
+				As previously discussed there are a myriad of variations on the SLAM problem, and there are a few different paradigms used to implement solutions to it. During some preliminary research, one method of SLAMming came up that seemed like it would be suitable for the project called CSM.
+				
+				\subsection{CSM}
+				CSM is an open-source C implementation of an ICP variant known as PlICP. It has seen usage for industrial prototypes of autonomous robotics, one of the most notable examples of this being Kuka, a German manufacturer of industrial robotics. It isn't quite a fully fledged SLAM solution, instead performing pairwise scan-matching on scan data that is fed into it. Before the PlICP algorithm it is based on can be explained, we must first look at the base ICP algorithm.
+			
+					\subsubsection{ICP}
+					ICP stands for Iterative Closest Point, and it refers to an algorithm that attempts to minimize the difference between two clouds of points, something known as point matching or point set registration. In essence, it means getting one set of points aligned to another set of points. Besl and McKay present the algorithm as a statement \cite{besl1992method} in their paper, and ICP is shown in terms of C++ in the Mobile Robot Planning Toolkit \citep{mrpt2013icp}. 
+					
+					We first of all have a source map, and then we have a map that we wish to align to it which we will refer to as the reference map. We then go through each point in the source map and which point in the reference map is the closest to it. We then determine a transformation which would minimize the mean squared error (the average squared difference) between the two points before applying this transformation to the reference set and then going through this set of steps again. This is repeated until a the mean squared error falls below a certain threshold.
+					
+					\subsubsection{PlICP}
+					Censi explains PlICP in a series of steps \citep{censi2008icp}. To start with, we take a reference scan, a second scan and a first guess for the translation needed to try and match the two maps. We then generate a polyline of the reference map by connecting sufficiently close enough dots (using a threshhold). Following this, a loop similar to the one in the base ICP algorithm begins.
+					
+					We first determine the coordinates of the second scan in the first scan's frame of reference using our initial translation guess. Then, for each point in the second scan, we determine the two closest points to it in the first scan. We trim any outliers within these matches, and use the sum of the squares of the distances from the points to the line containing the matches two points to find the error function. PlICP then uses an algorithm in order to minimize this error function which we now use as our translation guess. This new guess is used on the next iteration of the algorithm. This loop continues until either we have a convergence between the maps or a loop is detected as no further progress is being made.	
+					
+			\subsection{Suitability of CSM}
+			Firstly we can see that CSM is a pure C implementation of the previously described algorithm. This is excellent for the project, not just for the benefits of C such as it being a relatively quick language but also because it should be directly usable with an embedded board which would be the ideal choice for controlling the robot. Had it been in any other language we might have needed to use some sort of shared library to get it to work which likely would have slowed things down and potentially made the robot less effective. 
+			
+			CSM is however not a product of a professional company dealing in these matters, it's an open source project instead which could put some doubts with regards to its usefulness or reliability. However, it was developed by Dr Andrea Censi, someone who is a Deputy Director for the Chair of Dynamic Systems and Control at ETH Zurich meaning it is far from an amateur project. As previously mentioned as well it has been adopted by the German robotics company Kuka, so clearly it has enough merit to be used at the industrial level. Ultimately it would appear CSM is an ideal choice for the robot's localization and mapping functionality.
+					
+			\section{An Investigation Into SLAM - Conclusions}	
+			First and foremost we can safely establish that the SLAM problem is what we are addressing with regards to the implementation of the robot's ability to track its own location whilst mapping its environment. In addition to this we understand the fundamentals of the SLAM problem. This will massively benefit development, as being aware of having to store details internally such as wheel revelations gained via odometric sensors will allow us to cut down on time spent during development having to rewrite core pieces of functionality to make room for this. 
+		
+		\chapter{LIDAR}
+			\section{title}
+		
+			\section{What is LIDAR?}
+				LIDAR (Light Detection And Ranging) is a technology that uses light sensors to measure distances between the sensor and the target object. It achieves this by sending out light pulses which bounce off of objects back at the sensor where they are collected.
+				
+			
+			\section{Uses of LIDAR}
+			
+		
+
+		\chapter{Solutions}
+		\chapter{Product Requirements}
+			
+		
+		
+		\chapter{Review of Tools and Techniques}
+			\section{Scanning Behaviour}
+			One aspect that needed to be considered was the drone's behaviour whilst scanning. The initial thought was that the drone would move around, scan and save the scan results all simultaneously. To investigate the viability of this tests were performed to see if this was possible with the constraints we had, the most notable constraints being how quickly the MBed board is able to write scan data compared to how quickly it would be receiving it from the LIDAR sensor. *!Have some numbers here describing the time it takes to write data retrieved from 1 seconds' worth of LIDAR scanning!*. Based on this it was decided it would be best if the LIDAR stopped and took readings for a small period of time, with these readings being stored in the RAM and then written to internal files afterward. 
+			
+			\section{Dead Reckoning}
+			Odometry is the usage of data from motion sensors to estimate an object's position. One such implementation of this that will be looked at for the project is dead reckoning. Dead reckoning tracks the robot's position by using data from wheel encoders that count the number of wheel rotations performed during operation. From this, the internal tracked position of a robot can estimate its new position after periods of movement. Given that the chassis being used for the project has wheel encoders as part of the wheel motors, this approach would allow us to perform odometry without needing the use of additional kit. Dead reckoning is not without issues however. Most pressingly it does not account for wheel slippage. If the robot has a poor grip on the ground and the wheels slip, then the wheel rotation doesn't accurately correspond to the robot's location \citep{choset2001topological}. These issues would compound as well. As more and more slippage happens, the robot's internal position would become less and less accurate to where it actually is. 
+				
+	

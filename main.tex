@@ -1,0 +1,41 @@
+\documentclass[a4paper,11pt,nocenter,bold,notitlepage,noheadline,noindent]{thesis}
+
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage[numbers]{natbib}
+
+\title{Individual Project Report}
+\author{Liam Brand}
+
+%                     DOCUMENT
+\begin{document}
+	%\frontmatter
+	\maketitle
+	%\include{FRONT/abstract}
+	%\include{FRONT/declaration}
+	%\include{FRONT/acknowledgements}
+	\tableofcontents
+	\listoffigures
+	\listoftables
+	%\mainmatter
+	%\include{INTRODUCTION/text}
+	\include{ANALYSIS/text}
+	\include{SYNTHESIS/text}
+	\include{EVALUATION/text}
+	%\include{CONCLUSIONS/text}
+	%\appendix
+	%\include{TOR/text}
+	%\include{DEVELOPMENT/text}
+	%\include{CODE/text}
+	% GLOSSARY -- include if you've used lots of technical terminology/notation
+	% \include{glossary}
+	\nocite{stachniss2013robotmappingintro}
+	
+	\bibliographystyle{plainnat}
+	\bibliography{papers}
+\end{document}
