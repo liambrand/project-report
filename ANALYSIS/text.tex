@@ -6,15 +6,18 @@
 			Here we will address the two key aspects of the robot, the robot's movement and the robot's ability to observe and collect data about the environment.
 			
 			\section{Movement}
-			Not much is needed to achieve movement. First we'll need the chassis which will be composed of a supporting structure as well as a set of wheels and respective motors. Then we require a battery source, and finally a microcontroller which will control the motors.
+			For movement, we'll simply need a powered robot chassis. Not much is needed from the actual structure, as long as there is space and support for the robot's key elements such as the power source and the sensor(s) that it uses. Then we require a battery source, and finally a microcontroller which will control the motors. This section aims to go into a bit more detail on the chassis itself.
 			
 				\subsection{Chassis}
-				With regards to the chassis' structure most anything will do, we simply need something with enough space to and support to carry the power source, the microcontroller and any additional electronics we'll use for the robot's observation. The wheels we use for the chassis will be omnidirectional. Whilst a regular wheel can only roll forwards or backwards, omni directional wheels feature smaller wheels (often referred to as rollers) as part of the wheel itself. This allows the wheel to frictionlessly slide in other directions. 
+				Most conventional vehicles use standard wheels that have only two degrees of freedom. These wheels can either roll forwards or backwards. This means it is a non-holonomic vehicle, which essentially means at any given point in the vehicle's state there are certain directions it cannot travel in. This can present a few problems. Firstly, navigation will sometimes involve the adjustment of the vehicle's heading. The vehicle may need to reverse and turn before it can move forward to a certain location. This presents a problem in the robot's efficiency and ability to navigate around a difficult environment, as well as making it more difficult to implement from a software perspective as we would need to factor in situations where these sorts of adjustments would be needed before the robot can proceed. If the robot were to be holonomic however, then it would be able to begin travelling toward any location regardless of its current position. This can be achieved if the wheels our robot's chassis uses are omni-directional.
+				
+				
+				Watanabe\citep{watanabe1998control}, a Professor at Okayama University's Faculty of Engineering who has published a great deal of work in robotics, discusses a few different variations of these omni-directional wheels. One of the more popular variations in his discussion is the universal wheel, sometimes also referred to as the swedish wheel or mecanum wheel. This wheel is a larger wheel that has many rollers on the rim which allows the wheel to slide in a direction perpendicular to its motor axis. 
 				
 				\begin{figure}
 					\centering
 					\includegraphics[width=.3\linewidth]{ANALYSIS/90degwheel.png}
-					\caption{An omnidirectional wheel}
+					\caption{An omnidirectional wheel, with 90 degree rollers}
 					\label{90 Degree Omni Directional Wheel}
 				\end{figure}
 				
@@ -22,15 +25,18 @@
 				
 					\subsubsection{3WD 48mm Omni-Directional Triangle Mobile Robot Chassis}
 					
-				
-				
-				
-				\subsection{Microcontroller}
-				To control the direction and speed of the robot's wheels, a microcontroller will be required. It will most likely be linked up to an appropriate power source, and depending on the chassis configuration it may be directly connected to the wheel's motors. From here it will control the power being supplied to the wheels, modifying it in order to change the direction and speed of the wheels depending on what direction/orientation we want to steer the robot in.
 			
 			\section{Observation}
+			To achieve self navigation as well as mapping, the robot will need to take observations about its surrounding environment. This section aims to explore a few of the different methods that could be used for this, and ultimately to draw a conclusion on what method we will use.
 			
+				\subsection{Infrared}
+				Infrared sensors work by measuring things via the reflection of infrared light. The sensor will send out some infrared light where it will be reflected off of an obstacle. A reciever will capture this reflected light and depending on factors such as how much light is recieved back and the triangulation of how the light was recieved the presence of an obstacle will be determined. 
+				
+				The range and degrees of space being measured will depend on the sensor's model, but there are a few things the different sensors have in common. First, infrared sensors have both a maximum and a minimum range. Not only does the maximum range need to be factored in as sensor will struggle to pinpoint the location of light that has been reflected at a large range, but the sensor will also struggle to 'see' very close obstacles. In addition, infrared sensors struggle in strong sunlight and seem best suited to primarily indoor tasks.
+				
+				
 				\subsection{LIDAR}
+				LIDAR (Light Detection And Ranging) is a technology that uses light sensors to measure distances between the sensor and the target object. It achieves this by sending out light pulses which bounce off of objects back at the sensor where they are collected.
 			
 			
 			
