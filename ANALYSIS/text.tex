@@ -9,12 +9,11 @@
 			For movement, we'll simply need a powered robot chassis. Not much is needed from the actual structure, as long as there is space and support for the robot's key elements such as the power source and the sensor(s) that it uses. Then we require a battery source, and finally a microcontroller which will control the motors. This section aims to go into a bit more detail on the chassis itself.
 			
 				\subsection{Chassis}
-				Most conventional vehicles use standard wheels that have only two degrees of freedom. These wheels can either roll forwards or backwards. This means it is a non-holonomic vehicle, which essentially means at any given point in the vehicle's state there are certain directions it cannot travel in. This can present a few problems. Firstly, navigation will sometimes involve the adjustment of the vehicle's heading. The vehicle may need to reverse and turn before it can move forward to a certain location. This presents a problem in the robot's efficiency and ability to navigate around a difficult environment, as well as making it more difficult to implement from a software perspective as we would need to factor in situations where these sorts of adjustments would be needed before the robot can proceed. If the robot were to be holonomic however, then it would be able to begin travelling toward any location regardless of its current position. This can be achieved if the wheels our robot's chassis uses are omni-directional.
-				
+				Most conventional vehicles use standard wheels that have only two degrees of freedom. These wheels can either roll forwards or backwards. This means it is a non-holonomic vehicle, which essentially means at any given point in the vehicle's state there are certain directions it cannot travel in. This can present a few problems. Firstly, navigation will sometimes involve the adjustment of the vehicle's heading. The vehicle may need to reverse and turn before it can move forward to a certain location. This presents a problem in the robot's efficiency and ability to navigate around a difficult environment, as well as making it more difficult to implement from a software perspective as we would need to factor in situations where these sorts of adjustments would be needed before the robot can proceed. If the robot were to be holonomic however, then it would be able to begin travelling toward any location regardless of its current position. This can be achieved if the wheels our robot's chassis uses are omni-directional.	
 				
 				Watanabe\citep{watanabe1998control}, a Professor at Okayama University's Faculty of Engineering who has published a great deal of work in robotics, discusses a few different variations of these omni-directional wheels. One of the more popular variations in his discussion is the universal wheel, sometimes also referred to as the swedish wheel or mecanum wheel. This wheel is a larger wheel that has many rollers on the rim which allows the wheel to slide in a direction perpendicular to its motor axis. 
 				
-				\begin{figure}
+				\begin{figure}[h]
 					\centering
 					\includegraphics[width=.3\linewidth]{ANALYSIS/90degwheel.png}
 					\caption{An omnidirectional wheel, with 90 degree rollers}
@@ -24,21 +23,31 @@
 				A robot chassis composing of three or four of these wheels as well as relevant motors should be adequate. A few of the different chassis found during the preliminary research will now be evaluated to find which would be the most suitable for the project.
 				
 					\subsubsection{3WD 48mm Omni-Directional Triangle Mobile Robot Chassis}
+						\begin{figure}[h]
+							\centering
+							\includegraphics[width=.3\linewidth]{ANALYSIS/3wdomnidirectionalchassis.jpg}
+							\caption{3WD Omni-Directional Robot Chassis}
+							\label{3WD Omni-Directional Robot Chassis}
+						\end{figure}
 					
 			
 			\section{Observation}
-			To achieve self navigation as well as mapping, the robot will need to take observations about its surrounding environment. This section aims to explore a few of the different methods that could be used for this, and ultimately to draw a conclusion on what method we will use.
+			To achieve self navigation as well as mapping, the robot will need to take observations about its surrounding environment. In order to efficiently map the area and detect obstacles this will need to be performed in a 360 degree manner as well. This section aims to explore a few of the different methods that could be used for this, and ultimately to draw a conclusion on what method we will use.
 			
 				\subsection{Infrared}
-				Infrared sensors work by measuring things via the reflection of infrared light. The sensor will send out some infrared light where it will be reflected off of an obstacle. A reciever will capture this reflected light and depending on factors such as how much light is recieved back and the triangulation of how the light was recieved the presence of an obstacle will be determined. 
+				Infrared sensors work by measuring things via the reflection of infrared light. The sensor will send out some infrared light where it will be reflected off of an obstacle. A reciever will capture this reflected light and depending on factors such as how much light is recieved back and the triangulation of how the light was recieved the presence of an obstacle will be determined. There are a number of Infrared sensors available online for very cheap prices, websites like RobotShop and HobbyTronics list most of their sensors between £5 and £10. 360 sensors are incredible difficult to find, but their low price means purchasing a few would not be a problem.
 				
 				The range and degrees of space being measured will depend on the sensor's model, but there are a few things the different sensors have in common. First, infrared sensors have both a maximum and a minimum range. Not only does the maximum range need to be factored in as sensor will struggle to pinpoint the location of light that has been reflected at a large range, but the sensor will also struggle to 'see' very close obstacles. In addition, infrared sensors struggle in strong sunlight and seem best suited to primarily indoor tasks.
 				
 				
 				\subsection{LIDAR}
 				LIDAR (Light Detection And Ranging) is a technology that uses light sensors to measure distances between the sensor and the target object. It achieves this by sending out light pulses which bounce off of objects back at the sensor where they are collected.
+				
+				LIDAR has seen some popularity in mobile robotics and the decision to use LIDAR would give the project some interesting options. Some sensors boast very impressive statistics, with some ranges exceeding 10 metres whilst providing several thousand samples per second with 360 degree coverage \citep{slamtecA1M8}. Some of these sensors also feature SDKs (Source Development Kits), meaning the core sensor functionality will be accessible straight away allowing development to focus on the robot's logic rather than being bogged down in the belt and braces implementation of preliminary functionality. These features are expensive however, with some sensors being as high as £350.
+				
+				\subsection{Sonar}
 			
-			
+				
 			
 		
 		\chapter{An Investigation Into SLAM}
@@ -68,7 +77,7 @@
 			
 			Ultimately we want to use the robot's control inputs and observations to receive a map of the environment and the robot's path.
 			
-			\begin{figure}
+			\begin{figure}[h]
 				\includegraphics[scale=0.65]{ANALYSIS/slamdiagram.png}
 				\caption{The SLAM problem illustrated \citep{durrant2006simultaneous}}
 				\label{fig:slamillustration}
@@ -136,7 +145,7 @@
 			\subsection{Suitability of CSM}
 			Firstly we can see that CSM is a pure C implementation of the previously described algorithm. This is excellent for the project, not just for the benefits of C such as it being a relatively quick language but also because it should be directly usable with an embedded board which would be the ideal choice for controlling the robot. Had it been in any other language we might have needed to use some sort of shared library to get it to work which likely would have slowed things down and potentially made the robot less effective. 
 			
-			CSM is however not a product of a professional company dealing in these matters, it's an open source project instead which could put some doubts with regards to its usefulness or reliability. However, it was developed by Dr Andrea Censi, someone who is a Deputy Director for the Chair of Dynamic Systems and Control at ETH Zurich meaning it is far from an amateur project. As previously mentioned as well it has been adopted by the German robotics company Kuka, so clearly it has enough merit to be used at the industrial level. Ultimately it would appear CSM is an ideal choice for the robot's localization and mapping functionality.
+			CSM is however not a product of a professional company dealing in these matters, its open source nature could put some doubts with regards to its usefulness or reliability. However, it was developed by Dr Andrea Censi, someone who is a Deputy Director for the Chair of Dynamic Systems and Control at ETH Zurich meaning it is far from an amateur project. As previously mentioned as well it has been adopted by the German robotics company Kuka, so clearly it has enough merit to be used at the industrial level. Ultimately it would appear CSM is an ideal choice for the robot's localization and mapping functionality.
 					
 			\section{An Investigation Into SLAM - Conclusions}	
 			First and foremost we can safely establish that the SLAM problem is what we are addressing with regards to the implementation of the robot's ability to track its own location whilst mapping its environment. In addition to this we understand the fundamentals of the SLAM problem. This will massively benefit development, as being aware of having to store details internally such as wheel revelations gained via odometric sensors will allow us to cut down on time spent during development having to rewrite core pieces of functionality to make room for this. 
