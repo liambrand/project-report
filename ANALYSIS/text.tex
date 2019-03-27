@@ -3,13 +3,32 @@
 		
 		\chapter{Developing The Robot}
 			\section{Introduction}
-			Here we will investigate the development of the actual robot chassis. For the robot to be fit for purpose it needs to be capable of two things. The first is movement, otherwise it will not be able to navigate around the environment. The second is observation, as we need data about the environment in order to build the map as well as detect any obstacles that may be in the robot's way.
+			Here we will address the two key aspects of the robot, the robot's movement and the robot's ability to observe and collect data about the environment.
 			
 			\section{Movement}
+			Not much is needed to achieve movement. First we'll need the chassis which will be composed of a supporting structure as well as a set of wheels and respective motors. Then we require a battery source, and finally a microcontroller which will control the motors.
+			
+				\subsection{Chassis}
+				With regards to the chassis' structure most anything will do, we simply need something with enough space to and support to carry the power source, the microcontroller and any additional electronics we'll use for the robot's observation. The wheels we use for the chassis will be omnidirectional. Whilst a regular wheel can only roll forwards or backwards, omni directional wheels feature smaller wheels (often referred to as rollers) as part of the wheel itself. This allows the wheel to frictionlessly slide in other directions.
+				
+				\begin{figure}
+					\centering
+					\includegraphics[width=.3\linewidth]{ANALYSIS/90degwheel.png}
+					\caption{An omnidirectional wheel}
+					\label{90 Degree Omni Directional Wheel}
+				\end{figure}
+				
+				A robot chassis composing of three or four of these wheels as well as relevant motors should be adequate.
+				
+				
+				
+				\subsection{Microcontroller}
+				
 			
 			
 			
 			\section{Observation}
+				\subsection{LIDAR}
 			
 			
 			
@@ -19,10 +38,10 @@
 			The development of a moving robot is only one half of the end product. As previously mentioned in the project's Terms of Reference the purpose of this project is also to develop a robot that is capable of self navigation and mapping. In order for this to be possible, the robot must be capable of using observations about its environment to build a map. Not only that, but it also must track its own location within this environment. This chapter aims to explore SLAM, a computing problem with research and implemented solutions that deal with exactly that.
 		
 			\section{What is SLAM?}
-			SLAM stands for Simultaneous Localization and Mapping, and is something sometimes employed by mobile robots. Localization refers to the ability for the robot to be aware of its location within an environment, for example knowing where it is within a room. Mapping simply refers to building a map of the environment, such as the room the robot is in. SLAM is performing both of these tasks at the same time. Durrant-Whyte and Bailey\citep{durrant2006simultaneous} best sum it up as the ability for a mobile robot to be placed at an unknown location in an unknown environment and then both create a consistent map of the environment and be able to accurately determine its location within this map. Similar definitions can also be found in other articles \citep{choset2001topological, dissanayake2001solution}.
+			SLAM stands for Simultaneous Localization and Mapping, and is something sometimes employed by mobile robots. Localization refers to the ability for the robot to be aware of its location within an environment, for example knowing where it is within a room. Mapping simply refers to building a map of the environment, such as the room the robot is in. SLAM is performing both of these tasks at the same time. Durrant-Whyte and Bailey\citep{durrant2006simultaneous}, both academics that have done extensive work in the field of mobile robotics, best sum it up as the ability for a mobile robot to be placed at an unknown location in an unknown environment and then both create a consistent map of the environment and be able to accurately determine its location within this map. Similar definitions can also be found in other articles \citep{choset2001topological, dissanayake2001solution}.
 		
 			\section{Uses of SLAM in Industry}
-			There are a myriad of potential uses for SLAM, many of which can be seen within the wider industry. Commercially it has been used for products such as vacuum cleaners, Dyson for instance has a small automated vacuum cleaner called the 360 Eye which employs SLAM techniques to map the areas that it moves around and cleans. SLAM has seen many uses in archaeological contexts owing to its ability to perform exploration without risk to human life, one team \citep{clark2008archaeology} developed an underwater robot that used SLAM in order to map underwater cisterns that had been built thousands of years ago. The uses have not gone unnoticed by larger organisations. One of the research organisations within the USA?s Department of Defense has held challenges (known as the DARPA Grand Challenge) offering cash prizes as incentives to create high value research. These challenges involve organisations submitting cars that are timed as they race around certain environments. NASA have also made use of it in the past, in 2007 they used an autonomous underwater robot \citep{carnegie2007sinkhole} employing SLAM to go to the bottom of the world's deepest sinkhole. The robot used sensors to generate a sonar map of the sinkhole's inner dimensions 318 meters below the surface.  The drone also tested technologies that could be used in other more extreme underwater environments such as the oceans under the crust of Europa, one of Jupiter's moons. Interest has also been expressed in using SLAM for planetary rovers, allowing for the mapping and navigation of different planet surfaces.
+			There are a myriad of potential uses for SLAM, many of which can be seen within the wider industry. Commercially it has been used for products such as vacuum cleaners, Dyson for instance has a small automated vacuum cleaner called the 360 Eye which employs SLAM techniques to map the areas that it moves around and cleans. SLAM has seen many uses in archaeological contexts owing to its ability to perform exploration without risk to human life, one team \citep{clark2008archaeology} developed an underwater robot that used SLAM in order to map underwater cisterns that had been built thousands of years ago. The uses have not gone unnoticed by larger organisations. One of the research organisations within the USA's Department of Defense has held challenges (known as the DARPA Grand Challenge) offering cash prizes as incentives to create high value research. These challenges involve organisations submitting cars that are timed as they race around certain environments. NASA have also made use of it in the past, in 2007 they used an autonomous underwater robot \citep{carnegie2007sinkhole} employing SLAM to go to the bottom of the world's deepest sinkhole. The robot used sensors to generate a sonar map of the sinkhole's inner dimensions 318 meters below the surface.  The drone also tested technologies that could be used in other more extreme underwater environments such as the oceans under the crust of Europa, one of Jupiter's moons. This has led to increased interest being expressed in using SLAM for planetary rovers, which would allow for the mapping and navigation of different planet surfaces.
 			\medskip
 		
 			\section{The SLAM Problem}
@@ -113,24 +132,17 @@
 					
 			\section{An Investigation Into SLAM - Conclusions}	
 			First and foremost we can safely establish that the SLAM problem is what we are addressing with regards to the implementation of the robot's ability to track its own location whilst mapping its environment. In addition to this we understand the fundamentals of the SLAM problem. This will massively benefit development, as being aware of having to store details internally such as wheel revelations gained via odometric sensors will allow us to cut down on time spent during development having to rewrite core pieces of functionality to make room for this. 
-		
-		\chapter{LIDAR}
-			\section{title}
-		
-			\section{What is LIDAR?}
-				LIDAR (Light Detection And Ranging) is a technology that uses light sensors to measure distances between the sensor and the target object. It achieves this by sending out light pulses which bounce off of objects back at the sensor where they are collected.
-				
-			
-			\section{Uses of LIDAR}
-			
-		
 
-		\chapter{Solutions}
+		%\chapter{Solutions}
 		\chapter{Product Requirements}
+		Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
 			
 		
 		
 		\chapter{Review of Tools and Techniques}
+			\section{Micro C}
+			\section{MBED OS}
+		
 			\section{Scanning Behaviour}
 			One aspect that needed to be considered was the drone's behaviour whilst scanning. The initial thought was that the drone would move around, scan and save the scan results all simultaneously. To investigate the viability of this tests were performed to see if this was possible with the constraints we had, the most notable constraints being how quickly the MBed board is able to write scan data compared to how quickly it would be receiving it from the LIDAR sensor. *!Have some numbers here describing the time it takes to write data retrieved from 1 seconds' worth of LIDAR scanning!*. Based on this it was decided it would be best if the LIDAR stopped and took readings for a small period of time, with these readings being stored in the RAM and then written to internal files afterward. 
 			
