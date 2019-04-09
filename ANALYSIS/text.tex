@@ -1,26 +1,14 @@
 \part{Analysis}
-		\chapter{Problem Identification}
-		% what to do?
-		
-		\chapter{Product Requirements}
-		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
-		There are a few objectives in the Terms of Reference relating to the robot's capabilities. First and foremost the robot must be capable of basic navigation. Second, the drone must be capable of observing the environment and processing this data somehow. Finally, the robot must be capable of performing localization and mapping. From these we can get these basic requirements -
-		
-		\begin{itemize}
-			\item The robot must be capable of movement
-			\item The robot must be capable of observation
-			\item The robot must be capable of storing/processing observational data
-		\end{itemize}
-	
-		Everything from the justification of equipment, to the gathering of relevant literature, to the actual software programming of the robot should have the ultimate goal of achieving these objectives.
+		\chapter{Introduction}
+		To create
 		
 		
-		\chapter{Developing The Robot}
+		\chapter{Mobile Robotics}
 			\section{Introduction}
-			Here we will address the two key aspects of the robot, the robot's movement and the robot's ability to observe and collect data about the environment.
+			Here we will address some of the key aspects of mobile robotics that are relevant to the project, chiefly how movement is dealt with in mobile robotics as well as range-finding.
 			
 			\section{Movement}
-			For movement, we'll simply need a powered robot chassis. Not much is needed from the actual structure, as long as there is space and support for the robot's key elements such as the power source and the sensor(s) that it uses. Then we require a battery source, and finally a microcontroller which will control the motors. This section aims to go into a bit more detail on the chassis itself.
+			This section aims to explore how movement is generally achieved in the world of mobile robotics. From this, a greater understanding of robotic movement should be achieved which will aid the robot's development.
 			
 				\subsection{Chassis}
 				Most conventional vehicles use standard wheels that have only two degrees of freedom. These wheels can either roll forwards or backwards. This means it is a non-holonomic vehicle, which essentially means at any given point in the vehicle's state there are certain directions it cannot travel in. This can present a few problems. Firstly, navigation will sometimes involve the adjustment of the vehicle's heading. The vehicle may need to reverse and turn before it can move forward to a certain location. This presents a problem in the robot's efficiency and ability to navigate around a difficult environment, as well as making it more challenging to implement from a software perspective as we would need to factor in situations where these sorts of adjustments would be needed before the robot can proceed. If the robot were to be holonomic however, then it would be able to begin travelling toward any location regardless of its current position. This can be achieved if the wheels our robot's chassis uses are omni-directional.	
@@ -60,8 +48,8 @@
 					
 					
 			
-			\section{Observation}
-			To achieve self navigation as well as mapping, the robot will need to take observations about its surrounding environment. In order to efficiently map the area and detect obstacles this will need to be performed in a 360 degree manner as well. This section aims to explore a few of the different methods that could be used for this, and ultimately to draw a conclusion on what method we will use.
+			\section{Rangefinding}
+			To achieve self navigation as well as mapping, the robot will need to take observations about its surrounding environment. In order to efficiently map the area and detect obstacles this will need to be performed in a 360 degree manner as well. This sections aims to explore a few of the most common approaches to rangefinding.
 			
 				\subsection{Infrared}
 				Infrared sensors work by measuring things via the reflection of infrared light. The sensor will send out some infrared light where it will be reflected off of an obstacle. A reciever will capture this reflected light and depending on factors such as how much light is recieved back and the triangulation of how the light was recieved the presence of an obstacle will be determined. There are a number of Infrared sensors available online for very cheap prices, websites like RobotShop and HobbyTronics list most of their sensors between £5 and £10. 360 sensors are incredible difficult to find, but their low price means purchasing a few would not be a problem.
@@ -226,5 +214,19 @@
 				
 				\subsection{\textmu C/OS-II}
 				\textmu C/OS-II (which will hereon be referred to as Micro C OS) is a very simple real time operating system designed for use with embedded systems. Labrosse\citep{labrosse2002microc} discusses a number of different features of Micro C OS in the documentation in addition to ones you would typically find in an operating system (semaphores, task management, etc). Labrosse discusses how Micro C OS is able to be used on a wide variety of microprocessors owing to its design, allowing it to be highly portable. In addition, Micro C OS's scalability is discussed, allowing for only the services required in the operating system's host application to be used. This feature in particular would come in useful for the project given the use of a microcontroller, as it would allow us to cut down memory usage to only what we need which should help performance issues from arising.
+				
+		\chapter{Conclusions}
+		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
+		Based on the different aspects of mobile robotics and SLAM that have been looked at as well as the critique of the various tools and techniques that have been employed, we can outline the basic product requirements that will need to be achieved in the course of the product's development. First and foremost the robot must be capable of basic navigation. The drone must be capable of observing the environment using rangefinding techniques. Finally, the robot must be capable of processing data acquired through this rangefinding process to perform localization and mapping. From these we can get these basic requirements -
+		
+		\begin{itemize}
+			\item The robot must be capable of movement
+			\item The robot must be capable of observation
+			\item The robot must be capable of storing/processing observational data
+		\end{itemize}
+	
+	
+	
+		
 				
 	
