@@ -1,24 +1,54 @@
 \part{Synthesis}
 	\chapter{Introduction}
-	Now that the relevant product fields are understood to a sufficient degree and the product's needs have been established we can begin to plan out how we will achieve the project's objectives. First we will established the methological approach that will structure the product's development. Then, for each of the core product requirements we will look at a high level design overview of how the requirement will be met, the actual implementation of this design, and testing to evaluate how well this requirement has been satified by this implementation.
+	Now that the relevant product fields are understood to a sufficient degree and the product's needs have been established we can begin to plan out how we will achieve the project's objectives. First we will established the methological approach that will structure the product's development. Then, for each of the core product requirements we will look at a high level design overview of how the requirement will be met, the actual implementation of this design, and testing to evaluate how well this requirement has been satisfied by this implementation.
 	
 	\chapter{Methological Approach}
-	The project employed a prototyping methodology for development. This involves the system requirements being outlined and understood with an initial design being created from these requirements. Following this the first prototype is built, which often resembles an incredibly basic scaled down version of how the final system should ideally look. This prototype is then thoroughly evaluated, with potential changes that would bring the prototype closer to the final system being figured out. Finally, these changes are then implemented and the prototype is evaluated once again. This is repeated until the product has reached its ultimate goals.
+	The project employed a prototyping methodology for development. First, we must perform an investigation into the system requirements, which was performed in the analysis with a list of specific core requirements being outlined in the conclusion. Following this the first prototype is built, which will resemble an incredibly basic scaled down version of how the final system should ideally look. This prototype is then thoroughly evaluated, with potential changes that would bring the prototype closer to the final system being figured out. Finally, these changes are then implemented and the prototype is evaluated once again. This is repeated until the product has reached its ultimate goals.
 	
 	%prototyping diagram?
 	
-	This was employed partially due to the hardware nature of the product. Key features of the robot hinged on aspects like movement and observation being possible, so it was important to get a prototype that has this basic functionality up and working and quickly as possible. The prototyping approach allowed a pure focus on getting these functions working, and once they were the robot could be improved iteratively.
+	This methodology was employed partially due to the hardware nature of the product. Key features of the robot hinged on aspects like movement and observation being possible, so it was important to get a prototype that has this basic functionality up and working and quickly as possible. The prototyping approach allowed a pure focus on getting these functions working, and once they were the robot could be improved iteratively.
+	
+		\subsection{Initial Prototype}
+		As previously stated, this methodology involves an initial prototype that all future prototypes will be an iteration of. For this project, the first prototype will essentially be a dumb robot that is capable of functionality but doesn't actually achieve any specific objective. As mentioned in the Analysis, the three wheeled omnidirectional chassis will be employed. The first prototype will involve the assembly of this chassis. Following this, the microcontroller and power source will be connected and the microcontroller should be capable of making the robot perform some basic movement. Then the LIDAR sensor and microcontroller will need to be linked. Finally we will need a basic GUI that will be capable of interaction with the CSM software that will be used to generate the map. This will give us a basic robot, capable of some basic movement and a microcontroller that can interact with the LIDAR as well as a GUI that can process data from the LIDAR. This will be the foundation of the product, and from here we can begin implementing specific functionality.
 	
 	\chapter{Design}
+	In the design, we will first give a high level overview of how the different product objectives aim to be met and what hardware/software will be used to meet them. Following this, there will be a more in-depth look into these hardware and software elements.
 	
+	\section{Designing for Requirements}
+		\subsection{Movement}
+		The first of the three product aims outlined in the Analysis is that 'the robot must be capable of movement'.
+			
+		The structure of the robot will be the previously evaluated three wheeled omnidirectional chassis. The omnidirectional wheels will be driven by the three 12 volt motors that are attached to the chassis. An appropriate power source will be used to power the motors, however the motors will not be directly connected to this power source. In order to control the direction and speed of each individual wheel, a dfRobot Quad Motor shield will be fitted onto a FRDM K64F microcontroller. Rather than being connected to the power source, each of the three motors will be connected to this motor shield. Once the microcontroller and shield are powered by the power source, the microcontroller will be able to manipulate the direction and speed of the wheels which will allow the robot to move in different directions.
+			
+			From this, the robot will achieve an ability to move around an environment using basic navigation and the first of our three objectives will be met.
+			
+		\subsection{Observation}
+		The second of the three product aims is that 'the robot must be capable of observation'.
+			
+		The previously evaluated RPLIDAR A1M8 360 Degree Laser Scanner will be used for the range finding aspect of this. It will be powered through the microcontroller, although it may need to first be connected to a step down voltage regulator as both pins that require power range between 5 and 10 volts and it is likely that a higher voltage battery will be used given that the motors require 12 volts. Once powered, the LIDAR sensor will be connected to the microcontroller via the appropriate pins and it will be able to send scan data over a serial connection.
+			
+		This will allow the microcontroller access to range finding data and make it capable of utilizing the LIDAR sensor to observe the environment. A successful implementation here will achieve the second of our three product objectives.
+			
+		\subsection{Processing Observational Data}
+		The last of the three product objectives is that 'the robot must be capable of processing observational data'.
+		
+		The plan for this is to use the CSM software described in the Analysis to process the robot's observational data. Once the robot has taken its observations, they will be saved onto an SD card that has been plugged into the FRDM K64F microcontroller. These observations will then be plugged into a computer where a created GUI will (once the user has directed it to) load this data and feed it into the CSM software. Once CSM has output an appropriate map, the GUI will display this to the user.
+		
+		Following a successful implementation of the above procedure, we will be capable of taking observational data and processing it into a viewable map. This
 	
-	Before any functional implementation to satisfy the product requirements can take place, a thorough understanding of what needs to actually be implemented and how it is to be implemented needs to be achieved. In the design section, an overview of the proposed implementation for each of the product requirements will be discussed. 
-	
-	Given that the project is employing the prototyping, the proposed solutions will be broken down into basic steps. These steps will form the basis of the prototype iterations, with each subsequent prototype ideally achieving an extra step of functionality over the previous prototype. This will allow easily measurable progress during the project's development which will help determine whether or not it is on track, as well as ensuring each developed prototype has well defined goals that are not too small or great in scope.
+	\section{Hardware}
+	\section{Software}
 	
 		\subsection{Movement}
-			\subsubsection{Hardware}
-			As described previously in the Analysis, the foundation of the robot's structure is the three wheeled omnidirectional chassis. This will provide some of the fundamentals needed to achieve a moving chassis, chiefly the chassis itself as well as motors to drive the omni directional wheels, as well as a structure which can house the other components such as the power supply and the microcontroller which will dictate the motors.
+		The first of the core product requirements is that the robot must be capable of movement. There are both hardware and software elements to how movement will be achieved, so this section will be appropriately divided as such.
+		
+			\subsubsection{Hardware}	
+			The foundation of the robot's structure is the three wheeled omnidirectional chassis which will need to be assembled so that it resembles the chassis' assembly diagram.
+			% should the chassis' assembly with the relevant diagram be in the design or the implementation?
+			% what about power calculations with regards to the power source?
+			
+			 The three omnidirectional wheels will be driven by 12v DC motors. Interaction with the motors will be achieved via a FRDM K64 MBED microcontroller with a dfRobot Quad Motor Shield fitted onto it. The chassis' motors will go into the appropriate ground and power pins on the shield, and the microcontroller can then change whether the 
 			
 			\subsubsection{Software}
 		
@@ -31,11 +61,11 @@
 		
 		
 	\chapter{Implementation}
-		\subsection{Movement}
-		\subsection{Observation}
-		\subsection{Processing Observational Data}
+		\section{Movement}
+		\section{Observation}
+		\section{Processing Observational Data}
 		
 	\chapter{Testing}
-		\subsection{Movement}
-		\subsection{Observation}
-		\subsection{Processing Observational Data}
+		\section{Movement}
+		\section{Observation}
+		\section{Processing Observational Data}

@@ -201,6 +201,8 @@
 			One aspect that needed to be considered was the drone's behaviour whilst scanning. The initial thought was that the drone would move around, scan and save the scan results all simultaneously. To investigate the viability of this tests were performed to see if this was possible with the constraints we had, the most notable constraints being how quickly the MBed board is able to write scan data compared to how quickly it would be receiving it from the LIDAR sensor. Based on this it was decided it would be best if the LIDAR stopped and took readings for a small period of time, with these readings being stored in the RAM and then written to internal files afterward. 
 			%*!Have some numbers here describing the time it takes to write data retrieved from 1 seconds' worth of LIDAR scanning!*
 			
+			
+			% QUESTION -- is it worth talking about dead reckoning when we aren't using it for the actual product?
 			\section{Dead Reckoning}
 			Odometry is the usage of data from motion sensors to estimate an object's position. One such implementation of this that will be looked at for the project is dead reckoning. Dead reckoning tracks the robot's position by using data from wheel encoders that count the number of wheel rotations performed during operation. From this, the internal tracked position of a robot can estimate its new position after periods of movement. Given that the chassis being used for the project has wheel encoders as part of the wheel motors, this approach would allow us to perform odometry without needing the use of additional kit. Dead reckoning is not without issues however. Most pressingly it does not account for wheel slippage. If the robot has a poor grip on the ground and the wheels slip, then the wheel rotation doesn't accurately correspond to the robot's location \citep{choset2001topological}. These issues would compound as well. As more and more slippage happens, the robot's internal position would become less and less accurate to where it actually is. 
 		
@@ -220,12 +222,13 @@
 				
 		\chapter{Conclusions}
 		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
-		Based on the different aspects of mobile robotics and SLAM that have been looked at as well as the critique of the various tools and techniques that have been employed, we can outline the basic product requirements that will need to be achieved in the course of the product's development. First and foremost the robot must be capable of basic navigation. The drone must be capable of observing the environment using rangefinding techniques. Finally, the robot must be capable of processing data acquired through this rangefinding process to perform localization and mapping. From these we can get these basic requirements -
+		Based on the different aspects of mobile robotics and SLAM that have been looked at as well as the critique of the various tools and techniques that have been employed, we can outline the basic product requirements that will need to be achieved in the course of the product's development. First and foremost the robot must be capable of basic navigation. The drone must be capable of observing the environment using rangefinding techniques. Finally, the robot must be capable of processing data acquired through this rangefinding process to perform localization and mapping. Finally, the retrieved observational data must be processed and fed into the CSM software to generate a map. For this to happen the robot needs to be able to somehow store the observational data it retrieves from the LIDAR sensor, and we also need a medium to put the data into CSM and display the output. From this outline we can get these basic project requirements -
 		
 		\begin{itemize}
 			\item The robot must be capable of movement
 			\item The robot must be capable of observation
-			\item The robot must be capable of storing/processing observational data
+			\item The robot must be capable of storing observational data
+			\item The observational data must be processed into a map
 		\end{itemize}
 	
 	
