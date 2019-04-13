@@ -16,6 +16,7 @@
 	In the design, there will first be a high level overview of how the different project objectives will be met. Following this will be a discussion of design specifics for the project's hardware and software elements.
 	
 	\section{Designing for Requirements}
+	%mention encoders?
 		\subsection{Movement}
 		The first of the three product aims outlined in the Analysis is that 'the robot must be capable of movement'.
 			
@@ -26,7 +27,7 @@
 		\subsection{Observation}
 		The second of the three product aims is that 'the robot must be capable of observation'.
 			
-		The previously evaluated RPLIDAR A1M8 360 Degree Laser Scanner will be used for the range finding aspect of this. It will then be connected to the appropriate microcontroller pins so that it can recieve power and exchange information.
+		The RPLIDAR A1M8 360 Degree Laser Scanner will be used for the range finding aspect of this. Chosen for its high scan frequency and readily available SDK, it will be connected to the appropriate microcontroller pins so that it can recieve power and exchange information over a serial connection.
 			
 		This will allow the microcontroller access to range finding data and make it capable of utilizing the LIDAR sensor to observe the environment. A successful implementation here will achieve the second of our three product objectives.
 			
@@ -40,20 +41,23 @@
 	\medskip
 	Now that we have a high level understanding of how each of the project objectives will be met, there will be a more thorough planning of how each of the hardware and software components will be implemented.
 	
+	% QUESTION - Should I discuss the cost of things here?
 	\section{Hardware}
+	This section aims to outline the hardware components selected for the project and to describe in a more detailed manner how the robot itself will be constructed.
+	
 		\subsection{Chassis}
 			\subsubsection{Structure}
-			The chassis is made up of an upper and a lower triangular platform, connected by small metal rods that screw into pre-drilled holes on the platforms. The lowerplatform features three 12 volt motors as well as mounting points for the omnidirectional wheels, which should lock into place once they are pressed onto it. %!! PUT ASSEMBLY DIAGRAM HERE?
+			The chassis is made up of an upper and a lower triangular platform, connected by small metal rods that screw into pre-drilled holes on the platforms. The lower platform features three 12 volt motors as well as mounting points for the omnidirectional wheels, which should lock into place once they are pressed onto it. %!! PUT ASSEMBLY DIAGRAM HERE?
 			The space between the two platforms is where the robot's microcontroller and power supply will be housed, and the bulk of any wiring that needs to be done should ideally be here as well. On top of the upper chassis platform will be the LIDAR sensor used for range finding. It's important that the top platform remain relatively clean, as components or wiring being too close to the LIDAR may block the light it sends out and cause issues with the range finding process.
 			
 			The assembly shouldn't be overly complex, no soldering should be needed to connect components so it should be mostly a case of fitting things together.
 			
 			\subsubsection{Power}
-			Below is a run down of the different robot hardware components that will need to recieve power.
+			The hardware components that will need powering are the three motors used to drive the omnidirectional wheels, the microcontroller, and the LIDAR sensor. The LIDAR sensor has two seperate pins that require power, one powering the motors that drives the LIDAR sensor and the other being the actual range finder itself. Table \ref{table:1} has a run down of these hardware components and the voltages that they use.
 			
 			\begin{table}[h!]
 				\centering
-				\begin{tabular}{||c c||} 
+				\begin{tabular}{||c | c||} 
 					\hline
 					Component & Voltage \\ [0.5ex] 
 					\hline\hline
@@ -66,52 +70,53 @@
 				\caption{Components and respective voltages}
 				\label{table:1}
 			\end{table}
+		
+			To save on cost and complexity, it would be ideal to only use a single battery for the robot's power source. The plan is to use a single battery pack that holds 8 1.5V batteries giving us the 12V we need for the highest voltage component. 
 			
+		\subsection{Microcontroller}
+			\subsubsection{FRDM-K64F}
+			The FRDM-K64F will be employed to be the 'brain' of the robot. It's small, relatively cheap and compatible with the Micro C operating system which will run the tasks needed to be used for the robot's operation. As well, the freely available mbed SDK used for developing on these boards will make changing and redeploying code onto microcontroller quick and easy, which will help minimize time spent programming the next prototype iteration.
 			
-			
-			
-	
-	
+			\subsubsection{dfRobot Quad DC Motor Driver Shield}
+			To manipulate the robot the way we want, we cannot simply supply all the wheels with full power all the time. This will make them constantly spin at the maximum rate. Omnidirectional navigation relies on having different wheels spin in different directions, often at different speeds. To achieve this, the motor driver shield will sit on top of our microcontroller. It features pins for each of the chassis motor's power and ground cables, and once plugged in we can run code on the microcontroller to change whether these pins are HIGH and LOW as well as the pulse width modulation of these pins. It was chosen for its ease of use and available documentation, as well as its immediate compatibility with the FRDM-K64F, installation will be as easy as plugged it into the board's GPIO pins. This will allow us to change both the direction and the speed of each of the individual wheels, which will help us achieve our omnidirectional navigation.
+		
+		\subsection{Sensor}
+		The RPLIDAR A1M8 sensor will sit on top of the chassis and will be connected to the microcontroller. The microcontroller will provide the LIDAR with power, and a serial connection between the two components will allow the microcontroller to send and recieve information from the sensor. As mentioned in the power section, the LIDAR features two different pins that require power. These are the LIDAR motor and the LIDAR core, and they will recieve power that has been stepped down from the 12V battery pack that is being used.
 	
 	\section{Software}
+		\subsection{Robot}
+		The software for the actual robot will be written in C++, compiled and deployed onto the microcontroller with the mbed SDK. At its foundation, it will be a Micro C OS with a series of configured tasks to perform various aspects of the robot's functionality. As you would expect, these tasks will come with their own memory tasks and will be designated with appropriate priorities.
+		
+		
+		\subsection{Map Building}
 	
-		\subsection{Movement}
-		The first of the core product requirements is that the robot must be capable of movement. There are both hardware and software elements to how movement will be achieved, so this section will be appropriately divided as such.
-		
-			\subsubsection{Hardware}	
-			The foundation of the robot's structure is the three wheeled omnidirectional chassis which will need to be assembled so that it resembles the chassis' assembly diagram.
-			% should the chassis' assembly with the relevant diagram be in the design or the implementation?
-			% what about power calculations with regards to the power source?
-			
-			 The three omnidirectional wheels will be driven by 12v DC motors. Interaction with the motors will be achieved via a FRDM K64 MBED microcontroller with a dfRobot Quad Motor Shield fitted onto it. The chassis' motors will go into the appropriate ground and power pins on the shield, and the microcontroller can then change whether the 
-			
-			\subsubsection{Software}
-		
-		
-		\subsection{Observation}
-			\subsubsection{Hardware}
-			\subsubsection{Software}
-		
-		\subsection{Processing Observational Data}
-		
-		
-		
-	\chapter{Movement}
-		\section{Design}
-		\section{Implementation}
-		\section{Testing}
+		\subsubsection{FRDM-K64F}
+		The FRDM-K64F will be employed to be the 'brain' of the robot. It's small, relatively cheap and compatible with the Micro C operating system which will run the tasks needed to be used for the robot's operation. As well, the freely available mbed SDK used for developing on these boards will make changing and redeploying code onto microcontroller quick and easy, which will help minimize time spent programming the next prototype iteration.
 	
-	\chapter{Design}
-		\section{Movement}
-		\section{Observation}
-		\section{Processing Observational Data}
+		\subsection{Sensor}
+		The RPLIDAR A1M8 sensor will sit on top of the chassis and will send data to the microcontroller over a serial connection. Once this connection has been established, the microcontroller will be able to send request to the LIDAR. An overview of the possible requests that can be sent to the LIDAR can be seen in table \ref{table:2}.
+		
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{||c | c||} 
+				\hline
+				Function & Purpose  \\ [0.5ex] 
+				\hline\hline
+				Scan & Begin scanning  \\ 
+				Stop & Stop scanning  \\
+				Reset & Reboot RPLIDAR core  \\
+				Force Scan & Begin scanning without checking rotation speed  \\
+				Get Info & Output device info (e.g. serial number)  \\
+				Get Health & Output device health info  \\
+				Get Samplerate & Output single sampling time  \\
+				Get Lidar Conf & Get LIDAR configuration  \\ [1ex] 
+				\hline
+			\end{tabular}
+			\caption{RPLIDAR SDK overview}
+			\label{table:2}
+		\end{table}
+		
+
 		
 	\chapter{Implementation}
-		\section{Movement}
-		\section{Observation}
-		\section{Processing Observational Data}
-		
 	\chapter{Testing}
-		\section{Movement}
-		\section{Observation}
-		\section{Processing Observational Data}
