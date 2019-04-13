@@ -19,7 +19,7 @@
 					\centering
 					\includegraphics[width=.3\linewidth]{ANALYSIS/90degwheel.png}
 					\caption{An omnidirectional wheel, with 90 degree rollers}
-					\label{90 Degree Omni Directional Wheel}
+					\label{fig:1}
 				\end{figure}
 				
 				A robot chassis composing of three or four of these wheels as well as relevant motors should be adequate. A few of the different chassis found during the preliminary research will now be evaluated to find which would be the most suitable for the project.
@@ -40,7 +40,7 @@
 						\centering
 						\includegraphics[width=.3\linewidth]{ANALYSIS/3wdomnidirectionalchassis.jpg}
 						\caption{3WD Omni-Directional Robot Chassis}
-						\label{3WD Omni-Directional Robot Chassis}
+						\label{fig:2}
 					\end{figure}
 					Unlike the previous chassis this one features only three wheels rather than four. This is still enough to achieve freedom of movement however. Whilst it doesn't include the additional pieces of the kit the other does (such as a microcontroller) we still have our wheels, a supporting structure and appropriate motors with encoders that will provide us with odometric data. There is plenty of room in the middle for items such as our microcontroller and a power source, and the top plate is an ideal mounting point for our sensor.
 					
@@ -73,7 +73,7 @@
 					\centering
 					\includegraphics[width=.3\linewidth]{ANALYSIS/rplidara2.jpg}
 					\caption{RPLIDAR A2M8}
-					\label{RPLIDAR A2M8}
+					\label{fig:3}
 				\end{figure}
 				The RPLIDAR A2M8 uses the previous described LIDAR triangulation system, and outputs scan data at 8000 samples per second\citep{rplidarm8docs}. It outputs this data via a relevant communication interface, representing scans as distance (what distance between the sensor and the measuring point) and heading (the heading angle of the measurement). It also includes a start flag in its measurement signalling the start of a new scan, which would likely come in useful for processing the scan data as we could simply check this flag to see if incoming data is from a new scan. One of the biggest advantages to employing this sensor would be the SDK it comes with. With full documentation, the SDK allows us to access the sensor's entire functionality straight away. It has appropriate methods for beginning the scanning session, ending it and checking sensor health as well as a few other things. This would save a lot of time in the project as we could focus on logical implementation rather than creating the prerequisites that will be needed for the sensor to do what we need it to do.
 				
@@ -84,7 +84,7 @@
 					\centering
 					\includegraphics[width=.3\linewidth]{ANALYSIS/rplidara1.jpg}
 					\caption{RPLIDAR A1M8}
-					\label{RPLIDAR A1M8}
+					\label{fig:4}
 				\end{figure}
 				Essentially a less sophisticated version of the previous sensor, this iteration of the M1 LIDAR sensor still offers us a 4000 - 8000Hz sample frequency as well as the previously mentioned SDK. Among a few other things, the key differences here are that we have a slightly slower scan frequency (1 - 10Hz vs the A2's 5 - 15Hz) and a few pieces of SDK functionality that aren't available on the less advanced firmware. The key change is that we lack the express scan function, which is similar to the regular scan but it performs at the highest sampling rate the sensor can use. 
 				

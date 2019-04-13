@@ -10,15 +10,91 @@
 	This methodology was employed partially due to the hardware nature of the product. Key features of the robot hinged on aspects like movement and observation being possible, so it was important to get a prototype that has this basic functionality up and working and quickly as possible. The prototyping approach allowed a pure focus on getting these functions working, and once they were the robot could be improved iteratively.
 	
 		\subsection{Initial Prototype}
-		As previously stated, this methodology involves an initial prototype that all future prototypes will be an iteration of. For this project, the first prototype will essentially be a dumb robot that is capable of functionality but doesn't actually achieve any specific objective. As mentioned in the Analysis, the three wheeled omnidirectional chassis will be employed. The first prototype will involve the assembly of this chassis. Following this, the microcontroller and power source will be connected and the microcontroller should be capable of making the robot perform some basic movement. Then the LIDAR sensor and microcontroller will need to be linked. Finally we will need a basic GUI that will be capable of interaction with the CSM software that will be used to generate the map. This will give us a basic robot, capable of some basic movement and a microcontroller that can interact with the LIDAR as well as a GUI that can process data from the LIDAR. This will be the foundation of the product, and from here we can begin implementing specific functionality.
+		As previously stated, this methodology involves an initial prototype that all future prototypes will be an iteration of. The initial prototype of the project will involve the basic, primary construction of the robot. This will first involve the basic chassis assembly, followed by connecting relevant components to each other and then ensuring that they are all powered. Once this is done, we'll hopefully have an incredibly crude robot that won't be capable of much, but should hopefully serve as a solid foundation for future development toward the project goals.
+		
+		A similar approach will be followed for processing the map data. It won't be developed simultaneously at first as the robot needs to be capable of storing observational data from the LIDAR before the program can actually do anything, however it will start to be put together once the robot crosses this developmental threshhold.
 	
 	\chapter{Design}
-	In the design, there will first be a high level overview of how the different project objectives will be met. Following this will be a discussion of design specifics for the project's hardware and software elements.
+	Before implementation of the specific project aims can be implemented, we first need the initial prototype that we can begin iteratively improving. Therefore, it's logical to design the initial robotic prototype first. What follows is an overview of how the initial robot prototype will be designed, followed by a breakdown of each of the individual project aims will be met.
+	
+		\section{Initial Prototype}
+		Here will be the design for the base robot. The aim here is to achieve a solid foundation that all development can build on in order to meet the project objectives.
+			\subsection{Hardware}
+				\subsubsection{Chassis}
+				First off will be the basic assembly of the three wheeled omnidirectional chassis. The chassis is comprised of two triangular metal plates, joined together by metal rods that are screwed into pre drilled holes that line up to eachother. The lower platform is where the motors and mounting points for the omnidirectional wheels are found, so once the plates have been connected the wheels will be pushed onto these mounting points and locked into place.
+				% assembly diagram here?
+				
+				Now it's time for the microcontroller setup. The microcontroller used in this project is the FRDM-K64F, chosen for it's relatively low cost, small form factor and compatibility with the Micro C Operating System which is being employed for the robot's core program. To control the robot we'll also need a motor driver. The dfRobot Quad Motor Driver Shield is being employed for this project, it can be obtained from Amazon for around £13. It was chosen for this relatively low cost, the easily available documentation and the fact that it can easily plug into the FRDM-K64F, the microcontroller of choice for this project. The specifics behind how the shield will be used will be discussed during the movement design section, but in short it allows us to manipulate the energy being sent to the individual wheel motors which will afford us control over how they work and as such control over the robot's movement. Once these two components have been fitted together, the power and ground cables from each of the chassis motors will be plugged into the motor driver shield. Fig \ref{fig:shieldsetup} from the shield's documentation shows an example of this setup with four motors.
+				
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=.7\linewidth]{SYNTHESIS/shield_connection.png}
+					\caption{Example shield setup}
+					\label{fig:shieldsetup}
+				\end{figure}
+				
+				The assembly shouldn't be overly complex, no soldering should be needed to connect components so it should be mostly a case of fitting things together.
+				% explain LIDAR later.... :(
+				
+				\subsubsection{Power}
+				The hardware components that will need powering are the three motors used to drive the omnidirectional wheels, the microcontroller, and the LIDAR sensor. The LIDAR sensor has two seperate pins that require power, one powering the motors that drives the LIDAR sensor and the other being the actual range finder itself. Table \ref{table:1} has a run down of these hardware components and the voltages that they use.
+				
+				\begin{table}[h!]
+					\centering
+					\begin{tabular}{|| l | l ||} 
+						\hline
+						Component & Voltage \\ [0.5ex] 
+						\hline
+						3x DC Coreless Motor  & 12V  \\ 
+						FRDM-K64F  & 1.71 to 3.6V   \\
+						RPLIDAR Scanner  & 5 to 5.5V  \\
+						RPLIDAR Motor & 5 to 10V  \\ [1ex] 
+						\hline
+					\end{tabular}
+					\caption{Components and respective voltages}
+					\label{table:1}
+				\end{table}
+				
+				To save on cost and complexity, it would be ideal to only use a single battery for the robot's power source. A single power source will be used for the robot, a battery holder containing 8 1.5V batteries will give us the 12V we need for the motors. Then, a step down voltage regular will be used to lower the voltage required for the other components. Fig \ref{fig:powersetup} has an overview of this.
+				% !!!!!!!!!!!!!!!!!!!!!!!COME BACK TO THIS!!!!!!!!!!!!!!!!
+			
+			\subsection{Software}
+			The software for the actual robot will be written in C++, compiled and deployed onto the microcontroller with the mbed SDK. At its foundation, it will be a Micro C OS with a series of configured tasks to perform various aspects of the robot's functionality. As you would expect, these tasks will come with their own memory tasks and will be designated with appropriate priorities. For the initial setup, we only need to make a skeleton OS to ensure we can properly compile and deploy code onto the microcontroller. Some relevant data structures and variables for task priorities and memory stacks, as well as a single task that prints hello world would be fine for this.
+		
+		\section{Designing for Requirements}
+		Once this incredibly basic initial prototype is in place, we can begin to move toward truly fulfilling the project requirements. What follows is an overview of how each of the different project requirements will be met, with appropriate explanations toward the hardware and software employed.
+		
+			\subsection{Movement}
+			The first of the three product aims outlined in the Analysis is that 'the robot must be capable of movement'.
+				\subsubsection{Hardware}
+				The previously mentioned dfRobot Quad Motor Driver Shield comes into play here. As shown in fig \ref{fig:shieldsetup}, the motors power and ground cables will connect to the appropriate pins on the shield. The motors can be manipulated once they receive power in this fashion. The shield is able to affect the electricity being sent to the motors by changing its polarity and by using pulse width modularity. By changing the pin to HIGH or LOW, we can affect the direction that the motor spins in (forward or backwards) and pulse width modulation allows us to affect the speed of the motor.
+				
+				\subsubsection{Software}
+				In order to manipulate the motors we'll need some appropriate variables we can use to refer to the pins that the motor power and ground cables are connected to. %talk about pin lineup here and declaration
+				
+				% COME BACK TO THIS, TRIGONOMICAL NAVIGATION!
+
+				
+			\subsection{Observation}
+				\subsubsection{Hardware}
+				Only one range finder is being used to gather the observation data, the RPLIDAR A1M8 LIDAR sensor. The sensor is composed of a platform with a motor system that spins the range scanner as it takes readings, as well as some pins that can be used for communication. Fig \ref{fig:rplidarconfig} illustrates these components.
+				
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=.9\linewidth]{SYNTHESIS/rplidar_configuration.png}
+					\caption{Example shield setup}
+					\label{fig:rplidarconfig}
+				\end{figure}
+				
+				\subsubsection{Software}
+			\subsection{Processing Observational Data}
 	
 	\section{Designing for Requirements}
 	%mention encoders?
 		\subsection{Movement}
-		The first of the three product aims outlined in the Analysis is that 'the robot must be capable of movement'.
+			
+			\subsubsection{Hardware}
+			\subsubsection{Software}		
 			
 		For this, the three wheeled omni directional chassis will be employed. This chassis was chosen due to the reduced cost compared to most other available chassis, and the omnidirectional wheels were ideal as the holonomic properties of the robot will allow it to move in any direction from any position without the need to first change its heading. To control the motors that will drive the wheels, the FRDM K64F MBED microcontroller will be used. The board is small, relatively cheap and will support the Micro-C Operating System that is going to be used as a structure for the robot's program. The motor driver
 			
@@ -52,26 +128,7 @@
 			
 			The assembly shouldn't be overly complex, no soldering should be needed to connect components so it should be mostly a case of fitting things together.
 			
-			\subsubsection{Power}
-			The hardware components that will need powering are the three motors used to drive the omnidirectional wheels, the microcontroller, and the LIDAR sensor. The LIDAR sensor has two seperate pins that require power, one powering the motors that drives the LIDAR sensor and the other being the actual range finder itself. Table \ref{table:1} has a run down of these hardware components and the voltages that they use.
 			
-			\begin{table}[h!]
-				\centering
-				\begin{tabular}{|| l | l ||} 
-					\hline
-					Component & Voltage \\ [0.5ex] 
-					\hline
-					3x DC Coreless Motor  & 12V  \\ 
-					FRDM-K64F  & 1.71 to 3.6V   \\
-					RPLIDAR Scanner  & 5 to 5.5V  \\
-					RPLIDAR Motor & 5 to 10V  \\ [1ex] 
-					\hline
-				\end{tabular}
-				\caption{Components and respective voltages}
-				\label{table:1}
-			\end{table}
-		
-			To save on cost and complexity, it would be ideal to only use a single battery for the robot's power source. The plan is to use a single battery pack that holds 8 1.5V batteries giving us the 12V we need for the highest voltage component. 
 			
 		\subsection{Microcontroller}
 			\subsubsection{FRDM-K64F}
