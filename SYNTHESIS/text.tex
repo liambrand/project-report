@@ -57,10 +57,10 @@
 			
 			\begin{table}[h!]
 				\centering
-				\begin{tabular}{||c | c||} 
+				\begin{tabular}{|| l | l ||} 
 					\hline
 					Component & Voltage \\ [0.5ex] 
-					\hline\hline
+					\hline
 					3x DC Coreless Motor  & 12V  \\ 
 					FRDM-K64F  & 1.71 to 3.6V   \\
 					RPLIDAR Scanner  & 5 to 5.5V  \\
@@ -87,6 +87,26 @@
 		\subsection{Robot}
 		The software for the actual robot will be written in C++, compiled and deployed onto the microcontroller with the mbed SDK. At its foundation, it will be a Micro C OS with a series of configured tasks to perform various aspects of the robot's functionality. As you would expect, these tasks will come with their own memory tasks and will be designated with appropriate priorities.
 		
+			\subsubsection{Sensor}
+			In order to interface with the RPLIDAR A1M8, SLAMTEC's own SDK will be used. The SDK comes in the form of header files which appropriately implement the functionality needed to send requests and recieve information from the LIDAR sensor. Table \ref{table:3} has a manifest of the SDK and the functionality that it provides.
+			
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{|| l | l ||} 
+					\hline
+					File & Purpose \\ [0.5ex] 
+					\hline
+					rplidar.h  & Parent file for subsequent header files  \\ 
+					rplidar\textunderscore driver.h  & Provides RPLidarDriver class for  interfacing with sensor   \\
+					rplidar\textunderscore  protocol.h  & Defines structs and constants for the LIDAR protocol  \\
+					rplidar\textunderscore  cmd.h & Defines request/answer structs for LIDAR protocol  \\ 
+					rptypes.h & Platform independent structs and constants  \\ [1ex] 
+					\hline
+				\end{tabular}
+				\caption{RPLIDAR SDK files}
+				\label{table:3}
+			\end{table}
+		
 		
 		\subsection{Map Building}
 	
@@ -98,10 +118,10 @@
 		
 		\begin{table}[h!]
 			\centering
-			\begin{tabular}{||c | c||} 
+			\begin{tabular}{|| l | l ||} 
 				\hline
 				Function & Purpose  \\ [0.5ex] 
-				\hline\hline
+				\hline
 				Scan & Begin scanning  \\ 
 				Stop & Stop scanning  \\
 				Reset & Reboot RPLIDAR core  \\
