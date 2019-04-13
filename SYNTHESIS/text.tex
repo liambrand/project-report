@@ -13,31 +13,66 @@
 		As previously stated, this methodology involves an initial prototype that all future prototypes will be an iteration of. For this project, the first prototype will essentially be a dumb robot that is capable of functionality but doesn't actually achieve any specific objective. As mentioned in the Analysis, the three wheeled omnidirectional chassis will be employed. The first prototype will involve the assembly of this chassis. Following this, the microcontroller and power source will be connected and the microcontroller should be capable of making the robot perform some basic movement. Then the LIDAR sensor and microcontroller will need to be linked. Finally we will need a basic GUI that will be capable of interaction with the CSM software that will be used to generate the map. This will give us a basic robot, capable of some basic movement and a microcontroller that can interact with the LIDAR as well as a GUI that can process data from the LIDAR. This will be the foundation of the product, and from here we can begin implementing specific functionality.
 	
 	\chapter{Design}
-	In the design, we will first give a high level overview of how the different product objectives aim to be met and what hardware/software will be used to meet them. Following this, there will be a more in-depth look into these hardware and software elements.
+	In the design, there will first be a high level overview of how the different project objectives will be met. Following this will be a discussion of design specifics for the project's hardware and software elements.
 	
 	\section{Designing for Requirements}
 		\subsection{Movement}
 		The first of the three product aims outlined in the Analysis is that 'the robot must be capable of movement'.
 			
-		The structure of the robot will be the previously evaluated three wheeled omnidirectional chassis. The omnidirectional wheels will be driven by the three 12 volt motors that are attached to the chassis. An appropriate power source will be used to power the motors, however the motors will not be directly connected to this power source. In order to control the direction and speed of each individual wheel, a dfRobot Quad Motor shield will be fitted onto a FRDM K64F microcontroller. Rather than being connected to the power source, each of the three motors will be connected to this motor shield. Once the microcontroller and shield are powered by the power source, the microcontroller will be able to manipulate the direction and speed of the wheels which will allow the robot to move in different directions.
+		For this, the three wheeled omni directional chassis will be employed. This chassis was chosen due to the reduced cost compared to most other available chassis, and the omnidirectional wheels were ideal as the holonomic properties of the robot will allow it to move in any direction from any position without the need to first change its heading. To control the motors that will drive the wheels, the FRDM K64F MBED microcontroller will be used. The board is small, relatively cheap and will support the Micro-C Operating System that is going to be used as a structure for the robot's program. The motor driver
 			
-			From this, the robot will achieve an ability to move around an environment using basic navigation and the first of our three objectives will be met.
+		From this, the robot will achieve an ability to move around an environment using basic navigation and the first of our three objectives will be met.
 			
 		\subsection{Observation}
 		The second of the three product aims is that 'the robot must be capable of observation'.
 			
-		The previously evaluated RPLIDAR A1M8 360 Degree Laser Scanner will be used for the range finding aspect of this. It will be powered through the microcontroller, although it may need to first be connected to a step down voltage regulator as both pins that require power range between 5 and 10 volts and it is likely that a higher voltage battery will be used given that the motors require 12 volts. Once powered, the LIDAR sensor will be connected to the microcontroller via the appropriate pins and it will be able to send scan data over a serial connection.
+		The previously evaluated RPLIDAR A1M8 360 Degree Laser Scanner will be used for the range finding aspect of this. It will then be connected to the appropriate microcontroller pins so that it can recieve power and exchange information.
 			
 		This will allow the microcontroller access to range finding data and make it capable of utilizing the LIDAR sensor to observe the environment. A successful implementation here will achieve the second of our three product objectives.
 			
 		\subsection{Processing Observational Data}
 		The last of the three product objectives is that 'the robot must be capable of processing observational data'.
 		
-		The plan for this is to use the CSM software described in the Analysis to process the robot's observational data. Once the robot has taken its observations, they will be saved onto an SD card that has been plugged into the FRDM K64F microcontroller. These observations will then be plugged into a computer where a created GUI will (once the user has directed it to) load this data and feed it into the CSM software. Once CSM has output an appropriate map, the GUI will display this to the user.
+		The plan for this is to use the CSM software described in the Analysis to process the robot's observational data. Once the robot has taken its observations, they will be saved onto an SD card that has been plugged into the FRDM K64F microcontroller. These observations will then be plugged into a computer where a created program will (once the user has directed it to) load this data and feed it into the CSM software. Once CSM has output an appropriate map, the program will display this to the user.
 		
-		Following a successful implementation of the above procedure, we will be capable of taking observational data and processing it into a viewable map. This
+		Following a successful implementation of the above procedure, we will be capable of taking observational data and processing it into a viewable map. This will satisfy the last of the three project requirements.
+	
+	\medskip
+	Now that we have a high level understanding of how each of the project objectives will be met, there will be a more thorough planning of how each of the hardware and software components will be implemented.
 	
 	\section{Hardware}
+		\subsection{Chassis}
+			\subsubsection{Structure}
+			The chassis is made up of an upper and a lower triangular platform, connected by small metal rods that screw into pre-drilled holes on the platforms. The lowerplatform features three 12 volt motors as well as mounting points for the omnidirectional wheels, which should lock into place once they are pressed onto it. %!! PUT ASSEMBLY DIAGRAM HERE?
+			The space between the two platforms is where the robot's microcontroller and power supply will be housed, and the bulk of any wiring that needs to be done should ideally be here as well. On top of the upper chassis platform will be the LIDAR sensor used for range finding. It's important that the top platform remain relatively clean, as components or wiring being too close to the LIDAR may block the light it sends out and cause issues with the range finding process.
+			
+			The assembly shouldn't be overly complex, no soldering should be needed to connect components so it should be mostly a case of fitting things together.
+			
+			\subsubsection{Power}
+			Below is a run down of the different robot hardware components that will need to recieve power.
+			
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{||c c||} 
+					\hline
+					Component & Voltage \\ [0.5ex] 
+					\hline\hline
+					3x DC Coreless Motor  & 12V  \\ 
+					FRDM-K64F  & 1.71 to 3.6V   \\
+					RPLIDAR Scanner  & 5 to 5.5V  \\
+					RPLIDAR Motor & 5 to 10V  \\ [1ex] 
+					\hline
+				\end{tabular}
+				\caption{Components and respective voltages}
+				\label{table:1}
+			\end{table}
+			
+			
+			
+			
+	
+	
+	
 	\section{Software}
 	
 		\subsection{Movement}
@@ -59,6 +94,17 @@
 		
 		\subsection{Processing Observational Data}
 		
+		
+		
+	\chapter{Movement}
+		\section{Design}
+		\section{Implementation}
+		\section{Testing}
+	
+	\chapter{Design}
+		\section{Movement}
+		\section{Observation}
+		\section{Processing Observational Data}
 		
 	\chapter{Implementation}
 		\section{Movement}
