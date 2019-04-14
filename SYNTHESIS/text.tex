@@ -77,6 +77,7 @@
 
 				
 			\subsection{Observation}
+			The second of the three product aims outlined in the Analysis is that 'the robot must be capable of observation'.
 				\subsubsection{Hardware}
 				Only one range finder is being used to gather the observation data, the RPLIDAR A1M8 LIDAR sensor. The sensor is composed of a platform with a motor system that spins the range scanner as it takes readings, as well as some pins that can be used for communication. Fig \ref{fig:rplidarconfig} illustrates these components.
 				
@@ -87,14 +88,15 @@
 					\label{fig:rplidarconfig}
 				\end{figure}
 			
-				
-			
+				To interact with the sensor, it will be connected to the robot's microcontroller. We would first need to connect the microcontroller's TX (transmit) and RX (recieve) pins to the LIDAR's inverse pins (TX to RX, RX to TX). Then, using mbed's Serial library, we can create a Serial variable supplying the microcontroller's connected RX and TX pins and parameters. From this we can invoke methods like putc() and getc(), which put and get characters into and from the serial connection respectively. In order to power the sensor, there are two pins that need to be connected. The first is LIDAR core, which is the power for the actual LIDAR scanner itself. The second is the LIDAR motor, which is what spins the scanner as it makes observations. 
+				%COME BACK TO THIS AS WELL...
 				
 				\subsubsection{Software}
-				SLAMTEC have a document detailing the LIDAR protocol. This details the specifics behind how to communicate with the LIDAR. LIDAR communication is primarily achieved through the exchange of data packets. As a basic example, in order to obtain scan measurements the host system first needs to send data packets corresponding to the begin scan command. Once the LIDAR has recieved and processed this, it should begin sending back observational data. This could be achieved with the microcontroller. We would first need to connect the microcontroller's TX (transmit) and RX (recieve) pins to the LIDAR's inverse pins (TX to RX, RX to TX). Then, using mbed's Serial library, we can create a Serial variable supplying the microcontroller's connected RX and TX pins and parameters. From this we can invoke methods like putc() and getc(), which put and get characters into and from the serial connection respectively. 
+				SLAMTEC have a document detailing the LIDAR protocol. This details the specifics behind how to communicate with the LIDAR. LIDAR communication is primarily achieved through the exchange of data packets. As a basic example, in order to obtain scan measurements the host system first needs to send data packets corresponding to the begin scan command. Once the LIDAR has recieved and processed this, it should begin sending back observational data. 
 				
+				The format of the requests that need to be sent is documented in the LIDAR's protocol documentation\citep{rplidarprotocol}. To implement this, it would be a good idea to create a data structure in the microcontroller's C++ program with fields listed in the protocol (start flag, command, etc) and then put this field into the serial connection. A similar data structure could be populated with what is recieved from the serial channel to make it easy to process the data.
 				
-				In order to interface with the RPLIDAR A1M8, SLAMTEC's own SDK will be used. The SDK comes in the form of header files which appropriately implement the functionality needed to send requests and recieve information from the LIDAR sensor. Table \ref{table:3} has a manifest of the SDK and the functionality that it provides.
+				SLAMTEC provide an SDK for the LIDAR sensor however, which comes in the form of header files which will automatically implement this functionality. Table \ref{table:3} has a manifest of the SDK and the functionality that it provides.
 				
 				\begin{table}[h!]
 					\centering
@@ -113,6 +115,7 @@
 					\label{table:3}
 				\end{table}
 				
+				Essentially, the C++ program running on the microcontroller would need to create an RPLidarDriver variable which would be used to represent the connected LIDAR sensor. Once this is achieved the premade methods that implement the protocol functionality could be ran to achieve control over the LIDAR.
 				
 			\subsection{Processing Observational Data}
 				\subsubsection{Hardware}
