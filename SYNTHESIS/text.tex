@@ -89,6 +89,11 @@
 					\label{fig:rplidarconfig}
 				\end{figure}
 			
+				There are seven pins on the underside of the LIDAR sensor. These pins need to be connected to the appropriate microcontroller ports if the LIDAR is to work. 
+				% PICTURE OF LIDAR UNDERSIDE HERE
+				
+				The GND pins are simple ground pins, they will need to be connected to ground pins on the microcontroller. The RX and TX pins (Recieve and Transmit respectively) are Serial pins that will be used for communication with the microcontroller. These LIDAR pins will be linked to their opposite counterparts on the microcontroller (LIDAR RX to Microcontroller TX and vice versa). The V5.0 and VMOTO are simple power pins, they will need to be connected to pins on the microcontroller that output the appropriate amount of voltage. This is how the LIDAR sensor will retrieve power. The MOTOCTL pin is the motor control pin that listens for a signal indicating that a connected device is ready to recieve data. The signal is either high (ready) or low (not ready). To make use of this pin, a generic GPIO pin from the microcontroller will be configured within the microcontroller's software and set to 1 (high) when the robot needs to begin taking scan data.
+			
 				To interact with the sensor, it will be connected to the robot's microcontroller. We would first need to connect the microcontroller's TX (transmit) and RX (recieve) pins to the LIDAR's inverse pins (TX to RX, RX to TX). Then, using mbed's Serial library, we can create a Serial variable supplying the microcontroller's connected RX and TX pins and parameters. From this we can invoke methods like putc() and getc(), which put and get characters into and from the serial connection respectively. In order to power the sensor, there are two pins that need to be connected. The first is LIDAR core, which is the power for the actual LIDAR scanner itself. The second is the LIDAR motor, which is what spins the scanner as it makes observations. 
 				%COME BACK TO THIS AS WELL...
 				
@@ -137,8 +142,52 @@
 				\subsubsection{Hardware}
 				\subsubsection{Software}
 			\subsection{Observation}
+			Implementation of the robot's ability to take observations about its environment first involved a hardware configuration. The LIDAR sensor needed to be connected to the microcontroller so that it could draw power from the battery, as well as communicate with the microcontroller allowing it to receive commands and send observational data. Once the hardware connection was established, software on the microcontroller had to be capable of operating the LIDAR sensor and recieving its observations.
 				\subsubsection{Hardware}
+				As previously discussed, the seven pins on the underside of the LIDAR sensor need to be correctly connected up to the appropriate microcontroller pins if the sensor is to be used.
+				
+				Table \ref{table:4} gives an overview of which LIDAR pins needed to be connected to which microcontroller pins.
+				
+				\begin{table}[h!]
+					\centering
+					\begin{tabular}{|| l | l ||} 
+						\hline
+						LIDAR Pin & K64F Pin \\ [0.5ex] 
+						\hline
+						GND  & GND  \\ 
+						RX  & TX   \\
+						TX  & RX  \\
+						V5.0 & 5v  \\ 
+						GND & GND  \\ 
+						MOTOCTL & D7  \\ 
+						VMOTO & 3v3  \\ [1ex] 
+						\hline
+					\end{tabular}
+					\caption{RPLIDAR SDK files}
+					\label{table:3}
+				\end{table}
+			
+				Whilst most of these pins are straight forward, one that needed some additional configuration was the D7 pin used for the MOTOCTL (motor control). As previously discussed in the design, the MOTOCL pin will listen for either a high or a low signal. If the signal is high, the LIDAR has the okay to begin scanning and outputting data. If the signal is low, even if the LIDAR has power and recieves the appropriate command it will not function as the connected device has not given the ready signal. The K64F features numerous GPIO pins that can be easily configured for usage in situations like this. One such pin (D7) was simply declared as a basic DigitalOut allowing the microcontroller to manipulate the pin's polarity.
+				
+				\begin{lstlisting}
+				DigitalOut dtr(D7);
+				\end{lstlisting}
+				
+				When we want the sensor to output data this pin can be set to high....
+				\begin{lstlisting}
+				dtr = 1;
+				\end{lstlisting}
+				
+				...or low.
+				\begin{lstlisting}
+				dtr = 0;
+				\end{lstlisting}
+				
+				
 				\subsubsection{Software}
+				
+				
+				
 			\subsection{Processing Observational Data}
 				\subsubsection{Hardware}
 				\subsubsection{Software}
