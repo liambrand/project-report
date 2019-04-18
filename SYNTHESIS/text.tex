@@ -92,9 +92,9 @@
 				There are seven pins on the underside of the LIDAR sensor. These pins need to be connected to the appropriate microcontroller ports if the LIDAR is to work. 
 				% PICTURE OF LIDAR UNDERSIDE HERE
 				
-				The GND pins are simple ground pins, they will need to be connected to ground pins on the microcontroller. The RX and TX pins (Recieve and Transmit respectively) are Serial pins that will be used for communication with the microcontroller. These LIDAR pins will be linked to their opposite counterparts on the microcontroller (LIDAR RX to Microcontroller TX and vice versa). The V5.0 and VMOTO are simple power pins, they will need to be connected to pins on the microcontroller that output the appropriate amount of voltage. This is how the LIDAR sensor will retrieve power. The MOTOCTL pin is the motor control pin that listens for a signal indicating that a connected device is ready to recieve data. The signal is either high (ready) or low (not ready). To make use of this pin, a generic GPIO pin from the microcontroller will be configured within the microcontroller's software and set to 1 (high) when the robot needs to begin taking scan data.
+				The GND pins are simple ground pins, they will need to be connected to ground pins on the microcontroller. The RX and TX pins (Recieve and Transmit respectively) are serial pins that will be used for communication with the microcontroller. These LIDAR pins will be linked to their opposite counterparts on the microcontroller (LIDAR RX to Microcontroller TX and vice versa). The V5.0 and VMOTO are simple power pins, they will need to be connected to pins on the microcontroller that output the appropriate amount of voltage. This is how the LIDAR sensor will retrieve power. The MOTOCTL pin is the motor control pin that listens for a signal indicating that a connected device is ready to recieve data. The signal is either high (ready) or low (not ready). To make use of this pin, a generic GPIO pin from the microcontroller will be configured within the microcontroller's software and set to 1 (high) when the robot needs to begin taking scan data.
 			
-				To interact with the sensor, it will be connected to the robot's microcontroller. We would first need to connect the microcontroller's TX (transmit) and RX (recieve) pins to the LIDAR's inverse pins (TX to RX, RX to TX). Then, using mbed's Serial library, we can create a Serial variable supplying the microcontroller's connected RX and TX pins and parameters. From this we can invoke methods like putc() and getc(), which put and get characters into and from the serial connection respectively. In order to power the sensor, there are two pins that need to be connected. The first is LIDAR core, which is the power for the actual LIDAR scanner itself. The second is the LIDAR motor, which is what spins the scanner as it makes observations. 
+				To interact with the sensor, it will be connected to the robot's microcontroller. We would first need to connect the microcontroller's TX (transmit) and RX (recieve) pins to the LIDAR's inverse pins (TX to RX, RX to TX). Then, using mbed's serial library, we can create a serial variable supplying the microcontroller's connected RX and TX pins and parameters. From this we can invoke methods like putc() and getc(), which put and get characters into and from the serial connection respectively. In order to power the sensor, there are two pins that need to be connected. The first is LIDAR core, which is the power for the actual LIDAR scanner itself. The second is the LIDAR motor, which is what spins the scanner as it makes observations. 
 				%COME BACK TO THIS AS WELL...
 				
 				\subsubsection{Software}
@@ -129,8 +129,9 @@
 				Once the robot is receiving data from the LIDAR sensor, it needs to be transferred to an external program where the CSM software can be ran to generate a map from it. To do this a Micro SD-Card will be used. The FRDM-K64F has a Micro SD-Card socket attached to it, and the microcontroller will save the observational data to this card so that after a session of moving and scanning it can be plugged into a machine where it is able to be processed. The University's loans office can provide an 8GB card as well as an adapter allowing it to be plugged into a PC's USB slot, so this approach won't incur any extra cost. The saved data will only be angle and distance measurement pairs, so the card's (relatively) small size won't pose any memory issues. 
 				
 				\subsubsection{Software}
-		
-
+				First, the microcontroller must save this data to the connected Micro SD-Card. The Mbed microcontroller have a library called SDFileSystem used for interaction with connected SD cards. Using this library, a simple text file will be created on the Micro SD-Card and angle/distance measurements obtained from the LIDAR sensor will be written to it.
+				
+				Once readings have been written to the SD-Card, it will be removed and plugged into a USB adapter so it can be plugged into a computer. For ease of use, a GUI program will be used to automate the rest of the functionality. To design the GUI, a Python library called Tkinter will be used. It offers all the widgets that will need to be used to make a basic GUI such as frames, buttons and labels and its support of most (if not all) operating systems will allow it to be easily used. The GUI's job then is to create an appropriate input for CSM and to use it to generate a map from the readings. CSM takes in readings in the form of either a json or a carmen log. Of the two, json will be used due to its familiarity and much more easily accessible documentation around the internet. To invoke the CSM software itself via the program, Python features a subprocess module which allows for Python programs to spawn simple subprocesses and retrieve information they return. Once the software has processed a map from the readings, it will be output onto the screen so that the user can view it.
 		
 	\chapter{Implementation}
 		\section{Introduction}
@@ -150,42 +151,70 @@
 				
 				\begin{table}[h!]
 					\centering
-					\begin{tabular}{|| l | l ||} 
+					\begin{tabular}{|| l | l | l ||} 
 						\hline
-						LIDAR Pin & K64F Pin \\ [0.5ex] 
+						LIDAR Pin & K64F Pin & Pin Purpose \\ [0.5ex] 
 						\hline
-						GND  & GND  \\ 
-						RX  & TX   \\
-						TX  & RX  \\
-						V5.0 & 5v  \\ 
-						GND & GND  \\ 
-						MOTOCTL & D7  \\ 
-						VMOTO & 3v3  \\ [1ex] 
+						GND  & GND & Ground  \\ 
+						RX  & TX  & Serial Communication \\
+						TX  & RX & Serial Communication \\
+						V5.0 & 5v & LIDAR Core Power \\ 
+						GND & GND & Ground \\ 
+						MOTOCTL & D7 & DTR (Data Terminal Ready) \\ 
+						VMOTO & 3v3 & LIDAR Motor Power \\ [1ex] 
 						\hline
 					\end{tabular}
 					\caption{RPLIDAR SDK files}
 					\label{table:3}
 				\end{table}
 			
-				Whilst most of these pins are straight forward, one that needed some additional configuration was the D7 pin used for the MOTOCTL (motor control). As previously discussed in the design, the MOTOCL pin will listen for either a high or a low signal. If the signal is high, the LIDAR has the okay to begin scanning and outputting data. If the signal is low, even if the LIDAR has power and recieves the appropriate command it will not function as the connected device has not given the ready signal. The K64F features numerous GPIO pins that can be easily configured for usage in situations like this. One such pin (D7) was simply declared as a basic DigitalOut allowing the microcontroller to manipulate the pin's polarity.
+				These pins were connected to the appropriate microcontroller ports using simple male to female connectors.
 				
+				Once this was done, the LIDAR was able to function mechanically.
+				
+				\subsubsection{Software}
+				Following the hardware setup the microcontroller needs to actually communicate with the LIDAR sensor so that it can send commands, as well as receive observational data. 
+				
+				To first of all ensure the LIDAR is ready to communicate, the previously discussed MOTOCTL pin on the LIDAR needs to be recieving a HIGH signal so that it knows the microcontroller is ready to begin recieving data. The K64F features numerous GPIO pins that can be easily configured for usage in situations like this. One such pin (D7) was simply declared as a basic DigitalOut allowing the microcontroller to manipulate the pin's polarity.
+				
+				% too granular?
 				\begin{lstlisting}
 				DigitalOut dtr(D7);
 				\end{lstlisting}
 				
-				When we want the sensor to output data this pin can be set to high....
+				When we want the sensor to output data this pin can be set to HIGH...
 				\begin{lstlisting}
 				dtr = 1;
 				\end{lstlisting}
 				
-				...or low.
+				...or when we want it to stop, we can set it to LOW.
 				\begin{lstlisting}
 				dtr = 0;
 				\end{lstlisting}
 				
+				Once this was done and the DTR pin was set to HIGH, the LIDAR began spinning. The microcontroller didn't instantly begin recieving data however, as simply connecting the LIDAR and microcontroller serial pins are not enough for communication. In order to interact with the serial channel it needs to be declared in the robot's core program as an appropriate variable. There exists a library for arm MBED microcontroller called BufferedSerial which can be used for this. The original Serial library that it is based on allows for serial communication, with BufferedSerial simply adding a buffer to this. The core functionality remains the same however.
 				
-				\subsubsection{Software}
+				First the pins being used for serial communication need to be declared as a BufferedSerial variable, with BufferedSerial taking the TX and RX pin (in that order) of the microcontroller. 
+				\begin{lstlisting}
+				BufferedSerial lidar_device(D1, D0);
+				\end{lstlisting}
+				With this variable we are ready to begin interacting with the LIDAR. Now it's time to actually start doing this interaction.
 				
+				As previously discussed in the Design, SLAMTEC has an SDK that automates most of the LIDAR functionality. The appropriate files were added to the project and made able to be used by the core program with a simple include statement at the top of the main.cpp file. Following this a base lidar variable can be declared from the RPLidar class the SDK adds.
+				\begin{lstlisting}
+				RPLidar lidar;
+				\end{lstlisting}
+				
+				From here, an appropriate method was made that starts the LIDAR scanning and makes it begin outputting data.
+				\begin{lstlisting}
+				static void beginScanning() {
+					lidar.begin(lidar_device);
+					lidar.startScan();
+				}
+				\end{lstlisting}
+				% do i need to explain the method that this implements?
+				
+				So now the LIDAR is scanning, and outputting data to a serial channel that can be interacted with via a variable.
 				
 				
 			\subsection{Processing Observational Data}
