@@ -15,7 +15,8 @@
 		A similar approach will be followed for processing the map data. It won't be developed simultaneously at first as the robot needs to be capable of storing observational data from the LIDAR before the program can actually do anything, however it will start to be put together once the robot crosses this developmental threshhold.
 	
 	\chapter{Design}
-	Before implementation of the specific project aims can be implemented, we first need the initial prototype that we can begin iteratively improving. Therefore, it's logical to design the initial robotic prototype first. What follows is an overview of how the initial robot prototype will be designed, followed by a breakdown of each of the individual project aims will be met.
+		\section{Introduction}
+		Before implementation of the specific project aims can be implemented, we first need the initial prototype that we can begin iteratively improving. Therefore, it's logical to design the initial robotic prototype first. What follows is an overview of how the initial robot prototype will be designed, followed by a breakdown of each of the individual project aims will be met.
 	
 		\section{Initial Prototype}
 		Here will be the design for the base robot. The aim here is to achieve a solid foundation that all development can build on in order to meet the project objectives.
@@ -118,10 +119,43 @@
 				Essentially, the C++ program running on the microcontroller would need to create an RPLidarDriver variable which would be used to represent the connected LIDAR sensor. Once this is achieved the premade methods that implement the protocol functionality could be ran to achieve control over the LIDAR.
 				
 			\subsection{Processing Observational Data}
+			The last of the three project objectives is that 'the observational data must be processed into a map'.
 				\subsubsection{Hardware}
+				Once the robot is receiving data from the LIDAR sensor, it needs to be transferred to an external program where the CSM software can be ran to generate a map from it. To do this a Micro SD-Card will be used. The FRDM-K64F has a Micro SD-Card socket attached to it, and the microcontroller will save the observational data to this card so that after a session of moving and scanning it can be plugged into a machine where it is able to be processed. The University's loans office can provide an 8GB card as well as an adapter allowing it to be plugged into a PC's USB slot, so this approach won't incur any extra cost. The saved data will only be angle and distance measurement pairs, so the card's (relatively) small size won't pose any memory issues. 
+				
 				\subsubsection{Software}
 		
 
 		
 	\chapter{Implementation}
+		\section{Introduction}
+		\section{Initial Prototype}
+			\subsection{Hardware}
+			\subsection{Software}
+		\section{Implementing Requirements}
+			\subsection{Movement}
+				\subsubsection{Hardware}
+				\subsubsection{Software}
+			\subsection{Observation}
+				\subsubsection{Hardware}
+				\subsubsection{Software}
+			\subsection{Processing Observational Data}
+				\subsubsection{Hardware}
+				\subsubsection{Software}
+	
+	
 	\chapter{Testing}
+		\section{Introduction}
+		\section{Initial Prototype}
+			\subsection{Hardware}
+			\subsection{Software}
+		\section{Implementing Requirements}
+			\subsection{Movement}
+				\subsubsection{Hardware}
+				\subsubsection{Software}
+			\subsection{Observation}
+				\subsubsection{Hardware}
+				\subsubsection{Software}
+			\subsection{Processing Observational Data}
+				\subsubsection{Hardware}
+				\subsubsection{Software}
