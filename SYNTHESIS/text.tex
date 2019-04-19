@@ -22,10 +22,15 @@
 		Here will be the design for the base robot. The aim here is to achieve a solid foundation that all development can build on in order to meet the project objectives.
 			\subsection{Hardware}
 				\subsubsection{Chassis}
-				First off will be the basic assembly of the three wheeled omnidirectional chassis. The chassis is comprised of two triangular metal plates, joined together by metal rods that are screwed into pre drilled holes that line up to eachother. The lower platform is where the motors and mounting points for the omnidirectional wheels are found, so once the plates have been connected the wheels will be pushed onto these mounting points and locked into place.
-				% assembly diagram here?
+				First off will be the basic assembly of the three wheeled omnidirectional chassis. The chassis is comprised of two triangular metal plates, joined together by metal rods that are screwed into pre drilled holes that line up to eachother. The lower platform is where the motors and mounting points for the omnidirectional wheels are found, so once the plates have been connected the wheels will be pushed onto these mounting points and locked into place. Fig \ref{fig:chassisassembly} shows the assembly document that came with the chassis.
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=.9\linewidth]{SYNTHESIS/chassisassembly.png}
+					\caption{Chassis assembly guide}
+					\label{fig:chassisassembly}
+				\end{figure}
 				
-				Now it's time for the microcontroller setup. The microcontroller used in this project is the FRDM-K64F, chosen for it's relatively low cost, small form factor and compatibility with the Micro C Operating System which is being employed for the robot's core program. To control the robot we'll also need a motor driver. The dfRobot Quad Motor Driver Shield is being employed for this project, it can be obtained from Amazon for around £13. It was chosen for this relatively low cost, the easily available documentation and the fact that it can easily plug into the FRDM-K64F, the microcontroller of choice for this project. The specifics behind how the shield will be used will be discussed during the movement design section, but in short it allows us to manipulate the energy being sent to the individual wheel motors which will afford us control over how they work and as such control over the robot's movement. Once these two components have been fitted together, the power and ground cables from each of the chassis motors will be plugged into the motor driver shield. Fig \ref{fig:shieldsetup} from the shield's documentation shows an example of this setup with four motors.
+				Now it's time for the microcontroller setup. The microcontroller used in this project is the FRDM-K64F, chosen for it's relatively low cost, small form factor and compatibility with the Micro C Operating System which is being employed for the robot's core program. To control the robot we'll also need a motor driver. The dfRobot Quad Motor Driver Shield is being employed for this project, it can be obtained from Amazon for around \pounds{13}. It was chosen for this relatively low cost, the easily available documentation and the fact that it can easily plug into the FRDM-K64F, the microcontroller of choice for this project. The specifics behind how the shield will be used will be discussed during the movement design section, but in short it allows us to manipulate the energy being sent to the individual wheel motors which will afford us control over how they work and as such control over the robot's movement. Once these two components have been fitted together, the power and ground cables from each of the chassis motors will be plugged into the motor driver shield. Fig \ref{fig:shieldsetup} from the shield's documentation shows an example of this setup with four motors.
 				
 				\begin{figure}[h]
 					\centering
@@ -40,7 +45,7 @@
 				\subsubsection{Power}
 				The hardware components that will need powering are the three motors used to drive the omnidirectional wheels, the microcontroller, and the LIDAR sensor. Table \ref{table:1} has a run down of these hardware components, the voltages, and the milliamp consumption that they have.
 				
-				\begin{table}[h!]
+				\begin{table}[h]
 					\centering
 					\begin{tabular}{|| l | l | l ||} 
 						\hline
@@ -102,7 +107,7 @@
 				
 				The format of the requests that need to be sent is documented in the LIDAR's protocol documentation\citep{rplidarprotocol}. To implement this, it would be a good idea to create a data structure in the microcontroller's C++ program with fields listed in the protocol (start flag, command, etc) and then put this field into the serial connection. A similar data structure could be populated with what is recieved from the serial channel to make it easy to process the data.
 				
-				SLAMTEC provide an SDK for the LIDAR sensor however, which comes in the form of header files which will automatically implement this functionality. Table \ref{table:3} has a manifest of the SDK and the functionality that it provides.
+				SLAMTEC provide an SDK for the LIDAR sensor however, which comes in the form of header files which will automatically implement this functionality. Table \ref{table:sdkbreakdown} has a manifest of the SDK and the functionality that it provides.
 				
 				\begin{table}[h!]
 					\centering
@@ -118,7 +123,7 @@
 						\hline
 					\end{tabular}
 					\caption{RPLIDAR SDK files}
-					\label{table:3}
+					\label{table:sdkbreakdown}
 				\end{table}
 				
 				Essentially, the C++ program running on the microcontroller would need to create an RPLidarDriver variable which would be used to represent the connected LIDAR sensor. Once this is achieved the premade methods that implement the protocol functionality could be ran to achieve control over the LIDAR.
