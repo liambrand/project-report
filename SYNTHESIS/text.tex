@@ -10,7 +10,7 @@
 	This methodology was employed partially due to the hardware nature of the product. Key features of the robot hinged on aspects like movement and observation being possible, so it was important to get a prototype that has this basic functionality up and working and quickly as possible. The prototyping approach allowed a pure focus on getting these functions working, and once they were the robot could be improved iteratively.
 	
 		\subsection{Initial Prototype}
-		As previously stated, this methodology involves an initial prototype that all future prototypes will be an iteration of. The initial prototype of the project will involve the basic, primary construction of the robot. This will first involve the basic chassis assembly, followed by connecting relevant components to each other and then ensuring that they are all powered. Once this is done, we'll hopefully have an incredibly crude robot that won't be capable of much, but should hopefully serve as a solid foundation for future development toward the project goals.
+		As previously stated, this methodology involves an initial prototype that all future prototypes will be an iteration of. The initial prototype of the project will involve the basic, primary construction of the robot. This will first involve the basic chassis assembly followed by attempting to connect relevant components to eachother. Once this is done, we'll hopefully have an incredibly crude robot that won't be capable of anything, but should hopefully serve as a solid foundation for future development toward the project goals.
 		
 		A similar approach will be followed for processing the map data. It won't be developed simultaneously at first as the robot needs to be capable of storing observational data from the LIDAR before the program can actually do anything, however it will start to be put together once the robot crosses this developmental threshhold.
 	
@@ -72,8 +72,8 @@
 				The previously mentioned dfRobot Quad Motor Driver Shield comes into play here. As shown in fig \ref{fig:shieldsetup}, the motors power and ground cables will connect to the appropriate pins on the shield. The motors can be manipulated once they receive power in this fashion. The shield is able to affect the electricity being sent to the motors by changing its polarity and by using pulse width modularity. By changing the pin to HIGH or LOW, we can affect the direction that the motor spins in (forward or backwards) and pulse width modulation allows us to affect the speed of the motor.
 				
 				\subsubsection{Software}
-				In order to manipulate the motors we'll need some appropriate variables we can use to refer to the pins that the motor power and ground cables are connected to. %talk about pin lineup here and declaration
-				
+				In order to manipulate the motors we'll need some appropriate variables we can use to refer to the pins that the motor power and ground cables are connected to. 
+				%talk about pin lineup here and declaration
 				% COME BACK TO THIS, TRIGONOMICAL NAVIGATION!
 
 				
@@ -133,6 +133,10 @@
 				
 				Once readings have been written to the SD-Card, it will be removed and plugged into a USB adapter so it can be plugged into a computer. For ease of use, a GUI program will be used to automate the rest of the functionality. To design the GUI, a Python library called Tkinter will be used. It offers all the widgets that will need to be used to make a basic GUI such as frames, buttons and labels and its support of most (if not all) operating systems will allow it to be easily used. The GUI's job then is to create an appropriate input for CSM and to use it to generate a map from the readings. CSM takes in readings in the form of either a json or a carmen log. Of the two, json will be used due to its familiarity and much more easily accessible documentation around the internet. To invoke the CSM software itself via the program, Python features a subprocess module which allows for Python programs to spawn simple subprocesses and retrieve information they return. Once the software has processed a map from the readings, it will be output onto the screen so that the user can view it.
 		
+		\section{Pseudo Code}
+		Some pseudo code follows to help represent the initial plan for the code's structure and functional breakdown.
+		%PSEUDO CODE HERE, COPY FINAL ROBOT CODE
+		
 	\chapter{Implementation}
 		\section{Introduction}
 		\section{Initial Prototype}
@@ -168,7 +172,7 @@
 					\label{table:3}
 				\end{table}
 			
-				These pins were connected to the appropriate microcontroller ports using simple male to female connectors.
+				Due to the dfRobot Quad Motor shield being plugged into the K64F microcontroller, these LIDAR pins need to be connected to ports on the robot shield that are plugged into the appropriate microcontroller pins. Essentially, we look at what port needs to be used on the underlying microcontroller, then plug it into the motor shield port that is sitting on top of it. The LIDAR pins and shield ports were connected using simple male to female connector wires.
 				
 				Once this was done, the LIDAR was able to function mechanically.
 				
@@ -198,24 +202,88 @@
 				\begin{lstlisting}
 				BufferedSerial lidar_device(D1, D0);
 				\end{lstlisting}
-				With this variable we are ready to begin interacting with the LIDAR. Now it's time to actually start doing this interaction.
 				
-				As previously discussed in the Design, SLAMTEC has an SDK that automates most of the LIDAR functionality. The appropriate files were added to the project and made able to be used by the core program with a simple include statement at the top of the main.cpp file. Following this a base lidar variable can be declared from the RPLidar class the SDK adds.
+				As previously discussed in the Design, SLAMTEC has an SDK that automates most of the LIDAR functionality. The appropriate files were added to the project and made able to be used by the core program with a simple include statement at the top of the main.cpp file.
 				\begin{lstlisting}
 				RPLidar lidar;
 				\end{lstlisting}
 				
-				From here, an appropriate method was made that starts the LIDAR scanning and makes it begin outputting data.
+				Following this a base lidar variable can be declared from the RPLidar class the SDK adds.
+				\begin{lstlisting}
+				RPLidar lidar;
+				\end{lstlisting}
+				
+				Once this variable has been declared, in the program's main method the DTR is set to 0 to ensure that the LIDAR won't start scanning and outputting data when we don't need it to. The LIDAR variable is then connected to the relevant serial variable (the previously declared BufferedSerial) and the start scan command is issued. Despite receiving the command to start scanning the LIDAR won't begin until the DTR gives it the go ahead, but by configuring this as soon as the program begins it's a lot easier to stop and start the LIDAR data output.
+				\begin{lstlisting}
+				dtr = 0;
+				lidar.begin(lidar_device);
+				lidar.startScan();
+				\end{lstlisting}
+				
+				From here, two different simple one-line methods are used to start and stop the lidar.
 				\begin{lstlisting}
 				static void beginScanning() {
-					lidar.begin(lidar_device);
-					lidar.startScan();
+					dtr = 1;
+				}
+				
+				static void stopScanning() {
+					dtr = 0;
 				}
 				\end{lstlisting}
-				% do i need to explain the method that this implements?
+				These methods allow for quick and easy configuring of the DTR pin.
 				
-				So now the LIDAR is scanning, and outputting data to a serial channel that can be interacted with via a variable.
+				Now that the LIDAR is configured and can begin sending out data, it's time to start actually storing it within the program. First we need appropriate mediums for the storage of LIDAR data. This entails something to store a LIDAR sample that has just arrived so we can manipulate it to take what we need from it, and also a buffer to store all the total readings collect so that they can later be written to disk. 
 				
+				In order to store a newly recieving reading, the RPLidar SDK implements a basic struct that can be filled in with a .getCurrentPoint() method. This will be used so that recieved readings can be easily manipulated.
+				\begin{lstlisting}
+				struct RPLidarMeasurement
+				{
+					float distance;
+					float angle;
+					uint8_t quality;
+					bool  startBit;
+				};
+				\end{lstlisting}
+				
+				Now we need somewhere to store the readings themselves so they can be written to disk later on. We're interested in storing a large number of angle/distance pairs, so a large two dimensional array was used.
+				\begin{lstlisting}
+				float readingsBuffer[16000][2];
+				\end{lstlisting}
+				A two dimensional array was used to ensure an understandable format to the array. The array has 16000 spaces, with each space storing two seperate float values (angle and distance respectively). Now the actual method to take LIDAR readings and store them in the buffer needs to be made.
+				
+				Now that readings can be manipulated and stored, it's time to properly implement the method that stores them to a buffer.
+				\begin{lstlisting}
+				static void takeReadings() {
+					int arraySize = (sizeof(readingsBuffer)/sizeof(float))/2;
+					struct RPLidarMeasurement measurement;
+					for(int i = 0; i < arraySize; i++) {
+						lidar.waitPoint();
+						measurement = lidar.getCurrentPoint();
+						readingsBuffer[i][0] = measurement.angle;
+						readingsBuffer[i][1] = measurement.distance;
+					}
+				}
+				\end{lstlisting}
+				The method iterates through the buffer and stores the angle and distance of each reading it receives.
+				
+				All of these methods can now be incorporated into the scan task.
+				\begin{lstlisting}
+				static void appTaskScan(void *pdata) {
+					uint8_t status;
+				
+					while(true) {
+						OSSemPend(readyToScan, 0, &status);
+						pc.printf("Scanning...\n");
+						beginScanning();
+						takeReadings();
+						stopScanning();
+						pc.printf("Stopping scan.\n");
+						status = OSSemPost(readyToScan);
+						OSTimeDlyHMSM(0,0,0,4);
+					}
+				}
+				\end{lstlisting}
+				Once the readyToScan semaphore has been released, the LIDAR begins scanning, stores the readings to the buffer and then stops scanning. It then released the semaphore so that the robot can go back to moving.				
 				
 			\subsection{Processing Observational Data}
 				\subsubsection{Hardware}
