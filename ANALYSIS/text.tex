@@ -172,10 +172,10 @@
 			\section{Tools}
 				% where should this go?
 				% have a pinout diagram, explain the pin aliases (e.g. D1, D2, D3)
-				\section{Microcontroller}
+				\subsection{Microcontroller}
 				The main functioning of the robot will need to be controlled by a suitable microcontroller. Something relatively small and cheap with sufficient GPIO pins should work fine.
 				
-					\subsection{Arduino Uno Rev3}
+					\subsubsection{Arduino Uno Rev3}
 					\begin{figure}[h]
 						\centering
 						\includegraphics[width=.3\linewidth]{ANALYSIS/arduinounorev3.png}
@@ -184,7 +184,7 @@
 					\end{figure}
 					First and foremost the Arduino features a very small form factor, which is good for the robot as less space being taken up by the microcontroller means there is more room for proper cable management and other components. As well, it has several I/O pins which should accommodate any sensor that is used for observation. It also sits at a relatively low price point, costing around \pounds{20} on sites such as RobotShop and HobbyTronics. Unfortunately the technical specification is somewhat underwhelming, as it only boasts 30 kB of available memory with an also slow clock speed of 16MHz. The low memory and clock speed could present issues in operation, as it could result in insufficient space to store readings as well as a potentially long time to carry out any read/write tasks.
 				
-					\subsection{FRDM-K22F}
+					\subsubsection{FRDM-K22F}
 					\begin{figure}[h]
 						\centering
 						\includegraphics[width=.3\linewidth]{ANALYSIS/k22f.png}
@@ -193,7 +193,7 @@
 					\end{figure}
 					The K22F features higher specs than the Arduino, with 128kB of RAM and a 20MHz CPU. It also features a small form factor as well as an impressive 40 GPIO pins, which will easily accommodate any peripherals that the robot will make use of. The fact that the microcontroller is an arm Mbed product also allows it to make use of the online Mbed compiler as well as the Mbed SDK which could aid in development. Unfortunately the board is not featured on any common vendor websites based in the UK, with most sellers being based in the US which means it could take a while to arrive. In addition, it somewhat pales in comparison to a more sophisticated model which can be acquired at no cost from the University's loan office.
 					
-					\subsection{FRDM-K64F}
+					\subsubsection{FRDM-K64F}
 					\begin{figure}[h]
 						\centering
 						\includegraphics[width=.3\linewidth]{ANALYSIS/k64f.png}
