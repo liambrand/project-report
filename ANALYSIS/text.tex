@@ -146,7 +146,26 @@
 			First and foremost we can safely establish that the SLAM problem is what we are addressing with regards to the implementation of the robot's ability to track its own location whilst mapping its environment. In addition to this we understand the fundamentals of the SLAM problem. This will massively benefit development, as being aware of having to store details internally such as wheel revelations gained via odometric sensors will allow us to cut down on time spent during development having to rewrite core pieces of functionality to make room for this. 
 
 		%\chapter{Solutions}
+		\chapter{Product Requirements}
+		Based on the different aspects of mobile robotics and SLAM that have been looked at as well as preliminary project objectives outlined in the Terms of Reference, we can outline the basic product requirements that will need to be achieved in the course of the product's development.
 		
+			\section{Functional}
+			\begin{itemize}
+				\item The robot must be capable of movement
+				\item The robot must be capable of observation
+				\item The observational data must be processed into a map
+			\end{itemize}
+			
+			
+			\section{Non-Functional}
+			\begin{itemize}
+				\item The robot's movement should be omnidirectional. To be fully capable of proper navigation in any environment, it would be ideal that the robot has full freedom of movement.
+				\item The robot should be powered appropriately, with consideration given to battery and component voltages as well as power consumption.
+				\item The observational data should be stored appropriately. As previously mentioned in the Terms of Reference, the way in which observational data is stored is to be determined via an investigation. The way in which data is stored should depend on the results of this investigation.
+				\item Observational data will be processed into a map using the CSM software.
+			\end{itemize}
+		
+		%security?
 		
 		\chapter{Review of Tools and Techniques}
 		This chapter aims to focus on evaluating the potential tools and techniques that will be employed for the project's implementation. It will explore appropriate potential hardware and software, arriving at a conclusion along with an explanation as to why a certain tool or technique has been chosen.
@@ -280,8 +299,6 @@
 				% QUESTION -- is it worth talking about dead reckoning when we aren't using it for the actual product?
 				\subsection{Dead Reckoning}
 				Odometry is the usage of data from motion sensors to estimate an object's position. One such implementation of this that will be looked at for the project is dead reckoning. Dead reckoning tracks the robot's position by using data from wheel encoders that count the number of wheel rotations performed during operation. From this, the internal tracked position of a robot can estimate its new position after periods of movement. Given that the chassis being used for the project has wheel encoders as part of the wheel motors, this approach would allow us to perform odometry without needing the use of additional kit. Dead reckoning is not without issues however. Most pressingly it does not account for wheel slippage. If the robot has a poor grip on the ground and the wheels slip, then the wheel rotation doesn't accurately correspond to the robot's location \citep{choset2001topological}. These issues would compound as well. As more and more slippage happens, the robot's internal position would become less and less accurate to where it actually is. 
-				
-		\chapter{Product Requirements}
 				
 		\chapter{Conclusions}
 		% requirements gathering

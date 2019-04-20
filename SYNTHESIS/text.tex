@@ -94,8 +94,13 @@
 					\label{fig:rplidarconfig}
 				\end{figure}
 			
-				There are seven pins on the underside of the LIDAR sensor. These pins need to be connected to the appropriate microcontroller ports if the LIDAR is to work. 
-				% PICTURE OF LIDAR UNDERSIDE HERE
+				There are seven pins on the underside of the LIDAR sensor, shown in fig \ref{fig:lidarunderside}. These pins need to be connected to the appropriate microcontroller ports if the LIDAR is to work. 
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=.4\linewidth]{SYNTHESIS/lidarunderside.png}
+					\caption{LIDAR Underside}
+					\label{fig:lidarunderside}
+				\end{figure}
 				
 				The GND pins are simple ground pins, they will need to be connected to ground pins on the microcontroller. The RX and TX pins (Recieve and Transmit respectively) are serial pins that will be used for communication with the microcontroller. These LIDAR pins will be linked to their opposite counterparts on the microcontroller (LIDAR RX to Microcontroller TX and vice versa). The V5.0 and VMOTO are simple power pins, they will need to be connected to pins on the microcontroller that output the appropriate amount of voltage. This is how the LIDAR sensor will retrieve power. The MOTOCTL pin is the motor control pin that listens for a signal indicating that a connected device is ready to recieve data. The signal is either high (ready) or low (not ready). To make use of this pin, a generic GPIO pin from the microcontroller will be configured within the microcontroller's software and set to 1 (high) when the robot needs to begin taking scan data.
 			
