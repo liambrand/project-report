@@ -2,6 +2,9 @@
 		\chapter{Introduction}
 		Before creation of the main product can begin, an understanding of the relevant fields must be achieved. The first aim of the analysis is to develop this understanding by evaluating and then understanding relevant literature. Following this appropriate tools for the product will be identified, both hardware and software. Finally conclusions will be drawn based on what has been researched and evaluated, and a series of core objectives that need to be achieved for the project to be a success will be determined.
 		
+		\chapter{Problem Identification}
+		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
+		
 		\chapter{Mobile Robotics}
 			\section{Introduction}
 			Here we will address some of the key aspects of mobile robotics that are relevant to the project, chiefly how movement is dealt with in mobile robotics as well as range-finding.
@@ -247,25 +250,43 @@
 			\section{Techniques}
 				% talk about storage vs transmission here, use measure-mbed for write speed.
 				% have a table with 4 or 5 measurements
-				\subsection{Dealing with Scan Data}
+				\subsection{Storing Scan Data}
 				One aspect that needed to be addressed was how the observational data was actually dealt with. In the Terms of Reference, a few different options were considered. These were either storing the data locally on the drone, wirelessly transmitting the map data or transmitting a simple signal back to a hypothetical base camp. What follows is a brief investigation into what the most viable approach might be.
 				
 					\subsubsection{Wireless Transmission}
 					In order to either transmit the map data or any other signal, some form of transmitter will likely need to be added to the microcontroller. An RF (Radio Frequency) transciever could be added to the microcontroller allowing it to transmit and recieve radio signals. The K64F features headers for use with 2.4GHz radio add on modules, and a nRF24L01P Nordic transciever can be obtained very cheaply for just a few pounds online. The Mbed website also has a library\citep{nRF24L01Plibrary} for this transceiver which would allow for interaction with it to be relatively straight forward. The problem here though is that having just a transceiver on the robot's microcontroller probably wouldn't be enough for interaction with it, a second microcontroller would probably need to also have a radio chip soldered on so that something could actually receive transmissions. Attempting to get pairs of microcontroller listening to eachother presents problems in of itself, and as well the use of a radio would mean the robot's range is potentially limited.
 					
 					\subsubsection{Local Storage}
-					The alternative approach is for the observational data taken by the sensor to be stored on a local storage medium. The K64F features a Micro-SD card socket, and given that the Micro-SD card can be obtained from the University's loans office this approach would incur no extra cost or time spent waiting for a delivery. Similarly to the wireless radio transmission approach, mbed features an SDFileSystem library\citep{sdfilesystemlibrary} which would allow for a quick implementation of this on the software side of things. The use of local storage would also allow for the robot's range to be essentially unlimited as well. Two possible problems presented themselves here though. First is that local storage means space becomes a concern, it's no good having a potential unlimited range if the robot can't store any additional data a few minutes into a session. The second issue is speed. Given how it's likely the robot will take at least a few thousand readings based on the chosen sensor's sample rate, writing thousands of values to the SD Card might end up taking a while. Given the instant accessibility of this equipment, a few tests were carried out to see if these issues might present a problem.
-					%*!Have some numbers here describing the time it takes to write data retrieved from 1 seconds' worth of LIDAR scanning!*
+					The alternative approach is for the observational data taken by the sensor to be stored on a local storage medium. The K64F features a Micro-SD card socket, and given that the Micro-SD card can be obtained from the University's loans office this approach would incur no extra cost or time spent waiting for a delivery. Similarly to the wireless radio transmission approach, mbed features an SDFileSystem library\citep{sdfilesystemlibrary} which would allow for a quick implementation of this on the software side of things. The use of local storage would also allow for the robot's range to be essentially unlimited as well. There's a possible problem with this though. Given how it's likely the robot will take at least a few thousand readings based on the chosen sensor's sample rate, writing thousands of values to the SD Card might end up taking a while. Given the instant accessibility of this equipment, a few tests were carried out to see if these issues might present a problem. A simple program was used that measures how much time it takes for a section of code to execute. A 60MHz timer was started and stopped before and after the execution of code that involved writing 16000 samples to a file on the Micro SD-Card, which given the LIDAR's sampling rate of 4000 - 8000 was a few second's worth of scan data. An actual time in microseconds for the software's execution can be determined by dividing the elapsed clock cycles by the timer's clockrate in MHz. This code was ran multiple times and the mean clock cycles for each execution time was stored. Table \ref{table:filewritetests} shows the results of these tests.
+					
+					% should these tests be in testing given that the TOR mentions an investigation into what is viable?
+					\begin{table}[h!]
+						\centering
+						\begin{tabular}{|| l | l ||} 
+							\hline
+							Test & Time in Seconds \\ [0.5ex] 
+							\hline
+							1 & 7.9 \\ 
+							2 & 7.9 \\
+							3 & 7.7 \\
+							4 & 7.7 \\ [1ex] 
+							\hline
+						\end{tabular}
+						\caption{SD file write speed tests}
+						\label{table:filewritetests}		
+					\end{table}
+					Writing several thousand samples to the SD-Card doesn't seem to be an issue, and the created files seemed to be around 250kB meaning the 8GB SD-Cards that can be freely obtained from the University's loans office will have more than ample storage capacity. These factors combined with the readily available components make local storage the choice for holding the map data.
 				
 				% QUESTION -- is it worth talking about dead reckoning when we aren't using it for the actual product?
 				\subsection{Dead Reckoning}
 				Odometry is the usage of data from motion sensors to estimate an object's position. One such implementation of this that will be looked at for the project is dead reckoning. Dead reckoning tracks the robot's position by using data from wheel encoders that count the number of wheel rotations performed during operation. From this, the internal tracked position of a robot can estimate its new position after periods of movement. Given that the chassis being used for the project has wheel encoders as part of the wheel motors, this approach would allow us to perform odometry without needing the use of additional kit. Dead reckoning is not without issues however. Most pressingly it does not account for wheel slippage. If the robot has a poor grip on the ground and the wheels slip, then the wheel rotation doesn't accurately correspond to the robot's location \citep{choset2001topological}. These issues would compound as well. As more and more slippage happens, the robot's internal position would become less and less accurate to where it actually is. 
 				
+		\chapter{Product Requirements}
+				
 		\chapter{Conclusions}
 		% requirements gathering
 		% break down TOR objectives into must/could/should?
 		% reference other products?
-		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
 		Based on the different aspects of mobile robotics and SLAM that have been looked at as well as the critique of the various tools and techniques that have been employed, we can outline the basic product requirements that will need to be achieved in the course of the product's development. First and foremost the robot must be capable of basic navigation. The drone must be capable of observing the environment using rangefinding techniques. Finally, the robot must be capable of processing data acquired through this rangefinding process to perform localization and mapping. Finally, the retrieved observational data must be processed and fed into the CSM software to generate a map. For this to happen the robot needs to be able to somehow store the observational data it retrieves from the LIDAR sensor, and we also need a medium to put the data into CSM and display the output. From this outline we can get these basic project requirements -
 		
 		\begin{itemize}
