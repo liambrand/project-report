@@ -288,12 +288,87 @@
 					}
 				}
 				\end{lstlisting}
-				Once the readyToScan semaphore has been released, the LIDAR begins scanning, stores the readings to the buffer and then stops scanning. It then released the semaphore so that the robot can go back to moving.				
+				Once the readyToScan semaphore has been released, the scan task acquired it and the LIDAR begins scanning. Then the readings are stored to the buffer so they can be written to the disk later and the LIDAR stops scanning. It then releases the semaphore so that the movement task can begin again.		
 				
 			\subsection{Processing Observational Data}
+			Processing the observational data first involves actually finding a way to take it from the robot. It was determined that the best way to implement this would be via the use of a Micro SD-Card. Once this was done, the data itself needed to be turned into some form of map.
+			
 				\subsubsection{Hardware}
+				The only hardware elements that were needed to implement this functionality were the Micro SD-Card socket on the microcontroller, a Micro-SD card and a USB adapter allowing for a computer to access the files on the SD-Card. The socket was already attached to the microcontroller and no adjustments needed to be made to the hardware for the microcontroller to access it.
+				
 				\subsubsection{Software}
+				In order to access the Micro SD-Card the SDFileSystem library was used, and was incorporated into the program by simplying including the main SDFileSystem header. To use the library, an SDFileSystem variable first needs to be instantiated. This variable takes five parameters, four relevant microcontroller pins and a name. Table \ref{table:sdfilesystempins} describes each of the four pins the SDFileSystem needs, the name of the corresponding microcontroller pin and what the pin actually is.
 	
+				\begin{table}[h!]
+					\centering
+					\begin{tabular}{|| l | l | l ||} 
+						\hline
+						SDFileSystem Parameter & K64F Pin & Pin Purpose \\ [0.5ex] 
+						\hline
+						MOSI  & PTE3 & Master Out Slave In \\ 
+						MISO  & PTE1  & Master In Slave Out \\
+						SCLK  & PTE2 & Serial Clock \\
+						CS & PTE4 & Chip Select \\ [1ex] 
+						\hline
+					\end{tabular}
+					\caption{RPLIDAR SDK files}
+					\label{table:sdfilesystempins}
+				\end{table}
+			
+				The code risks being unclear if regular pin names are always used, so the relevant pins were first defined into more understandable names. The SDFileSystem variable was then declared.
+				
+				\begin{lstlisting}
+				#define MOSI		PTE3
+				#define MISO		PTE1
+				#define	SCLK		PTE2
+				#define	CS				PTE4
+				
+				SDFileSystem sd(MOSI, MISO, SCLK, CS, "sd");
+				\end{lstlisting}
+				
+				With this variable the file system on the Micro SD-Card is able to be accessed. The previously described scan task is what populates the readingsBuffer with data that is needed, so a method is required to iterate through the buffer and write the observational data to the Micro SD-Card.
+				
+				\begin{lstlisting}
+				static void writeReadings() {
+					int arraySize = (sizeof(readingsBuffer)/sizeof(float))/2;
+				
+					// Create the readings file on the Micro SD-Card
+					FILE *fp = fopen("/sd/readings.txt", "w");
+				
+					// Error checking
+					if (fp == NULL) {
+						pc.printf("Unable to access/create file \n");
+					}
+				
+					// Iterate through the readingsBuffer and write the angle/distance pairs
+					for(int i = 0; i < arraySize; i++) {
+						fprintf(fp, "%f %f", readingsBuffer[i][0], readingsBuffer[i][0]);
+					}
+				
+					// Close file
+					fclose(fp);
+				}
+				\end{lstlisting}
+				First the fopen method is called with a designated file, and the "w" parameter (meaning write) ensures that the file will be created if it doesn't already exist. Then a basic error check follows to make sure that the file is accessible, followed by an iteration through the readingsBuffer. As was previously mentioned, the buffer is populated by pairs of angle and distance measurements, so for each entry in the array the angle and distance is written to the file. Finally, the file is closed.
+				
+				This method can now be incorporated into the robot's writing task.
+				
+				\begin{lstlisting}
+				static void appTaskWrite(void *pdata) {
+					uint8_t status;
+				
+					while(true) {
+						OSSemPend(readyToWrite, 0, &status);
+						pc.printf("Writing readings to SD card...\n");
+						writeReadings();
+						pc.printf("Done writing.\n");
+						status = OSSemPost(readyToWrite);
+						pc.printf("Releasing write semaphore...");
+						OSTimeDlyHMSM(0,0,0,5);
+					}
+				}
+				\end{lstlisting}
+				The task pends on a readyToWrite semaphore which is released at the very end of the movement task once all movement and scanning has been performed. The write task acquired the semaphore, calls the method to write the readingsBuffer to disk and then posts the semaphore.
 	
 	\chapter{Testing}
 		\section{Introduction}
@@ -312,5 +387,6 @@
 				\subsubsection{Software}
 				
 	\chapter{Previous Failed Attempts}
+	The previously described implemented methods only give a walkthrough of the implementation attempts that enjoyed the most success. Other attempts to implement project goals were made that weren't as successful. This chapter aims to describe these attempts and explain what went wrong with them.
 		\section{Observation}
 	
