@@ -19,10 +19,11 @@
 		Before implementation of the specific project aims can be implemented, we first need the initial prototype that we can begin iteratively improving. Therefore, it's logical to design the initial robotic prototype first. What follows is an overview of how the initial robot prototype will be designed, followed by a breakdown of each of the individual project aims will be met.
 	
 		\section{Initial Prototype}
-		Here will be the design for the base robot. The aim here is to achieve a solid foundation that all development can build on in order to meet the project objectives.
+		Here will be the design for the base product that will serve as a foundation for all subsequent the development. The aim here is to have a skeleton project that can be filled in with functionality and built on to meet the project objectives.
+		
 			\subsection{Hardware}
 				\subsubsection{Chassis}
-				First off will be the basic assembly of the three wheeled omnidirectional chassis. The chassis is comprised of two triangular metal plates, joined together by metal rods that are screwed into pre drilled holes that line up to eachother. The lower platform is where the motors and mounting points for the omnidirectional wheels are found, so once the plates have been connected the wheels will be pushed onto these mounting points and locked into place. Fig \ref{fig:chassisassembly} shows the assembly document that came with the chassis.
+				First off will be the basic assembly of the three wheeled omnidirectional chassis. The chassis is comprised of two triangular metal plates, which will be joined together by screwing metal rods into pre drilled holes on each of the platforms. The lower platform is where the motors and mounting points for the omnidirectional wheels are found, so once the plates have been connected the wheels will be pushed onto these mounting points and locked into place. Fig \ref{fig:chassisassembly} shows the assembly document that came with the chassis.
 				\begin{figure}[h]
 					\centering
 					\includegraphics[width=.9\linewidth]{SYNTHESIS/chassisassembly.png}
@@ -30,7 +31,49 @@
 					\label{fig:chassisassembly}
 				\end{figure}
 				
-				Now it's time for the microcontroller setup. The microcontroller used in this project is the FRDM-K64F, chosen for it's relatively low cost, small form factor and compatibility with the Micro C Operating System which is being employed for the robot's core program. To control the robot we'll also need a motor driver. The dfRobot Quad Motor Driver Shield is being employed for this project, it can be obtained from Amazon for around \pounds{13}. It was chosen for this relatively low cost, the easily available documentation and the fact that it can easily plug into the FRDM-K64F, the microcontroller of choice for this project. The specifics behind how the shield will be used will be discussed during the movement design section, but in short it allows us to manipulate the energy being sent to the individual wheel motors which will afford us control over how they work and as such control over the robot's movement. Once these two components have been fitted together, the power and ground cables from each of the chassis motors will be plugged into the motor driver shield. Fig \ref{fig:shieldsetup} from the shield's documentation shows an example of this setup with four motors.
+				Now it's time for the microcontroller setup. The microcontroller used in this project is the FRDM-K64F, chosen for its free availability from the University loan office, small form factor and compatibility with the Micro C Operating System which is being employed for the robot's core program. To control the robot we'll also need a motor driver. The dfRobot Quad Motor Driver Shield is being employed for this project, it can be obtained from Amazon for around \pounds{13}. It was chosen for this relatively low cost, the easily available documentation and the fact that it can easily plug into the FRDM-K64F, the microcontroller of choice for this project. This shield will be lined up to the appropriate pins on the K64F and plugged in, in preperation for using the microcontroller to drive the motors. 
+				
+				The assembly shouldn't be overly complex, no soldering should be needed to connect components so it should be mostly a case of fitting things together.
+				% explain LIDAR later.... :(
+			\subsection{Software}
+				\subsubsection{Robot Program}
+				As previously mentioned in the analysis, the robot's program will be composed of a Micro C OS. Once further design has been discussed and a good idea of how the program should be structured has been understood, it would be prudent to create a skeleton OS with some basic tasks that simply print to ensure first that software can be properly deployed onto the microcontroller, and secondly to speed up development by allowing individual parts of the OS to be developed straight away.
+				
+			\subsection{Power}
+			The hardware components that will need powering are the three motors used to drive the omnidirectional wheels, the microcontroller, and the LIDAR sensor. Table \ref{table:1} has a run down of these hardware components, the voltages, and the milliamp consumption that they have.
+				
+			\begin{table}[h]
+				\centering
+				\begin{tabular}{|| l | l | l ||} 
+					\hline
+					Component & Voltage & Milliamp \\ [0.5ex] 
+					\hline
+					3x DC Coreless Motor  & 12V & Up to 1400 mA  \\ 
+					FRDM-K64F  & 5 to 9V &  50 mA \\
+					RPLIDAR  & 5 to 10V & Up to 1050 mA\\
+					\hline
+				\end{tabular}
+				\caption{Components and respective voltages}
+				\label{table:1}
+			\end{table}
+			
+			To save on cost and complexity, it would be ideal to only use a single battery for the robot's power source. A single power source will be used for the robot, a battery holder containing 8 1.5V batteries will give us the 12V we need for the motors. Then, a step down voltage regular will be used to lower the voltage required for the other components. A 7v and two 5v currents will be needed to supply power to the microcontroller and the LIDAR respectively. Fig \ref{fig:powersetup} has an overview of this.
+			% !!!!!!!!!!!!!!!!!!!!!!!COME BACK TO THIS!!!!!!!!!!!!!!!!
+				
+			Generally cheaper alkaline batteries have about 1800 to 2800 mAh (milliamp hours) in them, so an 8 pack of these will give us about half an hour's worth of operation before the robot starts to suffer due to low power. This is a worst case scenario assuming a constant high power draw, but this should be sufficient for the purposes of prototyping and demonstration. 
+			
+			\subsection{Software}
+			The software for the actual robot will be written in C++, compiled and deployed onto the microcontroller with the mbed SDK. At its foundation, it will be a Micro C OS with a series of configured tasks to perform various aspects of the robot's functionality. As would be expected, these tasks will come with their own memory tasks and will be designated with appropriate priorities. 
+			
+			The plan is for there to be three separate tasks. One task will deal with the robot's movement, one task will deal with taking data from the LIDAR and the final task will deal with actually writing this scan data to the connected Micro SD-Card. To control the program flow semaphores will be employed. For the initial prototype, these three tasks will be initialized and simply print messages to the console so a program such as minicom can see them running. This will allow assurance that the tasks are running in a logical order.
+		
+		\section{Designing for Requirements}
+		Once this incredibly basic initial prototype is in place, we can begin to move toward truly fulfilling the project requirements. What follows is an overview of how each of the different project requirements will be met, with appropriate explanations toward the hardware and software employed.
+		
+			\subsection{Movement}
+			The first of the three product aims outlined in the Analysis is that 'the robot must be capable of movement'.
+				\subsubsection{Hardware}
+				The power and ground cables from each of the chassis motors will be plugged into the motor driver shield. Fig \ref{fig:shieldsetup} from the shield's documentation shows an example of this setup with four motors.
 				
 				\begin{figure}[h]
 					\centering
@@ -39,42 +82,7 @@
 					\label{fig:shieldsetup}
 				\end{figure}
 				
-				The assembly shouldn't be overly complex, no soldering should be needed to connect components so it should be mostly a case of fitting things together.
-				% explain LIDAR later.... :(
-				
-				\subsubsection{Power}
-				The hardware components that will need powering are the three motors used to drive the omnidirectional wheels, the microcontroller, and the LIDAR sensor. Table \ref{table:1} has a run down of these hardware components, the voltages, and the milliamp consumption that they have.
-				
-				\begin{table}[h]
-					\centering
-					\begin{tabular}{|| l | l | l ||} 
-						\hline
-						Component & Voltage & Milliamp \\ [0.5ex] 
-						\hline
-						3x DC Coreless Motor  & 12V & Up to 1400 mA  \\ 
-						FRDM-K64F  & 5 to 9V &  50 mA \\
-						RPLIDAR  & 5 to 10V & Up to 1050 mA\\
-						\hline
-					\end{tabular}
-					\caption{Components and respective voltages}
-					\label{table:1}
-				\end{table}
-				
-				To save on cost and complexity, it would be ideal to only use a single battery for the robot's power source. A single power source will be used for the robot, a battery holder containing 8 1.5V batteries will give us the 12V we need for the motors. Then, a step down voltage regular will be used to lower the voltage required for the other components. Fig \ref{fig:powersetup} has an overview of this.
-				% !!!!!!!!!!!!!!!!!!!!!!!COME BACK TO THIS!!!!!!!!!!!!!!!!
-				
-				Generally cheaper alkaline batteries have about 1800 to 2800 mAh (milliamp hours) in them, so an 8 pack of these will give us about half an hour's worth of operation before the robot starts to suffer due to low power. This is a worst case scenario assuming a constant high power draw, but this should be sufficient for the purposes of prototyping and demonstration. 
-			
-			\subsection{Software}
-			The software for the actual robot will be written in C++, compiled and deployed onto the microcontroller with the mbed SDK. At its foundation, it will be a Micro C OS with a series of configured tasks to perform various aspects of the robot's functionality. As you would expect, these tasks will come with their own memory tasks and will be designated with appropriate priorities. For the initial setup, we only need to make a skeleton OS to ensure we can properly compile and deploy code onto the microcontroller. Some relevant data structures and variables for task priorities and memory stacks, as well as a single task that prints hello world would be fine for this.
-		
-		\section{Designing for Requirements}
-		Once this incredibly basic initial prototype is in place, we can begin to move toward truly fulfilling the project requirements. What follows is an overview of how each of the different project requirements will be met, with appropriate explanations toward the hardware and software employed.
-		
-			\subsection{Movement}
-			The first of the three product aims outlined in the Analysis is that 'the robot must be capable of movement'.
-				\subsubsection{Hardware}
-				The previously mentioned dfRobot Quad Motor Driver Shield comes into play here. As shown in fig \ref{fig:shieldsetup}, the motors power and ground cables will connect to the appropriate pins on the shield. The motors can be manipulated once they receive power in this fashion. The shield is able to affect the electricity being sent to the motors by changing its polarity and by using pulse width modularity. By changing the pin to HIGH or LOW, we can affect the direction that the motor spins in (forward or backwards) and pulse width modulation allows us to affect the speed of the motor.
+				Each of the motors power and ground cables will connect to the appropriate pins on the shield. The motors can be manipulated once they receive power in this fashion. The shield is able to affect the electricity being sent to the motors by changing its polarity and by using pulse width modularity. By changing the pin to HIGH or LOW, we can affect the direction that the motor spins in (forward or backwards) and pulse width modulation allows us to affect the speed of the motor.
 				
 				\subsubsection{Software}
 				In order to manipulate the motors we'll need some appropriate variables we can use to refer to the pins that the motor power and ground cables are connected to. 
@@ -136,26 +144,76 @@
 			\subsection{Processing Observational Data}
 			The last of the three project objectives is that 'the observational data must be processed into a map'.
 				\subsubsection{Hardware}
-				Once the robot is receiving data from the LIDAR sensor, it needs to be transferred to an external program where the CSM software can be ran to generate a map from it. To do this a Micro SD-Card will be used. The FRDM-K64F has a Micro SD-Card socket attached to it, and the microcontroller will save the observational data to this card so that after a session of moving and scanning it can be plugged into a machine where it is able to be processed. The University's loans office can provide an 8GB card as well as an adapter allowing it to be plugged into a PC's USB slot, so this approach won't incur any extra cost. The saved data will only be angle and distance measurement pairs, so the card's (relatively) small size won't pose any memory issues. 
+				Once the robot is receiving data from the LIDAR sensor, it needs to be transferred to an external program where the CSM software can be ran to generate a map from it. Based on the results of the previously conducted investigation into what would be the most suitable way to store observational data, a Micro SD-Card will be used. The FRDM-K64F has a Micro SD-Card socket attached to it, and the microcontroller will save the observational data to this card so that after a session of moving and scanning it can be plugged into a machine where it is able to be processed. The University's loans office can provide an 8GB card as well as an adapter allowing it to be plugged into a PC's USB slot, so this approach won't incur any extra cost. The saved data will only be angle and distance measurement pairs, so the card's (relatively) small size won't pose any memory issues. 
 				
 				\subsubsection{Software}
 				First, the microcontroller must save this data to the connected Micro SD-Card. The Mbed microcontroller have a library called SDFileSystem used for interaction with connected SD cards. Using this library, a simple text file will be created on the Micro SD-Card and angle/distance measurements obtained from the LIDAR sensor will be written to it.
 				
 				Once readings have been written to the SD-Card, it will be removed and plugged into a USB adapter so it can be plugged into a computer. For ease of use, a GUI program will be used to automate the rest of the functionality. To design the GUI, a Python library called Tkinter will be used. It offers all the widgets that will need to be used to make a basic GUI such as frames, buttons and labels and its support of most (if not all) operating systems will allow it to be easily used. The GUI's job then is to create an appropriate input for CSM and to use it to generate a map from the readings. CSM takes in readings in the form of either a json or a carmen log. Of the two, json will be used due to its familiarity and much more easily accessible documentation around the internet. To invoke the CSM software itself via the program, Python features a subprocess module which allows for Python programs to spawn simple subprocesses and retrieve information they return. Once the software has processed a map from the readings, it will be output onto the screen so that the user can view it.
-		
+		\newpage
 		\section{Pseudo Code}
-		Some pseudo code follows to help represent the initial plan for the code's structure and functional breakdown.
+		To help illustrate the system's overall design some pseudo code has been made. To prevent it from being overcomplicated some aspects such as the declaration of task priorities or memory stacks have been omitted, the pseudo code's purpose is not to show each and every aspect of what needs to be implemented but rather to serve as a structural guide during the implementation.
 		%PSEUDO CODE HERE, COPY FINAL ROBOT CODE
+		\begin{lstlisting}
+			FileSystemDeclaration
+			LIDARSerialConnectionDeclaration		
+			
+			scanningSemaphore
+			writingSemaphore
+			
+			movementTask() {
+				acquireSemaphores
+				move
+				releaseScanSemaphore
+				pendScanSemaphore
+				releaseWritingSemaphore
+				pendWritingSemaphore
+			}
+			
+			scanTask() {
+				pendScanSemaphore
+				scan
+				releaseScanSemaphore
+			}
+			
+			writeTask() {
+				pendWritingSemaphore
+				write
+				releaseWritingSemaphore
+			}
+		\end{lstlisting}
 		
 	\chapter{Implementation}
 		\section{Introduction}
+		This chapter will describe the actual creation of the product. The implementation of relevant software and hardware features for the different product components will be discussed, as well as unforeseen problems that were encountered.
+		
+		\section{Initial Setup}
+		Before work can begin implementing any specific functionality for the robot, some preliminary hardware assembly and software setup had to be carried out.
+			
+			\subsection{Hardware}
+			First of all the physical chassis had to be assembled. The only available documentation was fig \ref{fig:chassisassembly}, a labeled picture of an already assembled chassis which wasn't terribly useful. Luckily the construction was relatively straight forward, and only took around thirty minutes. Once the structure was built, the wheels where pushed onto the motors where they clicked on. The Quad Motor Shield was then installed onto the K64F microcontroller without any problems.
+				
+			\subsection{Software}
+			To speed up later development a basic Micro C OS was created and deployed onto the microcontroller. This OS resembled the pseudo code and was composed of skeleton tasks that simply printed their task name to the console when they ran. Semaphores were initialized and combined with the print messages the basic program flow could be figured out.
+				
+		
 		\section{Initial Prototype}
 			\subsection{Hardware}
+			% connect battery to microcontroller, share the first battery's ground port 
+			
+			
+			
 			\subsection{Software}
 		\section{Implementing Requirements}
 			\subsection{Movement}
 				\subsubsection{Hardware}
+				First the dfRobot Quad Motor shield was fitted onto the K64F microcontroller and placed in the lower level of the robot. Each of the three wheel motors had a ground and a power cable attached to them, these were all fed through the hole in the centre of the lower plate and connected to the appropriate ports on the motor shield. In the interest of keeping the components tidy, the power and ground cables were fastened to the lower plate with zip ties.
+				
+				At this point it was time to power the motors by connecting the 12V battery pack to the motor shield. Initially it was planned that this would be achieved from a breadboard, as the breadboard would allow the use of voltage regulators to supply lower voltages to the other components. A problem was encountered here though in the way of space. The microcontroller, motor power cables and battery pack alone already cluttered nearly all of the lower level of the robot. The additional of a breadboard with voltage regulators and additional wiring would be an incredibly difficult fit with wires potentially breaking or coming loose, and there was still the matter later on of connecting the LIDAR properly. This resulted in two decisions being made. The first was that the LIDAR would simply recieve power from the microcontroller. The second decision was that the microcontroller would receive its own battery. A spare 7.4V was obtained.
+				% talk about this summore
+				
 				\subsubsection{Software}
+				
 			\subsection{Observation}
 			Implementation of the robot's ability to take observations about its environment first involved a hardware configuration. The LIDAR sensor needed to be connected to the microcontroller so that it could draw power from the battery, as well as communicate with the microcontroller allowing it to receive commands and send observational data. Once the hardware connection was established, software on the microcontroller had to be capable of operating the LIDAR sensor and recieving its observations.
 				\subsubsection{Hardware}
@@ -183,6 +241,8 @@
 				\end{table}
 			
 				Due to the dfRobot Quad Motor shield being plugged into the K64F microcontroller, these LIDAR pins need to be connected to ports on the robot shield that are plugged into the appropriate microcontroller pins. Essentially, we look at what port needs to be used on the underlying microcontroller, then plug it into the motor shield port that is sitting on top of it. The LIDAR pins and shield ports were connected using simple male to female connector wires.
+				
+				With regards to power, it was previously mentioned in the movement implementation that due to spacial constraints the LIDAR would recieve power from the microcontroller. The microcontroller features two pins that can supply a voltage, a 5V pin and a 3V3 pin. Both pins would ideally recieve 5V, but to save room and ensure a simpler robot the scanner motor was connected to the lower voltage pin. It was decided that the scanner motor should recieve the lower voltage because it only appeared to make the scanner move a bit slower, whereas there was a concern that supplying the actual LIDAR core with a lower voltage might result in problems performing the actual scanning. 
 				
 				Once this was done, the LIDAR was able to function mechanically.
 				
