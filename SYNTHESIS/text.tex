@@ -454,4 +454,6 @@
 	\chapter{Previous Failed Attempts}
 	The previously described implemented methods only give a walkthrough of the implementation attempts that enjoyed the most success. Other attempts to implement project goals were made that weren't as successful. This chapter aims to describe these attempts and explain what went wrong with them.
 		\section{Observation}
-	
+		A problem encountered near the start of the project was getting the SDK to work with the LIDAR sensor. The SDK's documentation states that the rplidar.h file simply needs to be included to gain all of the LIDAR functionality, but when this was done the program gave file dependency errors during compile attempts. The most prominent error was an import problem where files within the SDK were unable to import the file sys/ioctl.h. Looking into this, ioctl.h appeared to be a linux kernel header file. The first attempt to fix this was simply making sure these files were working properly, so APT was used to install or update the linux kernel headers. Other packages such as build-essentials were also installed, but none of these things fixed the problem. In a last ditch effort these files were actually copied into the LIDAR SDK, but this just resulted in other dependency problems coming up.
+		
+		Rather than continuing to spend time attempting to get the SDK, it was decided to simply use the actual protocol that the SDK implemented.
