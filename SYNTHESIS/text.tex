@@ -98,7 +98,7 @@
 				\begin{figure}[h]
 					\centering
 					\includegraphics[width=.9\linewidth]{SYNTHESIS/rplidar_configuration.png}
-					\caption{Example shield setup}
+					\caption{LIDAR Underside}
 					\label{fig:rplidarconfig}
 				\end{figure}
 			
@@ -195,15 +195,7 @@
 				
 			\subsection{Software}
 			To speed up later development a basic Micro C OS was created and deployed onto the microcontroller. This OS resembled the pseudo code and was composed of skeleton tasks that simply printed their task name to the console when they ran. Semaphores were initialized and combined with the print messages the basic program flow could be figured out.
-				
-		
-		\section{Initial Prototype}
-			\subsection{Hardware}
-			% connect battery to microcontroller, share the first battery's ground port 
-			
-			
-			
-			\subsection{Software}
+
 		\section{Implementing Requirements}
 			\subsection{Movement}
 				\subsubsection{Hardware}
@@ -274,7 +266,7 @@
 						VMOTO & 3v3 & LIDAR Motor Power \\ [1ex] 
 						\hline
 					\end{tabular}
-					\caption{RPLIDAR SDK files}
+					\caption{LIDAR Microcontroller pin setup}
 					\label{table:3}
 				\end{table}
 			
@@ -414,7 +406,7 @@
 						CS & PTE4 & Chip Select \\ [1ex] 
 						\hline
 					\end{tabular}
-					\caption{RPLIDAR SDK files}
+					\caption{SDFileSystem Setup}
 					\label{table:sdfilesystempins}
 				\end{table}
 			
