@@ -155,7 +155,7 @@
 				Once the robot is receiving data from the LIDAR sensor, it needs to be transferred to an external program where the CSM software can be ran to generate a map from it. Based on the results of the previously conducted investigation into what would be the most suitable way to store observational data, a Micro SD-Card will be used. The FRDM-K64F has a Micro SD-Card socket attached to it, and the microcontroller will save the observational data to this card so that after a session of moving and scanning it can be plugged into a machine where it is able to be processed. The University's loans office can provide an 8GB card as well as an adapter allowing it to be plugged into a PC's USB slot, so this approach won't incur any extra cost. The saved data will only be angle and distance measurement pairs, so the card's (relatively) small size won't pose any memory issues. 
 				
 				\subsubsection{Software}
-				First, the microcontroller must save this data to the connected Micro SD-Card. The Mbed microcontroller have a library called SDFileSystem used for interaction with connected SD cards. Using this library, a simple text file will be created on the Micro SD-Card and angle/distance measurements obtained from the LIDAR sensor will be written to it.
+				First, the microcontroller must save this data to the connected Micro SD-Card. Mbed has a library called SDFileSystem used for interaction with connected SD cards. Using this library, a simple text file will be created on the Micro SD-Card and angle/distance measurements obtained from the LIDAR sensor will be written to it. This file will be written to the SD-Card after all movement and scanning has been done to keep the program simple. The FRDM-K64F features 256kB of RAM, and a C float is around 4 bytes. If we quite generously assume 156kB will be taken up by task stacks and other program necessities, that still leaves around 100kB of free RAM. In 100000 bytes, we can still store 25000 floats in RAM. Given that each returned scan will probably have two floats (an angle and a distance) we can store at least 12500 readings which is a good few seconds of LIDAR data.
 				
 				Once readings have been written to the SD-Card, it will be removed and plugged into a USB adapter so it can be plugged into a computer. For ease of use, a GUI program will be used to automate the rest of the functionality. To design the GUI, a Python library called Tkinter will be used. It offers all the widgets that will need to be used to make a basic GUI such as frames, buttons and labels and its support of most (if not all) operating systems will allow it to be easily used. The GUI's job then is to create an appropriate input for CSM and to use it to generate a map from the readings. CSM takes in readings in the form of either a json or a carmen log. Of the two, json will be used due to its familiarity and much more easily accessible documentation around the internet. To invoke the CSM software itself via the program, Python features a subprocess module which allows for Python programs to spawn simple subprocesses and retrieve information they return. Once the software has processed a map from the readings, it will be output onto the screen so that the user can view it.
 		\newpage
@@ -488,14 +488,17 @@
 				\subsubsection{Hardware}
 				\subsubsection{Software}
 				
-	\chapter{Previous Failed Attempts}
-	The previously described implemented methods only give a walkthrough of the implementation attempts that enjoyed the most success, as well as a brief description of any smaller issues that came up along the way. There were whole approaches to the project that ultimately failed however. The purpose of this chapter is to detail any such attempts.
+	\chapter{Blockers}
+	Any minor issues encountered during development have been touched on in the implementation. Larger problems were encountered however that caused a more significant hindrance to the product's development. Some of these issues even involved the whole developmental approach having to be reconsidered. This chapter aims to explore these issues in depth by detailing what happened and how, if at all, these issues were overcome.
+		
 		\section{LIDAR Communication}
 		A problem encountered near the start of the project was getting the SDK to work with the LIDAR sensor. The SDK's documentation states that the rplidar.h file simply needs to be included to gain LIDAR functionality, but when this was done the program gave file dependency errors during compile attempts. The most prominent error was an import problem where files within the SDK were unable to import the file sys/ioctl.h. Looking into this, ioctl.h appeared to be a linux kernel header file. The first attempt to fix this was simply making sure these kernel files were working properly, so APT was used to install or update the linux kernel headers. Other packages such as build-essentials were also installed, but none of these things fixed the problem. One other potential problem was that maybe there was a program somewhere relying on 32bit libraries which the 64bit Ubuntu OS didn't have, so APT was used to install the i386 architecture as well as some relevant packages to allow for better 32bit support. This didn't fix anything either. In a last ditch effort some of the kernal header files were actually copied into the LIDAR SDK, but this just resulted in other dependency problems coming up.
 		
 		Rather than continuing to spend time attempting to get the SDK working, it was decided to simply use the actual protocol that the SDK implemented. The protocol works by recieving request packets made up of certain bytes. Depending on what the bytes are, the LIDAR interprets the packet as a different command. These packets were created in the robot's program as arrays of bytes, and the Serial puts() command was used to send them to the LIDAR. getc() was then used within a task's main loop to retrieve the outputted data and it was printed to a terminal window. Relevant code snippets can be seen below.
 		\begin{lstlisting}
 		Serial pc(USBTX, USBRX);
+		Serial device(D1, D0, 115200);
+		
 		char startRequest[] = {0xA5, 0x20};
 		device.puts(startRequest);
 		
@@ -503,16 +506,20 @@
 			pc.printf(device.getc()); 
 		}
 		\end{lstlisting}
-		This had some results. Bytes were being recieved to the LIDAR but they were inconsistent, and sending a request to stop scanning would successfully stop the data output but any subsequent attempts to send the start request again would fail unless the entire program was reset. One possible fix was to implement the getc() method inside of an interrupt handler. Having getc() constantly called whenever the while loop ran might have been causing problems, but with an interrupt handler it would only trigger when there was actually something there.
+		This had mixed results. Bytes were being recieved to the LIDAR but they were incredibly inconsistent. There wasn't a steady stream or a regular pattern to what was being returned. As well, bytes would stop coming through if the program was recompiled and reflashed or if the board itself was reset with the reset button. In addition to that the other commands listed in the protocol were even less effective. A stop request can be sent to the LIDAR so that it stops outputting data, but when this was sent any subsequent start requests wouldn't work and the LIDAR would stay dormant. To get the LIDAR working again the program itself had to be reset. The protocol documentation did state that a small period of time should be allowed to elapse between two commands being sent to ensure the LIDAR could process them, but even 3 to 4 seconds worth of a delay didn't fix anything here. Some requests had even more confusing results. The get health request is something that the documentation says returned 3 bytes, but when an appropriate request variable was made and sent to the device over the serial connection it returned only two bytes. Incidentally even if the command did work part of the response is an integer that represents the error code, but nowhere in the documentation could an actual table explaining what error each code corresponded to be found. 
+		
+		After consultation with the project mentor and some further studying of the Serial class, the potential solution of ensuring that data was retrieved via an interrupt rather than a constant loop presented itself. Having getc() constantly called whenever the while loop ran might have been causing problems, but with an interrupt handler it would only trigger when there was actually something there. Mbed's own documentation describes the RawSerial as a more suitable alternative to Serial for this approach so the device variable was changed to be of a RawSerial type. The code changes can be seen below.
 		
 		\begin{lstlisting}
+		RawSerial device(D1, D0, 115200);
+		
 		device.attach(&rxInterrupt, Serial::RxIrq);
 		
 		void Rx_interrupt() {
 			pc.printf(device.getc());
 		}
 		\end{lstlisting}
-		This appeared to resolve the problems and values were recieved consistently. These numbers were written in a binary representation to the Micro-SD card so they could be processed by the GUI, but there were problems there as well.
+		This meant that the code to retrieve information from the device only ran when a character went into the RX buffer and was actually ready to be recieved. The strange behaviour with the stop request and some of the other requests was still present, but this resulted in LIDAR data being continuously and consistently printed to the console. This meant that at the very least there was data that could be worked with for now. These numbers were written in a binary representation to the Micro-SD card so they could be processed by the GUI, but there were problems there as well.
 		
 		This binary data would have to be turned into actual angle and distance numbers however. Fig \ref{fig:protocolbreakdown} is from the LIDAR protocol documentation, giving a breakdown of what byte in a returned scan packet corresponds to what information.
 		
@@ -551,7 +558,7 @@
 		# 'Actual Distance = distance_q2/4.0 mm'
 		distance = (int(distance, 2) / 4.0)/100
 		\end{lstlisting}
-		These points were then turned into mappable X and Y values. Despite all of this, none of this worked as intended. The produced maps made no logical sense, here is a map produced via this method from scans obtained from the inside of a rectangular box.
+		These points were then turned into mappable X and Y values. Despite all of this, none of this worked as intended. The produced maps made no logical sense, fig \ref{fig:failedmap} shows a map produced via this method from scans obtained from the inside of a rectangular box.
 		\begin{figure}[ht]
 			\centering
 			\includegraphics[width=.6\linewidth]{SYNTHESIS/failedmap.png}
@@ -560,6 +567,24 @@
 		\end{figure}
 	
 		The generated values were printed, and it was observed that every now and then angles would be impossible values above 360. After all of this it was decided to go back to the drawing board and attempt to get the SDK working again since using the protocol was rapidly leading nowhere and burning time. Searching around on the mbed website stumbled across a robotic program that made use of a similar LIDAR system by SLAMTEC. The SDK in use there was a modified version that seemed to work fine with embedded systems, but still had all the necessary open licensing. This SDK was tested with the program and compiled fine, and is what was used to ultimately implement the robot's observational capability.
+		
+		\section{Memory Problems}
+		It was previously assumed during the design and following some preliminary investigation into the available microcontrollers that the FRDM-K64F would be capable of storing the LIDAR readings in a temporary buffer before they are written to the file. To store the readings a two dimensional array was used, with each array entry containing a small array of two floats. To start off with the buffer used had a length of 16000, with each entry in itself containing an array of two floats (an angle and a distance). For the first few preliminary program tests this seemed to work fine, loops were used to write dummy entries to the array and the array was then written to a file to prove the process. During one test run however, a problem was shown in console along with a blinking red light on the mbed board indicating a runtime error.
+		
+		\begin{figure}[ht]
+			\centering
+			\includegraphics[width=.8\linewidth]{SYNTHESIS/memoryerror.jpg}
+			\label{fig:memoryerror}
+		\end{figure}
+		
+		This error began cropping up at the point where the program writes the buffer to a physical file. Despite it not being during the time when the readings buffer was actually filled out, the immediate reaction to the issue was simply to scale down the buffer. It made sense that perhaps too much space was being taken up by such a large variable, so it was halved to contain just 8000 angle distance pairs. The error was still encountered when compiling however, so just to see what would happen the array was decreased down to a significantly smaller size of just 1000. This issue still happened though, despite attempts to recompile and reflash the microcontroller as well as resetting the board with the reset button.
+		
+		\section{Scanning Inconsistency}
+		One problem that repeatedly impeded development was the inconsistency in the LIDAR's scanning behaviour. Once development began to focus on writing real observational data into a buffer rather than filling it with dummy data just to prove the process, a number of issues began to crop up.
+		
+		The first was that occasionally entire batches of scan data would be zeroes. Every single angle and distance measurement would be a 0.0000000 float, with no changes to the buffer size making a difference. Pin connections were double checked and sometimes simply removed and plugged in again but then the scan straight after would result in the same thing happening. The troubleshooting section of the RPLIDAR A1M8 documentation was consulted. One suggestion was that the LIDAR core worked better once it had warmed up, and that it should be left spinning for a minute or so before it begins taking measurements. A simple task delay was introduced for 2 minutes before the main program loop began, but this issue would still come up sometimes. The quickest fix was generally to just recompile the program, and the issue would more often than not seemingly go away.
+		
+		
 		
 		
 		
