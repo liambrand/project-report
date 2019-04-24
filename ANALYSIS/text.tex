@@ -3,7 +3,12 @@
 		Before creation of the main product can begin, an understanding of the relevant fields must be achieved. The first aim of the analysis is to develop this understanding by evaluating and then understanding relevant literature. Following this appropriate tools for the product will be identified, both hardware and software. Finally conclusions will be drawn based on what has been researched and evaluated, and a series of core objectives that need to be achieved for the project to be a success will be determined.
 		
 		\chapter{Problem Identification}
+		The aim of this project is to develop a mobile robot capable of utilizing Simultaneous Localization and Mapping, often referred to within robotics as SLAM. SLAM concerns the ability for a robot to move around whilst simultaneously tracking its position and generating a map of the environment it navigates around. This will entail elements of mobile robotics with regards to the construction and programming of a mobile robot as well as the actual realization of an implemented SLAM solution.
 		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
+		% requirements gathering
+		% break down TOR objectives into must/could/should?
+		% reference other products?
+		
 		
 		\chapter{Mobile Robotics}
 			\section{Introduction}
@@ -308,16 +313,9 @@
 				Odometry is the usage of data from motion sensors to estimate an object's position. One such implementation of this that will be looked at for the project is dead reckoning. Dead reckoning tracks the robot's position by using data from wheel encoders that count the number of wheel rotations performed during operation. From this, the internal tracked position of a robot can estimate its new position after periods of movement. Given that the chassis being used for the project has wheel encoders as part of the wheel motors, this approach would allow us to perform odometry without needing the use of additional kit. Dead reckoning is not without issues however. Most pressingly it does not account for wheel slippage. If the robot has a poor grip on the ground and the wheels slip, then the wheel rotation doesn't accurately correspond to the robot's location \citep{choset2001topological}. These issues would compound as well. As more and more slippage happens, the robot's internal position would become less and less accurate to where it actually is. 
 				
 		\chapter{Conclusions}
-		% requirements gathering
-		% break down TOR objectives into must/could/should?
-		% reference other products?
-		Based on the different aspects of mobile robotics and SLAM that have been looked at as well as the critique of the various tools and techniques that have been employed, we can outline the basic product requirements that will need to be achieved in the course of the product's development. First and foremost the robot must be capable of basic navigation. The drone must be capable of observing the environment using rangefinding techniques. Finally, the robot must be capable of processing data acquired through this rangefinding process to perform localization and mapping. Finally, the retrieved observational data must be processed and fed into the CSM software to generate a map. For this to happen the robot needs to be able to somehow store the observational data it retrieves from the LIDAR sensor, and we also need a medium to put the data into CSM and display the output. From this outline we can get these basic project requirements -
+		The literature review has allowed the scene to be set for the project now. The research and evaluation of relevant literature on mobile robotics will be incredibly valuable moving forward in the project, and has allowed for an understanding of the field that should aid development. In addition, the SLAM investigation has made clear the nature of the issue that will be dealt with when it comes to attempting to get the mobile robot to map the environment as well as providing a potential solution to the problem. 
 		
-		\begin{itemize}
-			\item The robot must be capable of movement
-			\item The robot must be capable of observation
-			\item The observational data must be processed into a map
-		\end{itemize}
+		The review of tools and techniques will be invaluable to development as well. Moving forward, it will be of great benefit to truly understand the tools that are being employed during the project as well as some of the different techniques that can be used to solve issues that come up.
 	
 	
 	
