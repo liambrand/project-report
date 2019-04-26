@@ -3,6 +3,11 @@
 		Before creation of the main product can begin, an understanding of the relevant fields must be achieved. The first aim of the analysis is to develop this understanding by evaluating and then understanding relevant literature. Following this appropriate tools for the product will be identified, both hardware and software. Finally conclusions will be drawn based on what has been researched and evaluated, and a series of core objectives that need to be achieved for the project to be a success will be determined.
 
 		The aim of this project is to develop a mobile robot capable of utilizing Simultaneous Localization and Mapping, often referred to within robotics as SLAM. SLAM concerns the ability for a robot to move around whilst simultaneously tracking its position and generating a map of the environment it navigates around. This will entail elements of mobile robotics with regards to the construction and programming of a mobile robot as well as the actual realization of an implemented SLAM solution.
+		
+		%When and where is SLAM an issue?
+		%Who or what does the SLAM problem affect, and in turn who could it benefit?
+		%What initiatives have been taken towards SLAM implementation for these problems?
+		
 		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
 		% requirements gathering
 		% break down TOR objectives into must/could/should?
@@ -11,31 +16,43 @@
 		
 		\chapter{Mobile Robotics}
 			\section{Introduction}
-			Here we will address some of the key aspects of mobile robotics that are relevant to the project, chiefly how movement is dealt with in mobile robotics as well as range-finding.
+			The creation of a ground-based mobile robot will require an understanding of the fundamentals of mobile robotics. The aim of this chapter is to develop such an understanding, looking over the chosen literature and discussing what can be learned for it as well as the steps that would need to be taken for the mobile platform to be fully realised.
 			
 			\section{Movement}
-			This section aims to explore how movement is generally achieved in the world of mobile robotics. From this, a greater understanding of robotic movement should be achieved which will aid the robot's development.
+			This section aims to explore how movement can be achieved in the world of mobile robotics. From this, a greater understanding of robotic movement should be achieved which will aid the robot's development.
 			
-				\subsection{Chassis}
-				Most conventional vehicles use standard wheels that have only two degrees of freedom. These wheels can either roll forwards or backwards. This means it is a non-holonomic vehicle, which essentially means at any given point in the vehicle's state there are certain directions it cannot travel in. This can present a few problems. Firstly, navigation will sometimes involve the adjustment of the vehicle's heading. The vehicle may need to reverse and turn before it can move forward to a certain location. This presents a problem in the robot's efficiency and ability to navigate around a difficult environment, as well as making it more challenging to implement from a software perspective as we would need to factor in situations where these sorts of adjustments would be needed before the robot can proceed. If the robot were to be holonomic however, then it would be able to begin travelling toward any location regardless of its current position. This can be achieved if the wheels our robot's chassis uses are omni-directional.	
+			At its most basic level, movement in mobile robotics consists of determining a path between the robots current position and its destination. Satisfying any movement tasks in this fashion will involve breaking down movement tasks into motions that accommodate for different constraints, such as the robot's capability and obstacles in the environment. One such constraint that has a significant impact in determining this path is the holonomic (or lack thereof) properties of the robot.
+			
+			Most conventional vehicles use standard wheels that have only two degrees of freedom. These wheels can either roll forwards or backwards. This means it is a non-holonomic vehicle, which essentially means at any given point in the vehicle's state there are certain directions it cannot travel in. Barraquand and Latombe, \citep{barraquand1989nonholonomic}, both experts in their field with Latombe publishing one of the most cited works in the field of mobile robotics, discuss nonholonomic robots and their navigational properties. The example they give to demonstrate non-holonomic constraints is a car. A car is capable of obtaining any position within an environment, but the car wheels are only capable of moving forward or backward. Therefore, the car's achievable velocities at any given point are two dimensional. This is what makes it a non-holonomic vehicle. A common real world example of this being an issue is in parallel parking.
+			
+			Barraquand and Latombe go on to discuss the problems that non-holonomic navigation possesses. In constructing a collision free path, the first difficulty is in actually determining a feasible path between two points. This is because a straightforward translation of the robot from its initial position to its destination is not always possible. Indeed, Laumond et al\citep{laumond1994motion} in their discussion of the issues with non-holonomic navigation mention that a determined path doesn't always correspond to a trajectory that can be used by the robot. Fig \ref{fig:generatedpathfailure} demonstrates this. In an article for IEEE, Murray and Sastry\citep{murray1993nonholonomic} compare a path generated by a path planner to the actual path that would need to be taken to translate a robot between two locations.
+			
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.9]{ANALYSIS/generatedpathfailure.png}
+				\caption{Generated path ignoring the robot's non-holonomic properties}
+				\label{fig:generatedpathfailure}
+			\end{figure}
+			
+			One of the ways in which these problems can be negated is through employing a holonomic vehicle, which would allow it to enjoy the ability to move in any direction regardless of its current position or heading. One of the most popular ways in which vehicles obtaining holonomic properties are constructed is through the use of special omnidirectional wheels.
 				
-				Watanabe\citep{watanabe1998control}, a Professor at Okayama University's Faculty of Engineering who has published a great deal of work in robotics, discusses a few different variations of these omni-directional wheels. One of the more popular variations in his discussion is the universal wheel, sometimes also referred to as the swedish wheel or mecanum wheel. This wheel is a larger wheel that has many rollers on the rim which allows the wheel to slide in a direction perpendicular to its motor axis. 
+			Watanabe\citep{watanabe1998control}, a Professor at Okayama University's Faculty of Engineering who has published a great deal of work in robotics, discusses a few different variations of these omnidirectional wheels. One of the more popular variations in his discussion is the universal wheel, sometimes also referred to as the swedish wheel or mecanum wheel. This wheel is a larger wheel that has many rollers on the rim which allows the wheel to slide in a direction perpendicular to its motor axis. 
 				
-				\begin{figure}[h]
+			\begin{figure}[h]
+				\centering
+				\begin{subfigure}{.5\textwidth}
 					\centering
-					\begin{subfigure}{.5\textwidth}
-						\centering
-						\includegraphics[width=.4\linewidth]{ANALYSIS/90degwheel.png}
-					\end{subfigure}%
-					\begin{subfigure}{.5\textwidth}
-						\centering
-						\includegraphics[width=.4\linewidth]{ANALYSIS/45degwheel.jpg}
-					\end{subfigure}
-					\caption{Mecanum wheels with 90 and 45 degree rollers}
-					\label{fig:omnidirectionalwheels}
-				\end{figure}
-				
-				A robot chassis composing of three or four of these wheels as well as relevant motors should be adequate.
+					\includegraphics[width=.4\linewidth]{ANALYSIS/90degwheel.png}
+				\end{subfigure}
+				\begin{subfigure}{.5\textwidth}
+					\centering
+					\includegraphics[width=.4\linewidth]{ANALYSIS/45degwheel.jpg}
+				\end{subfigure}
+				\caption{Mecanum wheels with 90 and 45 degree rollers}
+				\label{fig:omnidirectionalwheels}
+			\end{figure}
+		
+			The use of such wheels greatly simplifies the robot's movement. Calculated paths between points can be translated much easier into usable commands given the robot's movement freedom, and the number of maneuvers required is reduced drastically since there is no need for repeated "backing up" movements to adjust the robot's heading.
 			
 			\section{Rangefinding}
 			To achieve self navigation as well as mapping, the robot will need to take observations about its surrounding environment. In order to efficiently map the area and detect obstacles this will need to be performed in a 360 degree manner as well. This sections aims to explore a few of the most common approaches to rangefinding.
@@ -156,7 +173,6 @@
 			\section{An Investigation Into SLAM - Conclusions}	
 			First and foremost we can safely establish that the SLAM problem is what we are addressing with regards to the implementation of the robot's ability to track its own location whilst mapping its environment. In addition to this we understand the fundamentals of the SLAM problem. This will massively benefit development, as being aware of having to store details internally such as wheel revelations gained via odometric sensors will allow us to cut down on time spent during development having to rewrite core pieces of functionality to make room for this. 
 
-		%\chapter{Solutions}
 		\chapter{Product Requirements}
 		Based on the different aspects of mobile robotics and SLAM that have been looked at as well as preliminary project objectives outlined in the Terms of Reference, we can outline the basic product requirements that will need to be achieved in the course of the product's development.
 		
