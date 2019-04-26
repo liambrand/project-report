@@ -213,7 +213,6 @@
 				\item The observational data must be processed into a map
 			\end{itemize}
 			
-			
 			\section{Non-Functional}
 			\begin{itemize}
 				\item \textbf{Build Quality} - The robot should be built to an acceptable standard. Wires should be managed to ensure the robot's function isn't impeded by them (e.g. getting stuck in the wheels) and components should stay inside the chassis during the robot's operation.
@@ -223,7 +222,7 @@
 			\end{itemize}
 		
 			\section{Security}
-			There are no specific security requirements for the system.
+			There are no security requirements for the system.
 		
 		\chapter{Review of Tools and Techniques}
 		This chapter aims to focus on evaluating the potential tools and techniques that will be employed for the project's implementation. It will explore appropriate potential hardware and software, arriving at a conclusion along with an explanation as to why a certain tool or technique has been chosen.
@@ -238,7 +237,7 @@
 						\caption{4WD Omni-Directional Robot Chassis}
 						\label{4WD Omni-Directional Robot Chassis}
 					\end{figure}
-					This chassis features four of the aforementioned omnidirectional wheels along with appropriate motors. The motors have encoders with them which record wheel revolutions, allowing us to use odemetric measurements should we connect these encoders to the microcontroller. This kit includes the microcontroller which is an Arduino 328, as well as a nickel metal hydride battery and an appropriate charger. The kit also includes an IO expansion board which would allow us to connect more external devices. 
+					This chassis features four of the aforementioned omnidirectional wheels along with appropriate motors. The motors have encoders with them which record wheel revolutions, allowing us to use odemetric measurements should we connect these encoders to the microcontroller. This kit includes the microcontroller which is an Arduino 328, as well as a nickel metal hydride battery and an appropriate charger. The kit also includes an IO expansion board which would allow us to connect more external devices\cite{4wdArduinoChassis}.
 					
 					Whilst it would be useful to have most of the equipment decisions done for us, some of this is not necessary. The IO expansion board for example will most likely be needed, as all we're really interested in adding is a sensor for observations. As well, the price of the kit is quite high given we would also need to purchase a LIDAR sensor on top of it.
 					
@@ -249,14 +248,10 @@
 						\caption{3WD Omni-Directional Robot Chassis}
 						\label{fig:2}
 					\end{figure}
-					Unlike the previous chassis this one features only three wheels rather than four. This is still enough to achieve freedom of movement however. Whilst it doesn't include the additional pieces of the kit the other does (such as a microcontroller) we still have our wheels, a supporting structure and appropriate motors with encoders that will provide us with odometric data. There is plenty of room in the middle for items such as our microcontroller and a power source, and the top plate is an ideal mounting point for our sensor.
+					Unlike the previous chassis this one features only three wheels rather than four. This is still enough to achieve freedom of movement however. Whilst it doesn't include the additional pieces of the kit the other does (such as a microcontroller) we still have our wheels, a supporting structure and appropriate motors with encoders that will provide us with odometric data. There is plenty of room in the middle for items such as our microcontroller and a power source, and the top plate is an ideal mounting point for our sensor\cite{3wdomnichassis}.
 					
 					Whilst still a bit expensive, the chassis is still on the cheaper side compared to the previous one and some cost is expected to be incurred given that a 12v DC motor with an encoder can cost around \pounds{30}. One issue encountered while looking for an appropriate robot chassis is that the majority on sale seem to already include microcontrollers and sensors, which launches their price up and also removes a lot of the choice from the product. Looking around the RobotShop and HobbyTronics website for just an empty chassis only yielded this product. Based on these factors, this chassis will be the one used for the product.
 			
-			
-			
-				% where should this go?
-				% have a pinout diagram, explain the pin aliases (e.g. D1, D2, D3)
 				\subsection{Microcontroller}
 				The main functioning of the robot will need to be controlled by a suitable microcontroller. Something relatively small and cheap with sufficient GPIO pins should work fine.
 				
@@ -267,16 +262,16 @@
 						\caption{Arduino Uno Rev3}
 						\label{fig:arduinounorev3}
 					\end{figure}
-					First and foremost the Arduino features a very small form factor, which is good for the robot as less space being taken up by the microcontroller means there is more room for proper cable management and other components. As well, it has several I/O pins which should accommodate any sensor that is used for observation. It also sits at a relatively low price point, costing around \pounds{20} on sites such as RobotShop and HobbyTronics. Unfortunately the technical specification is somewhat underwhelming, as it only boasts 30 kB of available memory with an also slow clock speed of 16MHz. The low memory and clock speed could present issues in operation, as it could result in insufficient space to store readings as well as a potentially long time to carry out any read/write tasks.
+					First and foremost the Arduino features a very small form factor, which is good for the robot as less space being taken up by the microcontroller means there is more room for proper cable management and other components. As well, it has several I/O pins which should accommodate any sensor that is used for observation. It also sits at a relatively low price point, costing around \pounds{20} on sites such as rs-online\cite{arduinounorev3}. Unfortunately the technical specification is somewhat underwhelming, as it only boasts 30 kB of available memory with an also slow clock speed of 16MHz\cite{arduinounorev3docs}. The low memory and clock speed could present issues in operation, as it could result in insufficient space to store readings as well as a potentially long time to carry out any read/write tasks.
 				
-					\subsubsection{FRDM-K22F - \pounds{24.45}}
+					\subsubsection{FRDM-K22F - \pounds{23.57}}
 					\begin{figure}[h]
 						\centering
 						\includegraphics[width=.3\linewidth]{ANALYSIS/k22f.png}
 						\caption{FRDM-K22F}
 						\label{fig:k22f}
 					\end{figure}
-					The K22F features higher specs than the Arduino, with 128kB of RAM and a 20MHz CPU. It also features a small form factor as well as an impressive 40 GPIO pins, which will easily accommodate any peripherals that the robot will make use of. The fact that the microcontroller is an arm Mbed product also allows it to make use of the online Mbed compiler as well as the Mbed SDK which could aid in development. Unfortunately the board is not featured on any common vendor websites based in the UK, with most sellers being based in the US which means it could take a while to arrive. In addition, it somewhat pales in comparison to a more sophisticated model which can be acquired at no cost from the University's loan office.
+					The K22F features higher specs than the Arduino, with 128kB of RAM and a 20MHz CPU. It also features a small form factor as well as an impressive 40 GPIO pins, which will easily accommodate any peripherals that the robot will make use of. The fact that the microcontroller is an arm Mbed product also allows it to make use of the online Mbed compiler as well as the Mbed SDK which could aid in development\cite{frdmk22fdocs}. Unfortunately the board is not featured on any common vendor websites based in the UK, with most sellers being based in the US which means it could take a while to arrive. Vendors that ship it from the US cost around \pounds{23} to \pounds{25}\cite. In addition, it somewhat pales in comparison to a more sophisticated model which can be acquired at no cost from the University's loan office.
 					
 					\subsubsection{FRDM-K64F}
 					\begin{figure}[h]
@@ -285,7 +280,7 @@
 						\caption{FRDM-K64F}
 						\label{fig:k64f}
 					\end{figure}
-					Essentially an upgraded version of the FRDM-K22F, the K64F features more RAM and a faster CPU than its more budget oriented counterpart. There are also a few additional peripherals that come already attached, such as a Micro SD-Card reader allowing our robot to read and write to an external storage medium. It too boasts all of the accessibility to the online compiler and Mbed SDK that the K22F does. These features combined with its free availability at the University's loan office make it the ideal choice for the project.
+					Essentially an upgraded version of the FRDM-K22F, the K64F features more RAM and a faster CPU than its more budget oriented counterpart. There are also a few additional peripherals that come already attached, such as a Micro SD-Card reader allowing our robot to read and write to an external storage medium\cite{frdmk64fspecs}. It too boasts all of the accessibility to the online compiler and Mbed SDK that the K22F does. These features combined with its free availability at the University's loan office make it the ideal choice for the project.
 			
 				\subsection{Rangefinder}
 				Based on the discussion regarding the various rangefinding techniques in the mobile robotic's section, it was decided that LIDAR, whilst the most expensive, seems to be the most appropriate for the project. This was primarily due to its ability to be unaffected by poor light levels or other sensors, as well as available sensors that feature pre-implemented functionality. Here we will look at a few different LIDAR sensors that could be suitable for the project.
@@ -297,7 +292,7 @@
 						\caption{RPLIDAR A2M8}
 						\label{fig:rplidara2m8}
 					\end{figure}
-					The RPLIDAR A2M8 uses the previous described LIDAR triangulation system, and outputs scan data at 8000 samples per second\citep{rplidarm8docs}. It outputs this data via a relevant communication interface, representing scans as distance (what distance between the sensor and the measuring point) and heading (the heading angle of the measurement). It also includes a start flag in its measurement signalling the start of a new scan, which would likely come in useful for processing the scan data as we could simply check this flag to see if incoming data is from a new scan. One of the biggest advantages to employing this sensor would be the SDK it comes with. With full documentation, the SDK allows us to access the sensor's entire functionality straight away. It has appropriate methods for beginning the scanning session, ending it and checking sensor health as well as a few other things. This would save a lot of time in the project as we could focus on logical implementation rather than creating the prerequisites that will be needed for the sensor to do what we need it to do.
+					The RPLIDAR A2M8 uses the previous described LIDAR triangulation system, and outputs scan data at 8000 samples per second\citep{rplida2m8docs}. It outputs this data via a relevant communication interface, representing scans as distance (what distance between the sensor and the measuring point) and heading (the heading angle of the measurement). It also includes a start flag in its measurement signalling the start of a new scan, which would likely come in useful for processing the scan data as we could simply check this flag to see if incoming data is from a new scan. One of the biggest advantages to employing this sensor would be the SDK it comes with. With full documentation\cite{rplidarsdkdocs}, the SDK allows us to access the sensor's entire functionality straight away. It has appropriate methods for beginning the scanning session, ending it and checking sensor health as well as a few other things. This would save a lot of time in the project as we could focus on logical implementation rather than creating the prerequisites that will be needed for the sensor to do what we need it to do.
 					
 					The major downside to all of these advantages however is the cost. Sitting at just above \pounds{300}, this is an incredibly steep price for the project if we factor in the cost of the other equipment such as the chassis. This problem leads us to the final choice.
 					
@@ -308,7 +303,7 @@
 						\caption{RPLIDAR A1M8}
 						\label{fig:rplidara1m8}
 					\end{figure}
-					Essentially a less sophisticated version of the previous sensor, this iteration of the M1 LIDAR sensor still offers us a 4000 - 8000Hz sample frequency as well as the previously mentioned SDK. Among a few other things, the key differences here are that we have a slightly slower scan frequency (1 - 10Hz vs the A2's 5 - 15Hz) and a few pieces of SDK functionality that aren't available on the less advanced firmware. The key change is that we lack the express scan function, which is similar to the regular scan but it performs at the highest sampling rate the sensor can use. 
+					Essentially a less sophisticated version of the previous sensor, this iteration of the M1 LIDAR sensor still offers us a 4000 - 8000Hz sample frequency as well as the previously mentioned SDK. Among a few other things, the key differences here are that we have a slightly slower scan frequency (1 - 10Hz vs the A2's 5 - 15Hz) and a few pieces of SDK functionality that aren't available on the less advanced firmware. The key change is that we lack the express scan function, which is similar to the regular scan but it performs at the highest sampling rate the sensor can use. The upside however is a lower price point\cite{rplidara1m8price}.
 					
 					These downsides are negligible with our product however, ultimately as long as we can easily get observational data at a reasonable rate the project benefits hugely. This functionality at the far more agreeable price point makes this the sensor of choice for the robot.
 				
@@ -331,7 +326,9 @@
 				One aspect that needed to be addressed was how the observational data was actually dealt with. In the Terms of Reference, a few different options were considered. These were either storing the data locally on the drone, wirelessly transmitting the map data or transmitting a simple signal back to a hypothetical base camp. What follows is a brief investigation into what the most viable approach might be.
 				
 					\subsubsection{Wireless Transmission}
-					In order to either transmit the map data or any other signal, some form of transmitter will likely need to be added to the microcontroller. An RF (Radio Frequency) transciever could be added to the microcontroller allowing it to transmit and recieve radio signals. The K64F features headers for use with 2.4GHz radio add on modules, and a nRF24L01P Nordic transciever can be obtained very cheaply for just a few pounds online. The Mbed website also has a library\citep{nRF24L01Plibrary} for this transceiver which would allow for interaction with it to be relatively straight forward. The problem here though is that having just a transceiver on the robot's microcontroller probably wouldn't be enough for interaction with it, a second microcontroller would probably need to also have a radio chip soldered on so that something could actually receive transmissions. Attempting to get pairs of microcontroller listening to eachother presents problems in of itself, and as well the use of a radio would mean the robot's range is potentially limited.
+					In order to either transmit the map data or any other signal, some form of transmitter will likely need to be added to the microcontroller. An RF (Radio Frequency) transciever could be added to the microcontroller allowing it to transmit and receive radio signals. The K64F features headers for use with 2.4GHz radio add on modules, and a nRF24L01P Nordic transceiver can be obtained very cheaply for just a few pounds online. The Mbed website also has a library\citep{nRF24L01Plibrary} for this transceiver which would allow for interaction with it to be relatively straight forward. The problem here though is that having just a transceiver on the robot's microcontroller probably wouldn't be enough for interaction with it, a second microcontroller would probably need to also have a radio chip soldered on so that something could actually receive transmissions. Attempting to get pairs of microcontroller listening to each other presents problems in of itself, and as well the use of a radio would mean the robot's range is potentially limited.
+					
+					Despite this, the ability for a transmitter to send a simple confirmation signal indicating the robot isn't stuck or experiencing problems would greatly augment the robot's ranged capabilities. Should time allow it, this could be a good addition to the robot once the rest of the system is in place.
 					
 					\subsubsection{Local Storage}
 					The alternative approach is for the observational data taken by the sensor to be stored on a local storage medium. The K64F features a Micro-SD card socket, and given that the Micro-SD card can be obtained from the University's loans office this approach would incur no extra cost or time spent waiting for a delivery. Similarly to the wireless radio transmission approach, mbed features an SDFileSystem library\citep{sdfilesystemlibrary} which would allow for a quick implementation of this on the software side of things. The use of local storage would also allow for the robot's range to be essentially unlimited as well. There's a possible problem with this though. Given how it's likely the robot will take at least a few thousand readings based on the chosen sensor's sample rate, writing thousands of values to the SD Card might end up taking a while. Given the instant accessibility of this equipment, a few tests were carried out to see if these issues might present a problem. A simple program was used that measures how much time it takes for a section of code to execute. A 60MHz timer was started and stopped before and after the execution of code that involved writing 16000 samples to a file on the Micro SD-Card, which given the LIDAR's sampling rate of 4000 - 8000 was a few second's worth of scan data. An actual time in microseconds for the software's execution can be determined by dividing the elapsed clock cycles by the timer's clockrate in MHz. This code was ran multiple times and the mean clock cycles for each execution time was stored. Table \ref{table:filewritetests} shows the results of these tests.
