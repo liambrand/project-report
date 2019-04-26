@@ -1,8 +1,7 @@
 \part{Analysis}
 		\chapter{Introduction}
 		Before creation of the main product can begin, an understanding of the relevant fields must be achieved. The first aim of the analysis is to develop this understanding by evaluating and then understanding relevant literature. Following this appropriate tools for the product will be identified, both hardware and software. Finally conclusions will be drawn based on what has been researched and evaluated, and a series of core objectives that need to be achieved for the project to be a success will be determined.
-		
-		\chapter{Problem Identification}
+
 		The aim of this project is to develop a mobile robot capable of utilizing Simultaneous Localization and Mapping, often referred to within robotics as SLAM. SLAM concerns the ability for a robot to move around whilst simultaneously tracking its position and generating a map of the environment it navigates around. This will entail elements of mobile robotics with regards to the construction and programming of a mobile robot as well as the actual realization of an implemented SLAM solution.
 		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
 		% requirements gathering
@@ -42,7 +41,7 @@
 			To achieve self navigation as well as mapping, the robot will need to take observations about its surrounding environment. In order to efficiently map the area and detect obstacles this will need to be performed in a 360 degree manner as well. This sections aims to explore a few of the most common approaches to rangefinding.
 			
 				\subsection{Infrared}
-				Infrared sensors work by measuring things via the reflection of infrared light. The sensor will send out some infrared light where it will be reflected off of an obstacle. A reciever will capture this reflected light and depending on factors such as how much light is recieved back and the triangulation of how the light was recieved the presence of an obstacle will be determined. There are a number of Infrared sensors available online for very cheap prices, websites like RobotShop and HobbyTronics list most of their sensors between £5 and £10. 360 sensors are incredible difficult to find, but their low price means purchasing a few would not be a problem.
+				Infrared sensors work by measuring things via the reflection of infrared light. The sensor will send out some infrared light where it will be reflected off of an obstacle. A reciever will capture this reflected light and depending on factors such as how much light is recieved back and the triangulation of how the light was recieved the presence of an obstacle will be determined. There are a number of Infrared sensors available online for very cheap prices, websites like RobotShop and HobbyTronics list most of their sensors between \pounds{5} and \pounds{10}. 360 sensors are incredible difficult to find, but their low price means purchasing a few would not be a problem.
 				
 				The range and degrees of space being measured will depend on the sensor's model, but there are a few things the different sensors have in common. First, infrared sensors have both a maximum and a minimum range. Not only does the maximum range need to be factored in as sensor will struggle to pinpoint the location of light that has been reflected at a large range, but the sensor will also struggle to 'see' very close obstacles. In addition, infrared sensors struggle in strong sunlight and seem best suited to primarily indoor tasks.
 				
@@ -214,7 +213,7 @@
 				\subsection{Microcontroller}
 				The main functioning of the robot will need to be controlled by a suitable microcontroller. Something relatively small and cheap with sufficient GPIO pins should work fine.
 				
-					\subsubsection{Arduino Uno Rev3 - \pounds{£20.80}}
+					\subsubsection{Arduino Uno Rev3 - \pounds{20.80}}
 					\begin{figure}[h]
 						\centering
 						\includegraphics[width=.3\linewidth]{ANALYSIS/arduinounorev3.png}
