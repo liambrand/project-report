@@ -204,9 +204,11 @@
 			First and foremost we can safely establish that the SLAM problem is what we are addressing with regards to the implementation of the robot's ability to track its own location whilst mapping its environment. In addition to this we understand the fundamentals of the SLAM problem. This will massively benefit development, as being aware of having to store details internally such as wheel revelations gained via odometric sensors will allow us to cut down on time spent during development having to rewrite core pieces of functionality to make room for this. 
 
 		\chapter{Product Requirements}
+		\label{requirements}
 		Based on the different aspects of mobile robotics and SLAM that have been looked at as well as preliminary project objectives outlined in the Terms of Reference, we can outline the basic product requirements that will need to be achieved in the course of the product's development.
 		
 			\section{Functional}
+			\label{requirements:functional}
 			\begin{itemize}
 				\item The robot must be capable of movement
 				\item The robot must be capable of observation
@@ -214,9 +216,10 @@
 			\end{itemize}
 			
 			\section{Non-Functional}
+			\label{requirements:nonfunctional}
 			\begin{itemize}
 				\item \textbf{Build Quality} - The robot should be built to an acceptable standard. Wires should be managed to ensure the robot's function isn't impeded by them (e.g. getting stuck in the wheels) and components should stay inside the chassis during the robot's operation.
-				\item \textbf{Functional Speed} - The observation and map generation should be done within an acceptable time. The robot shouldn't take more than 30 seconds to take readings at a location, and it shouldn't take more than a minute to generate a map from the readings.
+				\item \textbf{Functional Speed} - The observation and map generation should be done within an acceptable time. The robot shouldn't take more than 10 seconds to take readings at a location, and it shouldn't take more than 30 seconds to generate a map from the readings once they have been acquired.
 				\item \textbf{Adaptable Mapping} - To ensure the robot maps correctly, the mapping should be tested against a few different layouts. This will ensure the implemented method of mapping can successfully adapt to and map new environments.
 				\item \textbf{Reliable Mapping} - When mapping the same environment multiple times, the robot's produced maps shouldn't differ too much. Repeated testing in the same environment will be carried out to ensure produced maps are consistent.
 			\end{itemize}
@@ -283,7 +286,7 @@
 					Essentially an upgraded version of the FRDM-K22F, the K64F features more RAM and a faster CPU than its more budget oriented counterpart. There are also a few additional peripherals that come already attached, such as a Micro SD-Card reader allowing our robot to read and write to an external storage medium\cite{frdmk64fspecs}. It too boasts all of the accessibility to the online compiler and Mbed SDK that the K22F does. These features combined with its free availability at the University's loan office make it the ideal choice for the project.
 			
 				\subsection{Rangefinder}
-				Based on the discussion regarding the various rangefinding techniques in the mobile robotic's section, it was decided that LIDAR, whilst the most expensive, seems to be the most appropriate for the project. This was primarily due to its ability to be unaffected by poor light levels or other sensors, as well as available sensors that feature pre-implemented functionality. Here we will look at a few different LIDAR sensors that could be suitable for the project.
+				Based on the discussion regarding the various rangefinding techniques in the mobile robotic's section, it was decided that LIDAR, whilst the most expensive, seems to be the most appropriate for the project. This was primarily due to its ability to be unaffected by poor light levels or other sensors, as well as available sensors that feature pre-implemented functionality. In addition, the high accuracy of LIDAR mentioned by a few papers in \ref{litreview:lidar} will allow the created map to possess a high level of detail. Here we will look at a few different LIDAR sensors that could be suitable for the project.
 				
 					\subsubsection{RPLIDAR A2M8 360 Degree Laser Scanner - \pounds{301.43}}
 					\begin{figure}[h]
@@ -303,7 +306,7 @@
 						\caption{RPLIDAR A1M8}
 						\label{fig:rplidara1m8}
 					\end{figure}
-					Essentially a less sophisticated version of the previous sensor, this iteration of the M1 LIDAR sensor still offers us a 4000 - 8000Hz sample frequency as well as the previously mentioned SDK. Among a few other things, the key differences here are that we have a slightly slower scan frequency (1 - 10Hz vs the A2's 5 - 15Hz) and a few pieces of SDK functionality that aren't available on the less advanced firmware. The key change is that we lack the express scan function, which is similar to the regular scan but it performs at the highest sampling rate the sensor can use. The upside however is a lower price point\cite{rplidara1m8price}.
+					Essentially a less sophisticated version of the previous sensor, this iteration of the M1 LIDAR sensor still offers us a 4000 - 8000Hz sample frequency as well as the previously mentioned SDK\cite{rplidara1m8datasheet}. Among a few other things, the key differences here are that we have a slightly slower scan frequency (1 - 10Hz vs the A2's 5 - 15Hz) and a few pieces of SDK functionality that aren't available on the less advanced firmware. The key change is that we lack the express scan function, which is similar to the regular scan but it performs at the highest sampling rate the sensor can use. The upside however is a lower price point\cite{rplidara1m8price}.
 					
 					These downsides are negligible with our product however, ultimately as long as we can easily get observational data at a reasonable rate the project benefits hugely. This functionality at the far more agreeable price point makes this the sensor of choice for the robot.
 				
@@ -320,25 +323,21 @@
 			
 			
 			\section{Techniques}
-				% talk about storage vs transmission here, use measure-mbed for write speed.
-				% have a table with 4 or 5 measurements
-				\subsection{Storing Scan Data}
-				One aspect that needed to be addressed was how the observational data was actually dealt with. In the Terms of Reference, a few different options were considered. These were either storing the data locally on the drone, wirelessly transmitting the map data or transmitting a simple signal back to a hypothetical base camp. What follows is a brief investigation into what the most viable approach might be.
-				
-					\subsubsection{Wireless Transmission}
-					In order to either transmit the map data or any other signal, some form of transmitter will likely need to be added to the microcontroller. An RF (Radio Frequency) transciever could be added to the microcontroller allowing it to transmit and receive radio signals. The K64F features headers for use with 2.4GHz radio add on modules, and a nRF24L01P Nordic transceiver can be obtained very cheaply for just a few pounds online. The Mbed website also has a library\citep{nRF24L01Plibrary} for this transceiver which would allow for interaction with it to be relatively straight forward. The problem here though is that having just a transceiver on the robot's microcontroller probably wouldn't be enough for interaction with it, a second microcontroller would probably need to also have a radio chip soldered on so that something could actually receive transmissions. Attempting to get pairs of microcontroller listening to each other presents problems in of itself, and as well the use of a radio would mean the robot's range is potentially limited.
-					
-					Despite this, the ability for a transmitter to send a simple confirmation signal indicating the robot isn't stuck or experiencing problems would greatly augment the robot's ranged capabilities. Should time allow it, this could be a good addition to the robot once the rest of the system is in place.
+				\subsection{Acquiring Scan Data}
+				One aspect that needed to be addressed was how the observational data was actually dealt with. Once the LIDAR is taking observations, how does this data find its way back to a terminal where it can actually be used? In the Terms of Reference, a few different options were considered. These were either storing the data locally on the drone or wirelessly transmitting the map data. What follows is a brief investigation into which of these two approaches would be the most viable.
 					
 					\subsubsection{Local Storage}
-					The alternative approach is for the observational data taken by the sensor to be stored on a local storage medium. The K64F features a Micro-SD card socket, and given that the Micro-SD card can be obtained from the University's loans office this approach would incur no extra cost or time spent waiting for a delivery. Similarly to the wireless radio transmission approach, mbed features an SDFileSystem library\citep{sdfilesystemlibrary} which would allow for a quick implementation of this on the software side of things. The use of local storage would also allow for the robot's range to be essentially unlimited as well. There's a possible problem with this though. Given how it's likely the robot will take at least a few thousand readings based on the chosen sensor's sample rate, writing thousands of values to the SD Card might end up taking a while. Given the instant accessibility of this equipment, a few tests were carried out to see if these issues might present a problem. A simple program was used that measures how much time it takes for a section of code to execute. A 60MHz timer was started and stopped before and after the execution of code that involved writing 16000 samples to a file on the Micro SD-Card, which given the LIDAR's sampling rate of 4000 - 8000 was a few second's worth of scan data. An actual time in microseconds for the software's execution can be determined by dividing the elapsed clock cycles by the timer's clockrate in MHz. This code was ran multiple times and the mean clock cycles for each execution time was stored. Table \ref{table:filewritetests} shows the results of these tests.
+					One approach is for the observational data taken by the sensor to be stored on a local storage medium. The K64F features a Micro-SD card socket, and given that the Micro-SD card can be obtained from the University's loans office this approach would incur no extra cost or time spent waiting for a delivery. Mbed features an SDFileSystem library\citep{sdfilesystemlibrary} which would allow for a quick implementation of this on the software side of things. The use of local storage would also allow for the robot's range to be essentially unlimited as well. 
 					
-					% should these tests be in testing given that the TOR mentions an investigation into what is viable?
+					The speed of this approach should be considered. Given how it's likely the robot will take at least a few thousand readings based on the chosen sensor's sample rate, writing thousands of values to the SD Card might end up taking a while. Given the instant accessibility of this equipment, a few tests were carried out to see if these issues might present a problem. 
+					
+					A simple program was used that measures how much time it takes for a section of code to execute. A 60MHz timer was started and stopped before and after the execution of code that involved writing 16000 samples to a file on the Micro SD-Card, which given the LIDAR's sampling rate of 4000 - 8000 was a few second's worth of scan data. An actual time in microseconds for the software's execution can be determined by dividing the elapsed clock cycles by the timer's clockrate in MHz. This code was ran multiple times and the mean clock cycles for each execution time was stored. Table \ref{table:filewritetests} shows the results of these tests.
+
 					\begin{table}[h!]
 						\centering
 						\begin{tabular}{|| l | l ||} 
 							\hline
-							Test & Time in Seconds \\ [0.5ex] 
+							Test & Time in Seconds to Write Data \\ [0.5ex] 
 							\hline
 							1 & 7.9 \\ 
 							2 & 7.9 \\
@@ -346,10 +345,18 @@
 							4 & 7.7 \\ [1ex] 
 							\hline
 						\end{tabular}
-						\caption{SD file write speed tests}
+						\caption{Time taken to write 16000 dummy samples to the Micro SD-Card}
 						\label{table:filewritetests}		
 					\end{table}
-					Writing several thousand samples to the SD-Card doesn't seem to be an issue, and the created files seemed to be around 250kB meaning the 8GB SD-Cards that can be freely obtained from the University's loans office will have more than ample storage capacity. These factors combined with the readily available components make local storage the choice for holding the map data.
+					Writing several thousand samples to the SD-Card won't be an issue, and the created files seemed to be around 250kB meaning the 8GB SD-Cards that can be freely obtained from the University's loans office will have more than ample storage capacity.
+					
+					\subsubsection{Wireless Transmission}
+					In order to transmit the map data, some form of transmitter will likely need to be added to the microcontroller. An RF (Radio Frequency) transceiver could be added to the microcontroller allowing it to transmit and receive radio signals. The K64F features headers for use with 2.4GHz radio add on modules, and a nRF24L01P Nordic transceiver can be obtained very cheaply for just a few pounds online. The Mbed website also has a library\citep{nRF24L01Plibrary} for this transceiver which would allow for interaction with it to be relatively straight forward. Data transmission shouldn't be a problem either. The transceiver's data sheet\ref{nRF24L01Pdatasheet} says that the transceiver has a minimum transfer rate of 250kbps. The A1M8's documentation\cite{rplidara1m8datasheet} mentions distance and heading as two attributes of the working mode's data output. It also mentions the sensor's 4000 - 8000hz sampling rate. If we assume the sensor is always going to be working at the highest sampling rate and that both the angle and distance values are stored as floats, then every second we recieve 16000 float values (8000, the sampling rate, multiplied by two since each scan will feature two floats to be stored). Since each float is four bytes that means to acquire this second's worth of scan data, the transceiver would need to transmit 64000 bytes, or 64 kilobytes. Given the worst case scenario transmit speed of 250kb/s this would be done in less than a second, so we shouldn't have any trouble transmitting as much observational data as we might need.
+					
+					The problem here though is that having just a transceiver on the robot's microcontroller wouldn't be enough for interaction with it, a second microcontroller would need to also have a radio chip soldered on so that something could actually receive transmissions. Attempting to get pairs of microcontroller listening to each other presents problems in of itself, and as well the use of a radio would mean the robot's range is potentially limited.
+					
+					\subsubsection{Deciding on an Approach}
+					Whilst the wireless transmission approach boasts more initial range and and allows for the robot's observational data to be acquired much quicker, the readily available components, reduced setup time and greater internal storage offered by the Micro SD-Cards space make it the technique of choice for dealing with the observational data. Despite this, the ability for a transmitter to send a simple confirmation signal indicating the robot isn't stuck or experiencing problems would greatly augment the robot's ranged capabilities. Should time allow it, this could be a good addition to the robot once the rest of the system is in place.
 				
 				% QUESTION -- is it worth talking about dead reckoning when we aren't using it for the actual product?
 				\subsection{Dead Reckoning}
