@@ -473,20 +473,42 @@
 				It was first necessary to be capable of standard mapping to ensure that the data being obtained from the LIDAR sensor was actually a reflection of the environment that it scanned. A simple Tkinter GUI was created consisting of a few buttons
 	
 	\chapter{Testing}
-		\section{Introduction}
-		\section{Initial Prototype}
-			\subsection{Hardware}
-			\subsection{Software}
-		\section{Implementing Requirements}
-			\subsection{Movement}
-				\subsubsection{Hardware}
-				\subsubsection{Software}
-			\subsection{Observation}
-				\subsubsection{Hardware}
-				\subsubsection{Software}
-			\subsection{Processing Observational Data}
-				\subsubsection{Hardware}
-				\subsubsection{Software}
+	%Purpose of testing, what will happen here
+	%Nature of testing. Black/white box?
+	%Explain the importance of testing in relevance to the chosen methodology
+	
+		\section{Testing the OS}
+		%Connected microcontroller to
+		
+		\section{Testing the Movement}
+		%First test that each of the motors works using vague directions.
+			%These will be verified from my personal observations.
+			%Test forwards, backwards, left, right, and then do a spinny.
+			
+		\section{Testing the Observation}
+		%To get the LIDAR SDK working, a serial terminal was used.
+			%Then the OS started the LIDAR and began printing the values tothe terminal.
+			
+		\section{Testing the File Writing}
+		%LIDAR was ran and told to print the first 10 values that it got.
+		%Values were then saved to the SD card.
+		%USB adapter for the Micro-SD Card was plugged in, values were observed and compared.
+			%Were they different? Did they save? What format did they save in?
+			
+		\section{Testing the GUI}
+		%Firstly, does the GUI run?
+		%Second, can it read files? Read some test files like the binary coords.
+			%Make a .txt file, click a button that reads it and prints it. Do this for 10 random strings.
+		%Then, can it read the saved data from the robot?
+			%Test this 10 times as well
+			
+		\section{Testing the System}
+		%All of the above.
+			%Generates a random number, moves in that direction.
+			%Scans and prints data.
+			%Saves the data to a Micro SD-Card.
+			%Plug that into the PC, see what the GUI says.
+			%10 times, change the environment each time.
 				
 	\chapter{Blockers}
 	Any minor issues encountered during development have been touched on in the implementation. Larger problems were encountered however that caused a more significant hindrance to the product's development. Some of these issues even involved the whole developmental approach having to be reconsidered. This chapter aims to explore these issues in depth by detailing what happened and how, if at all, these issues were overcome.
