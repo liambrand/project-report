@@ -2,6 +2,7 @@
 		\chapter{Introduction}
 		Before creation of the main product can begin, an understanding of the relevant fields must be achieved. The first aim of the analysis is to develop this understanding by evaluating and then understanding relevant literature. Following this appropriate tools for the product will be identified, both hardware and software. Finally conclusions will be drawn based on what has been researched and evaluated, and a series of core objectives that need to be achieved for the project to be a success will be determined.
 
+		\chapter{Problem Identification}
 		The aim of this project is to develop a mobile robot capable of utilizing Simultaneous Localization and Mapping, often referred to within robotics as SLAM. SLAM concerns the ability for a robot to move around whilst simultaneously tracking its position and generating a map of the environment it navigates around. This will entail elements of mobile robotics with regards to the construction and programming of a mobile robot as well as the actual realization of an implemented SLAM solution.
 		
 		%When and where is SLAM an issue?
@@ -215,13 +216,14 @@
 			
 			\section{Non-Functional}
 			\begin{itemize}
-				\item The robot's movement should be omnidirectional. To be fully capable of proper navigation in any environment, it would be ideal that the robot has full freedom of movement.
-				\item The robot should be powered appropriately, with consideration given to battery and component voltages as well as power consumption.
-				\item The observational data should be stored appropriately. As previously mentioned in the Terms of Reference, the way in which observational data is stored is to be determined via an investigation. The way in which data is stored should depend on the results of this investigation.
-				\item Observational data will be processed into a map using the CSM software.
+				\item \textbf{Build Quality} - The robot should be built to an acceptable standard. Wires should be managed to ensure the robot's function isn't impeded by them (e.g. getting stuck in the wheels) and components should stay inside the chassis during the robot's operation.
+				\item \textbf{Functional Speed} - The observation and map generation should be done within an acceptable time. The robot shouldn't take more than 30 seconds to take readings at a location, and it shouldn't take more than a minute to generate a map from the readings.
+				\item \textbf{Adaptable Mapping} - To ensure the robot maps correctly, the mapping should be tested against a few different layouts. This will ensure the implemented method of mapping can successfully adapt to and map new environments.
+				\item \textbf{Reliable Mapping} - When mapping the same environment multiple times, the robot's produced maps shouldn't differ too much. Repeated testing in the same environment will be carried out to ensure produced maps are consistent.
 			\end{itemize}
 		
-		%security?
+			\section{Security}
+			There are no specific security requirements for the system.
 		
 		\chapter{Review of Tools and Techniques}
 		This chapter aims to focus on evaluating the potential tools and techniques that will be employed for the project's implementation. It will explore appropriate potential hardware and software, arriving at a conclusion along with an explanation as to why a certain tool or technique has been chosen.
