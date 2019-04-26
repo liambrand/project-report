@@ -107,6 +107,7 @@
 			\medskip
 		
 			\section{The SLAM Problem}
+			\label{litreview:slamproblem}
 			Let's use some key notations to help break down the essentials of the SLAM problem. \newline
 			\textbf{t} - Current time. \newline
 			\textbf{x\textsubscript{t}} - Location and orientation of vehicle. \newline
@@ -133,14 +134,20 @@
 			There are variations within the SLAM problem however. At a broader level, SLAM problems generally come in one of two flavours. These are full SLAM and online SLAM. 
 
 				\subsection{Full SLAM}
+				\label{litreview:slam:fullslam}
 				Full SLAM involves using landmark observations and data relevant to discerning the robot's current position in order to determine the robot's entire path. It can be written as such -
 				
 				p(\textbf{X\textsubscript{0:t}}, \textbf{m} $\mid$ \textbf{Z\textsubscript{0:t}}, \textbf{U\textsubscript{0:t}})
 				
+				We want the probability distribution (essentially the estimation of the robot's current position) to be an estimation of what is on the left (current vehicle location and landmarks) based on what's on the right (landmark observations and control inputs).
+				
 				\subsection{Online SLAM}
+				\label{litreview:slam:onlineslam}
 				Online SLAM differs slightly in that it seeks to determine the robot's current location rather than the robot's entire path. It can be written as such - 
 				
-				p(\textbf{x\textsubscript{0:t}}, \textbf{m} $\mid$ \textbf{Z\textsubscript{0:t}}, \textbf{U\textsubscript{0:t}})
+				p(\textbf{x\textsubscript{t}}, \textbf{m} $\mid$ \textbf{Z\textsubscript{0:t}}, \textbf{U\textsubscript{0:t}})
+				
+				Compared to the previous notation used in \ref{litreview:slam:fullslam}, this probabilistic estimation only estimates the robot's position (x) at the current time (\textsubscript{t}) rather than the robot's full historical path.
 				
 				\subsection{SLAM Taxonomy}
 				The possible differences in the SLAM problem don't end there. Depending on different factors there are also different sub approaches to the SLAM problem. Below are some common variants.
