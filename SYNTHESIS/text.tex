@@ -3,6 +3,7 @@
 	Now that the relevant product fields are understood to a sufficient degree and the product's needs have been established we can begin to plan out how we will achieve the project's objectives. First we will established the methological approach that will structure the product's development. Then, for each of the core product requirements we will look at a high level design overview of how the requirement will be met, the actual implementation of this design, and testing to evaluate how well this requirement has been satisfied by this implementation.
 	
 	\chapter{Methological Approach}
+	\label{synthesis:methodology}
 	The project employed a prototyping methodology for development. First, we must perform an investigation into the system requirements, which was performed in the analysis with a list of specific core requirements being outlined in the conclusion. Following this the first prototype is built, which will resemble an incredibly basic scaled down version of how the final system should ideally look. This prototype is then thoroughly evaluated, with potential changes that would bring the prototype closer to the final system being figured out. Finally, these changes are then implemented and the prototype is evaluated once again. This is repeated until the product has reached its ultimate goals.
 	\begin{figure}[h]
 		\centering
@@ -22,8 +23,8 @@
 		\section{Introduction}
 		Before implementation of the specific project aims can be implemented, we first need the initial prototype that we can begin iteratively improving. Therefore, it's logical to design the initial robotic prototype first. What follows is an overview of how the initial robot prototype will be designed, followed by a breakdown of each of the individual project aims will be met.
 	
-		\section{Initial Prototype}
-		Here will be the design for the base product that will serve as a foundation for all subsequent the development. The aim here is to have a skeleton project that can be filled in with functionality and built on to meet the project objectives.
+		\section{Initial Overview}
+		Here will be the design for a high level overview of the project, first establishing the basics of how the robot's structure will be assembled and how the robot's core software will be made.
 		
 			\subsection{Hardware}
 				\subsubsection{Chassis}
@@ -38,44 +39,38 @@
 				Now it's time for the microcontroller setup. The microcontroller used in this project is the FRDM-K64F, chosen for its free availability from the University loan office, small form factor and compatibility with the Micro C Operating System which is being employed for the robot's core program. To control the robot we'll also need a motor driver. The dfRobot Quad Motor Driver Shield is being employed for this project, it can be obtained from Amazon for around \pounds{13}. It was chosen for this relatively low cost, the easily available documentation and the fact that it can easily plug into the FRDM-K64F, the microcontroller of choice for this project. This shield will be lined up to the appropriate pins on the K64F and plugged in, in preperation for using the microcontroller to drive the motors. 
 				
 				The assembly shouldn't be overly complex, no soldering should be needed to connect components so it should be mostly a case of fitting things together.
-				% explain LIDAR later.... :(
+				
+				\subsubsection{Power}
+				The hardware components that will need powering are the three motors used to drive the omnidirectional wheels, the microcontroller, and the LIDAR sensor. Table \ref{table:1} has a run down of these hardware components, the voltages, and the milliamp consumption that they have.
+				
+				\begin{table}[h]
+					\centering
+					\begin{tabular}{|| l | l | l ||} 
+						\hline
+						Component & Voltage & Milliamp \\ [0.5ex] 
+						\hline
+						3x DC Coreless Motor  & 12V & Up to 1400 mA  \\ 
+						FRDM-K64F  & 5 to 9V &  50 mA \\
+						RPLIDAR  & 5 to 10V & Up to 1050 mA\\
+						\hline
+					\end{tabular}
+					\caption{Components and respective voltages}
+					\label{table:1}
+				\end{table}
+				
+				To save on cost and complexity, it would be ideal to only use a single battery for the robot's power source. A single power source will be used for the robot, a battery holder containing 8 1.5V batteries will give us the 12V we need for the motors. Then, a step down voltage regular will be used to lower the voltage required for the other components. A 7v and two 5v currents will be needed to supply power to the microcontroller and the LIDAR respectively.
+				
+				Generally cheaper alkaline batteries have about 1800 to 2800 mAh (milliamp hours) in them, so an 8 pack of these will give us about half an hour's worth of operation before the robot starts to suffer due to low power. This is a worst case scenario assuming a constant high power draw, but this should be sufficient for the purposes of prototyping and demonstration. 
+				
 			\subsection{Software}
 				\subsubsection{Robot Program}
-				As previously mentioned in the analysis, the robot's program will be composed of a Micro C OS. Once further design has been discussed and a good idea of how the program should be structured has been understood, it would be prudent to create a skeleton OS with some basic tasks that simply print to ensure first that software can be properly deployed onto the microcontroller, and secondly to speed up development by allowing individual parts of the OS to be developed straight away.
-				
-			\subsection{Power}
-			The hardware components that will need powering are the three motors used to drive the omnidirectional wheels, the microcontroller, and the LIDAR sensor. Table \ref{table:1} has a run down of these hardware components, the voltages, and the milliamp consumption that they have.
-				
-			\begin{table}[h]
-				\centering
-				\begin{tabular}{|| l | l | l ||} 
-					\hline
-					Component & Voltage & Milliamp \\ [0.5ex] 
-					\hline
-					3x DC Coreless Motor  & 12V & Up to 1400 mA  \\ 
-					FRDM-K64F  & 5 to 9V &  50 mA \\
-					RPLIDAR  & 5 to 10V & Up to 1050 mA\\
-					\hline
-				\end{tabular}
-				\caption{Components and respective voltages}
-				\label{table:1}
-			\end{table}
-			
-			To save on cost and complexity, it would be ideal to only use a single battery for the robot's power source. A single power source will be used for the robot, a battery holder containing 8 1.5V batteries will give us the 12V we need for the motors. Then, a step down voltage regular will be used to lower the voltage required for the other components. A 7v and two 5v currents will be needed to supply power to the microcontroller and the LIDAR respectively.
-			% !!!!!!!!!!!!!!!!!!!!!!!COME BACK TO THIS!!!!!!!!!!!!!!!!
-				
-			Generally cheaper alkaline batteries have about 1800 to 2800 mAh (milliamp hours) in them, so an 8 pack of these will give us about half an hour's worth of operation before the robot starts to suffer due to low power. This is a worst case scenario assuming a constant high power draw, but this should be sufficient for the purposes of prototyping and demonstration. 
-			
-			\subsection{Software}
-			The software for the actual robot will be written in C++, compiled and deployed onto the microcontroller with the mbed SDK. At its foundation, it will be a Micro C OS with a series of configured tasks to perform various aspects of the robot's functionality. As would be expected, these tasks will come with their own memory tasks and will be designated with appropriate priorities. 
-			
-			The plan is for there to be three separate tasks. One task will deal with the robot's movement, one task will deal with taking data from the LIDAR and the final task will deal with actually writing this scan data to the connected Micro SD-Card. To control the program flow semaphores will be employed. For the initial prototype, these three tasks will be initialized and simply print messages to the console so a program such as minicom can see them running. This will allow assurance that the tasks are running in a logical order.
+				The robot's software will be a Micro C OS, implemented using C++ classes and compiled with the mbed SDK platform. Classes will be created based on grouped functionality to allow for greater code readability and efficiency. Once development begins, it would be prudent to create a skeleton OS based on the classes and states outlined by the documentation in \ref{sec:finaldesigndocs}. This will enable confirmation that the software is able to be deployed on the microcontroller, and will serve as a good base for functional implementation.
 		
 		\section{Designing for Requirements}
-		Once this incredibly basic initial prototype is in place, we can begin to move toward truly fulfilling the project requirements. What follows is an overview of how each of the different project requirements will be met, with appropriate explanations toward the hardware and software employed.
+		Now that the fundamentals of the hardware's construction and the software's foundations are understood, we can begin to move toward truly fulfilling the project requirements. What follows is an overview of how each of the different project requirements will be met, with appropriate explanations toward the hardware and software employed.
 		
 			\subsection{Movement}
-			The first of the three product aims outlined in the Analysis is that 'the robot must be capable of movement'.
+			The first of the three functional requirements outlined in \ref{requirements:functional} is that 'the robot must be capable of movement'.
 				\subsubsection{Hardware}
 				The dfRobot Quad Motor shield is being used to help control the motors. Fig \ref{fig:shield} shows an overview of the shield.
 				\begin{figure}[h]
@@ -85,24 +80,24 @@
 					\label{fig:shield}
 				\end{figure}
 			
-				The motor power interface is how the shield will actually recieve its power from the battery. The power and ground cables from each of the chassis motors will be plugged into the appropriate motor pins that can be seen on the left of the shield figure. Fig \ref{fig:shieldsetup} from the shield's documentation shows an example of this setup with four motors.
+				The motor power interface is how the shield will actually receive its power from the battery. The power and ground cables from each of the chassis motors will be plugged into the appropriate motor pins that can be seen on the left of the shield figure. Fig \ref{fig:shieldsetup} from the shield's documentation shows an example of this setup with four motors.
 				
 				\begin{figure}[h]
 					\centering
 					\includegraphics[width=.7\linewidth]{SYNTHESIS/shield_connection.png}
-					\caption{Example shield setup}
+					\caption{Shield connection}
 					\label{fig:shieldsetup}
 				\end{figure}
 				
 				Each of the motors power and ground cables will connect to the appropriate pins on the shield. The motors can be manipulated once they receive power in this fashion. The shield is able to affect the electricity being sent to the motors by changing its polarity and by using pulse width modularity. By changing the pin to HIGH or LOW, we can affect the direction that the motor spins in (forward or backwards) and pulse width modulation allows us to affect the speed of the motor.
 				
 				\subsubsection{Software}
-				For each motor on the shield, there are two associated pins. The first of these pins controls the motors direction (forward or backward). The second of the pins controls the motor speed,  achieved using pulse width modulation. To manipulate the motors these pins will need to be declared as variable within the robot's software and assigned different values based on what we are trying to do. The directional pins are either HIGH or LOW, so they will be declared as digital pins that are assigned a binary value. For the speed pins, mbed features a PwmOut interface with a .write() method that can be used to assign a duty cycle value to the variable. This is perfect for what we need.
+				For each motor on the shield, there are two associated pins. The first of these pins controls the motors direction (forward or backward). The second of the pins controls the motor speed,  achieved using pulse width modulation. To manipulate the motors these pins will need to be declared as variable within the robot's software and assigned different values based on what we are trying to do. The directional pins are either HIGH or LOW, so they will be declared as digital pins that are assigned a binary value. For the speed pins, mbed features a PwmOut interface with a .write() method that can be used to assign a duty cycle value to the variable. This is perfect for what we need. To actually steer the robot, methods in the control class will receive angle and speed values and perform trigonometrical calculations to find out what speed and direction values need to be sent to each of the three motors.
 				%talk about pin lineup here and declaration
 				% COME BACK TO THIS, TRIGONOMICAL NAVIGATION!
 				
 			\subsection{Observation}
-			The second of the three product aims outlined in the Analysis is that 'the robot must be capable of observation'.
+			The second of the three functional requirements outlined in \ref{requirements:functional} is that 'the robot must be capable of observation'.
 				\subsubsection{Hardware}
 				Only one range finder is being used to gather the observation data, the RPLIDAR A1M8 LIDAR sensor. The sensor is composed of a platform with a motor system that spins the range scanner as it takes readings, as well as some pins that can be used for communication. Fig \ref{fig:rplidarconfig} illustrates these components.
 				
@@ -121,14 +116,29 @@
 					\label{fig:lidarunderside}
 				\end{figure}
 				
-				The GND pins are simple ground pins, they will need to be connected to ground pins on the microcontroller. The RX and TX pins (Recieve and Transmit respectively) are serial pins that will be used for communication with the microcontroller. These LIDAR pins will be linked to their opposite counterparts on the microcontroller (LIDAR RX to Microcontroller TX and vice versa). The V5.0 and VMOTO are simple power pins, they will powered via a stepped down 5V current taken from the voltage regulators. This is how the LIDAR sensor will retrieve power. The MOTOCTL pin is the motor control pin that listens for a signal indicating that a connected device is ready to recieve data. The signal is either high (ready) or low (not ready). To make use of this pin, a generic GPIO pin from the microcontroller will be configured within the microcontroller's software and set to 1 (high) when the robot needs to begin taking scan data.
+				The GND pins are simple ground pins, they will need to be connected to ground pins on the microcontroller. The RX and TX pins (Recieve and Transmit respectively) are serial pins that will be used for communication with the microcontroller. These LIDAR pins will be linked to their opposite counterparts on the microcontroller (LIDAR RX to Microcontroller TX and vice versa). The V5.0 and VMOTO are simple power pins, they will powered via a stepped down 5V current taken from the voltage regulators. This is how the LIDAR sensor will retrieve power. The MOTOCTL pin is the motor control pin that listens for a signal indicating that a connected device is ready to receive data. The signal is either high (ready) or low (not ready). To make use of this pin, a generic GPIO pin from the microcontroller will be configured within the microcontroller's software and set to 1 (high) when the robot needs to begin taking scan data.
 				
 				\subsubsection{Software}
-				SLAMTEC have a document detailing the LIDAR protocol. This details the specifics behind how to communicate with the LIDAR. LIDAR communication is primarily achieved through the exchange of data packets. As a basic example, in order to obtain scan measurements the host system first needs to send data packets corresponding to the begin scan command. Once the LIDAR has recieved and processed this, it should begin sending back observational data. 
+				\label{sec:observation:software}
+				SLAMTEC have a document detailing the LIDAR protocol\citep{rplidarprotocol}. This details the specifics behind how to communicate with the LIDAR. The protocol works by recieving request packets made up of certain bytes. Depending on what the bytes are, the LIDAR interprets the packet as a different command. All request packets contain a one byte start flag and a one byte command field, with optional fields for things like a payload depending on the request being sent. Depending on the command, the sensor will respond in a different way. Fig \ref{fig:examplerequest} shows the documentation's outline of a simple SCAN request which causes the LIDAR to begin outputting observational data.
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=.9\linewidth]{SYNTHESIS/examplerequest.png}
+					\caption{Scan Request}
+					\label{fig:examplerequest}
+				\end{figure}
+			
+				To begin scanning, a request packet with two bytes of the listed values would need to be sent to the LIDAR. It's advised by the documentation to wait at least 2ms after this before sending any further requests to give the sensor a chance to process the request. Once the sensor has processed the request a response descriptor is sent back. All response descriptors begin with two start flags, and then have five bytes providing information about the coming responses. It provides the size of a single incoming data packet, the send mode of the current request/response session (e.g. single response to the request or multiple responses) and the data type of the incoming response packets.  
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=.9\linewidth]{SYNTHESIS/responsedescriptor.png}
+					\caption{Response Descriptor}
+					\label{fig:responsedescriptor}
+				\end{figure}
 				
-				The format of the requests that need to be sent is documented in the LIDAR's protocol documentation\citep{rplidarprotocol}. To implement this, it would be a good idea to create a data structure in the microcontroller's C++ program with fields listed in the protocol (start flag, command, etc) and then put this field into the serial connection. A similar data structure could be populated with what is recieved from the serial channel to make it easy to process the data.
+				This could be implemented through the use of data structres in the robot's program. For example, a scan request data structure with two fields (start flag and command) could be initialized and then sent to the LIDAR sensor via the serial connection. Data structures resembling the response descriptors could be populated with information sent back from the sensor as well, allowing for easy processing and manipulation of retrieved data.
 				
-				SLAMTEC provide an SDK for the LIDAR sensor however, which comes in the form of header files which will automatically implement this functionality. Table \ref{table:sdkbreakdown} has a manifest of the SDK and the functionality that it provides.
+				This may not be needed however. SLAMTEC provide an SDK for the LIDAR sensor which comes in the form of header files which will automatically implement this functionality. Table \ref{table:sdkbreakdown} has a manifest of the SDK and the functionality that it provides.
 				
 				\begin{table}[h!]
 					\centering
@@ -147,49 +157,55 @@
 					\label{table:sdkbreakdown}
 				\end{table}
 				
-				Essentially, the C++ program running on the microcontroller would need to create an RPLidarDriver variable which would be used to represent the connected LIDAR sensor. Once this is achieved the premade methods that implement the protocol functionality could be ran to achieve control over the LIDAR.
+				All that would be needed is for the C++ program running on the microcontroller to create an RPLidarDriver variable which would be used to represent the connected LIDAR sensor. Once this is achieved the premade methods that implement the protocol functionality could be ran to achieve control over the LIDAR. Once the LIDAR is retrieving data the class will be able to populate a buffer with readings which can be written to a file once it's full. Readings could also be checked by the robot's main program to see if a distance measurement is particularly low, and if it is the robot could steer away from whatever angle the distance has been measured from to avoid obstacles.
 				
 			\subsection{Processing Observational Data}
-			The last of the three project objectives is that 'the observational data must be processed into a map'.
+			\label{section:processing:intro}
+			The last of the three functional requirements outlined in \ref{requirements:functional} is that 'the observational data must be processed into a map'.
 				\subsubsection{Hardware}
-				Once the robot is receiving data from the LIDAR sensor, it needs to be transferred to an external program where the CSM software can be ran to generate a map from it. Based on the results of the previously conducted investigation into what would be the most suitable way to store observational data, a Micro SD-Card will be used. The FRDM-K64F has a Micro SD-Card socket attached to it, and the microcontroller will save the observational data to this card so that after a session of moving and scanning it can be plugged into a machine where it is able to be processed. The University's loans office can provide an 8GB card as well as an adapter allowing it to be plugged into a PC's USB slot, so this approach won't incur any extra cost. The saved data will only be angle and distance measurement pairs, so the card's (relatively) small size won't pose any memory issues. 
+				Once the robot is receiving data from the LIDAR sensor, it needs to be transferred to an external program where the CSM software can be ran to generate a map from it. Based on the results of the previously conducted investigation into what would be the most suitable way to store observational data, a Micro SD-Card will be used. The FRDM-K64F has a Micro SD-Card socket attached to it, and the microcontroller will save the observational data to this card so it can be plugged into a machine where it is able to be processed. The University's loans office can provide an 8GB card as well as an adapter allowing it to be plugged into a PC's USB slot, so this approach won't incur any extra cost. The saved data will only be angle and distance measurement pairs, so the card's (relatively) small size won't pose any memory issues. 
 				
 				\subsubsection{Software}
-				First, the microcontroller must save this data to the connected Micro SD-Card. Mbed has a library called SDFileSystem used for interaction with connected SD cards. Using this library, a simple text file will be created on the Micro SD-Card and angle/distance measurements obtained from the LIDAR sensor will be written to it. This file will be written to the SD-Card after all movement and scanning has been done to keep the program simple. The FRDM-K64F features 256kB of RAM, and a C float is around 4 bytes. If we quite generously assume 156kB will be taken up by task stacks and other program necessities, that still leaves around 100kB of free RAM. In 100000 bytes, we can still store 25000 floats in RAM. Given that each returned scan will probably have two floats (an angle and a distance) we can store at least 12500 readings which is a good few seconds of LIDAR data.
+				First, the microcontroller must save this data to the connected Micro SD-Card. Mbed has a library called SDFileSystem used for interaction with connected SD cards. Using this library, a simple text file will be created on the Micro SD-Card and angle/distance measurements obtained from the LIDAR sensor will be written to it. As the LIDAR scans data it will populate a buffer, and once the buffer has been filled it will be written to the card. After this the buffer will be cleared and begin being populated again. The FRDM-K64F features 256kB of RAM, and a C float is around 4 bytes. If we quite generously assume 156kB will be taken up by task stacks and other program necessities, that still leaves around 100kB of free RAM. In 100000 bytes, we can still store 25000 floats in RAM. Given that each returned scan will probably have two floats (an angle and a distance) we can store at least 12500 readings before the robot needs to pause to write them to file, which should be more than adequate.
 				
-				Once readings have been written to the SD-Card, it will be removed and plugged into a USB adapter so it can be plugged into a computer. For ease of use, a GUI program will be used to automate the rest of the functionality. To design the GUI, a Python library called Tkinter will be used. It offers all the widgets that will need to be used to make a basic GUI such as frames, buttons and labels and its support of most (if not all) operating systems will allow it to be easily used. The GUI's job then is to create an appropriate input for CSM and to use it to generate a map from the readings. CSM takes in readings in the form of either a json or a carmen log. Of the two, json will be used due to its familiarity and much more easily accessible documentation around the internet. To invoke the CSM software itself via the program, Python features a subprocess module which allows for Python programs to spawn simple subprocesses and retrieve information they return. Once the software has processed a map from the readings, it will be output onto the screen so that the user can view it.
+				Once readings are successfully being obtained and stored to the SD-Card medium, development should focus on turning this data into a map. The first stage will consist of something relatively simple. Converting the measurements into a simple outline or scatterplot graph will allow for some easy visibility on the quality of the readings being retrieved, and will serve as a solid base prototype as developmental focus moves toward making this generated map incorporate multiple scans at different positions. 
+				
+				To design the GUI, a Python library called Tkinter will be used. It offers all the widgets that will need to be used to make a basic GUI such as frames, buttons and labels and its support of most (if not all) operating systems will allow it to be easily used. To create the regular map to begin with, a Python library called matplotlib will be used. Provided with x and y coordinates, matplotlib can plot these points onto a scatterplot graph. If the angles and distances are converted into appropriate x and y coordinates it should be relatively straight forward to produce a map early on. Once this has been achieved, focus should be turned to implementing CSM for a true SLAM product. The GUI's job at that point is to create an appropriate input for CSM and to use it to generate a map from the readings. CSM takes in readings in the form of either a json or a carmen log. Of the two, json will be used due to its familiarity and much more easily accessible documentation around the internet. To invoke the CSM software itself via the program, Python features a subprocess module which allows for Python programs to spawn simple subprocesses and retrieve information they return. Once the software has processed a map from the readings, it will be output onto the screen so that the user can view it.
 		\newpage
-		\section{Pseudo Code}
-		To help illustrate the system's overall design some pseudo code has been made. To prevent it from being overcomplicated some aspects such as the declaration of task priorities or memory stacks have been omitted, the pseudo code's purpose is not to show each and every aspect of what needs to be implemented but rather to serve as a structural guide during the implementation.
-		%PSEUDO CODE HERE, COPY FINAL ROBOT CODE
-		\begin{lstlisting}
-			FileSystemDeclaration
-			LIDARSerialConnectionDeclaration		
-			
-			scanningSemaphore
-			writingSemaphore
-			
-			movementTask() {
-				acquireSemaphores
-				move
-				releaseScanSemaphore
-				pendScanSemaphore
-				releaseWritingSemaphore
-				pendWritingSemaphore
-			}
-			
-			scanTask() {
-				pendScanSemaphore
-				scan
-				releaseScanSemaphore
-			}
-			
-			writeTask() {
-				pendWritingSemaphore
-				write
-				releaseWritingSemaphore
-			}
-		\end{lstlisting}
+		
+		\section{Final Design Documentation}
+		\label{sec:finaldesigndocs}
+			\subsection{Class Diagram}
+			Fig \ref{fig:classdiagram} shows the intended classes for the robot's software.
+			\begin{itemize}
+				\item \textbf{Robot} - The core of the robot's program, this will contain the initial OS setup and the main task which will delegate commands to the Control and Lidar classes.
+				\item \textbf{Control} - The Control class will deal with manipulation of the robot's motors. It will contain the relevant variables for each of the motor's direction and speed pins, and given an angle and speed will calculate the necessary values that need to be assigned to these pins to steer the robot in the right direction. 
+				\item \textbf{Lidar} - The Lidar class will handle the robot's operations with the sensor. It will store relevant variables for the sensor's operation such as the DTR pin variable allowing it to signal that it is ready to receive data from the sensor, and relevant serial variables to actually retrieve this data from. It will also contain a buffer which it will populate with readings before having them written by its fileWriter class. It will have methods to start and stop the LIDAR's scanning, a method to actually store the readings in the buffer and a method that returns the latest reading for obstacle detection. It will also have some methods that act as wrappers for the SDK's functionality such as getHealth() and getInfo().
+				\item \textbf{FileWriter} - The FileWriter class deals with writing the data to the robot's Micro SD-Card. It will have a declaration of the SDFileSystem class provided by the library of the same name, and when supplied with a populated readingsBuffer by the Lidar class it will write the values in the buffer to the SD-Card.
+			\end{itemize}
+			\begin{figure}[ht]
+				\centering
+				\includegraphics[width=\linewidth]{SYNTHESIS/classdiagram.png}
+				\caption{Class Diagram}
+				\label{fig:classdiagram}
+			\end{figure}
+		
+		\section{State Machine}
+		The finite state machine in \ref{fig:statemachine} represents the different states that the robot can be in.
+		\begin{itemize}
+			\item \textbf{Initialize} - Setup of variables and tasks once the robot receives power.
+			\item \textbf{Scan} - Retrieving observations from the LIDAR and populating buffer.
+			\item \textbf{Obstacle Detected} - Recieved measurement has a very low distance.
+			\item \textbf{Save Data} - Once the buffer is full it's written to a file.
+			\item \textbf{Move} - Moving away from obstacles.
+		\end{itemize}
+		
+		\begin{figure}[ht]
+			\centering
+			\includegraphics[width=.8\linewidth]{SYNTHESIS/statemachine.png}
+			\caption{Finite State Machine}
+			\label{fig:statemachine}
+		\end{figure}
 		
 	\chapter{Implementation}
 		\section{Introduction}
@@ -199,11 +215,11 @@
 		Before work can begin implementing any specific functionality for the robot, some preliminary hardware assembly and software setup had to be carried out.
 			
 			\subsection{Hardware}
-			First of all the physical chassis had to be assembled. The only available documentation was fig \ref{fig:chassisassembly}, a labeled picture of an already assembled chassis which wasn't terribly useful. Luckily the construction was relatively straight forward, and only took around thirty minutes. Once the structure was built, the wheels where pushed onto the motors where they clicked on. The Quad Motor Shield was then installed onto the K64F microcontroller without any problems.
+			First of all the physical chassis had to be assembled. The available documentation for the chassis' construction is \ref{fig:chassisassembly} which came in the chassis box. Construction was relatively straight forward and the diagram was of help with a few parts, so it only took around thirty minutes to assemble the structure. Once it was built, the wheels where pushed onto the motors where they clicked on. The Quad Motor Shield was then installed onto the K64F microcontroller without any problems.
 				
 			\subsection{Software}
-			To speed up later development a basic Micro C OS was created and deployed onto the microcontroller. This OS resembled the pseudo code and was composed of skeleton tasks that simply printed their task name to the console when they ran. Semaphores were initialized and combined with the print messages the basic program flow could be figured out.
-
+			To speed up later development a basic Micro C OS was created and deployed onto the microcontroller. This OS resembled the pseudo code and was composed of skeleton tasks and classes with method stubs.
+			
 		\section{Implementing Requirements}
 			\subsection{Movement}
 				\subsubsection{Hardware}
@@ -211,15 +227,13 @@
 				
 				Each pair of power and ground ports are labelled with a number on the shield (e.g M1, M2 etc). From hereonn in, the motors will be referred to with these same numbers. Fig \ref{fig:robotwheels} shows the position and names of each of the wheels on the robot.
 				% FIG HERE
-			
-
 				
 				
-				At this point it was time to power the motors by connecting the 12V battery pack to the motor shield. Initially it was planned that this would be achieved from a breadboard, as the breadboard would allow the use of voltage regulators to supply lower voltages to the other components. A problem was encountered here though in the way of space. The microcontroller, motor power cables and battery pack alone already cluttered nearly all of the lower level of the robot. The additional of a breadboard with voltage regulators and additional wiring would be an incredibly difficult fit with wires potentially breaking or coming loose, and there was still the matter later on of connecting the LIDAR properly. This resulted in two decisions being made. The first was that the LIDAR would simply recieve power from the microcontroller. The second decision was that the microcontroller would receive its own battery. The K64F features a VIN pin for power that takes between 5V and 9V, so a 6V battery pack was obtained. The power cable was connected to the VIN, and the ground cable shared a ground port with the motor's battery pack.
+				At this point it was time to power the motors by connecting the 12V battery pack to the motor shield. Initially it was planned that this would be achieved from a breadboard, as the breadboard would allow the use of voltage regulators to supply lower voltages to the other components. A problem was encountered here though in the way of space. The microcontroller, motor power cables and battery pack alone already cluttered nearly all of the lower level of the robot. The additional of a breadboard with voltage regulators and additional wiring would be an incredibly difficult fit with wires potentially breaking or coming loose, and there was still the matter later on of connecting the LIDAR properly. This resulted in two decisions being made. The first was that the LIDAR would simply receive power from the microcontroller. The second decision was that the microcontroller would receive its own battery. The K64F features a VIN pin for power that takes between 5V and 9V, so a 6V battery pack was obtained. The power cable was connected to the VIN, and the ground cable shared a ground port with the motor's battery pack. Preliminary tests confirmed that the motors responded to commands sent to them by the robot's software.
+				% LINK TO TESTING
 				
 				\subsubsection{Software}
-				Each of the three motors were now connected to two pins on the Quad Motor Shield. One pin affected direction, the other affected the speed. Direction was a simple case of polarity. Depending on the motor, HIGH or LOW dictated whether the motor span forwards or backwards. These pins could be declared as DigitalOut variables, and assigned either a 1 or a 0 depending on what was needed.  The pins that affected speed did so via pulse width modulation, so these could be declared as PwmOut variables and floats could be assigned to them to affect their duty cycle. The motor driver's documentation has a table stating which of the pins on the shield corresponded to which motors, so whichever K64F pin was connected to the relevant shield pin was used for the variables.
-				
+				Each of the three motors were now connected to two pins on the Quad Motor Shield. One pin affected direction, the other affected the speed. Direction was a simple case of polarity. Depending on the motor, HIGH or LOW dictated whether the motor span forwards or backwards. These pins could be declared as DigitalOut variables, and assigned either a 1 or a 0 depending on what was needed.  The pins that affected speed did so via pulse width modulation, so these could be declared as PwmOut variables and floats could be assigned to them to affect their duty cycle. The motor driver's documentation has a table stating which of the pins on the shield corresponded to which motors, so whichever K64F pin was connected to the relevant shield pin was used for the variables. These variables were declared within the control header and cpp files.
 				% state specifically which pin for each motor or is that too granular?
 				\begin{lstlisting}
 				DigitalOut  M1_DIR(D4);
@@ -232,21 +246,7 @@
 				PwmOut M3_SPD(D5);
 				\end{lstlisting}
 				
-				Simple movement could be achieved just by configuring different motors to spin in different directions initially. Functions were made that allowed the robot to drive in four basic directions. One such function can be seen below.
-				\begin{lstlisting}
-				static void goForward() {
-					pc.printf("goForward");
-					M2_DIR = 1;
-					M3_DIR = 1;
-				
-					M1_SPD = 0;
-					M2_SPD = 0.5f;
-					M3_SPD = 0.5f;
-				}
-				\end{lstlisting}
-				
-				This for example set Motor 2 to spin clockwise and Motor 3 to spin counter-clockwise. Both of these wheels therefore moved in the direction of the first motor, and the small rollers on the wheel allowed the robot to frictionlessly slide in this direction.
-				
+				Stubs of the methods listed in \ref{fig:classdiagram} were created for the class. Some basic movement methods were made to ensure the robot could actually navigate, making it go forwards and backwards but the ideal implementation involved movement being possible for every headings in a 360 degree radius. Some preliminary problems with calculating force values came up as an issue however. Most force calculations resulted in a raw float values between -1 and 1, but this couldn't be assigned to a speed spin because the pins only supported positive value. Forward and backward motion was dictated by the directional pin. Issues involving other project components ate up time as well, and this aspect of the project was accordingly never fully realised. These problems are explained in \ref{evaluation:processevaluation}.
 				
 			\subsection{Observation}
 			Implementation of the robot's ability to take observations about its environment first involved a hardware configuration. The LIDAR sensor needed to be connected to the microcontroller so that it could draw power from the battery, as well as communicate with the microcontroller allowing it to receive commands and send observational data. Once the hardware connection was established, software on the microcontroller had to be capable of operating the LIDAR sensor and recieving its observations.
@@ -281,60 +281,49 @@
 				Once this was done, the LIDAR was able to function mechanically.
 				
 				\subsubsection{Software}
-				Following the hardware setup the microcontroller needs to actually communicate with the LIDAR sensor so that it can send commands, as well as receive observational data. 
+				Following the hardware setup the microcontroller needs to actually communicate with the LIDAR sensor so that it can send commands, as well as receive observational data. This was the responsibiltiy of the lidar.cpp class.
 				
-				To first of all ensure the LIDAR is ready to communicate, the previously discussed MOTOCTL pin on the LIDAR needs to be recieving a HIGH signal so that it knows the microcontroller is ready to begin recieving data. The K64F features numerous GPIO pins that can be easily configured for usage in situations like this. One such pin (D7) was simply declared as a basic DigitalOut allowing the microcontroller to manipulate the pin's polarity.
+				To first of all ensure the LIDAR is ready to communicate, the previously discussed MOTOCTL pin on the LIDAR needs to be recieving a HIGH signal so that it knows the microcontroller is ready to begin recieving data. The K64F features numerous GPIO pins that can be easily configured for usage in situations like this. One such pin (D7) was declared as a basic DigitalOut allowing the microcontroller to manipulate the pin's polarity.
 				
-				% too granular?
 				\begin{lstlisting}
 				DigitalOut dtr(D7);
 				\end{lstlisting}
 				
-				When we want the sensor to output data this pin can be set to HIGH...
+				Simple methods were used for this manipulation. When the sensor needs to output data the pin was set to HIGH...
 				\begin{lstlisting}
-				dtr = 1;
-				\end{lstlisting}
-				
-				...or when we want it to stop, we can set it to LOW.
-				\begin{lstlisting}
-				dtr = 0;
-				\end{lstlisting}
-				
-				Once this was done and the DTR pin was set to HIGH, the LIDAR began spinning. The microcontroller didn't instantly begin recieving data however, as simply connecting the LIDAR and microcontroller serial pins are not enough for communication. In order to interact with the serial channel it needs to be declared in the robot's core program as an appropriate variable. There exists a library for arm MBED microcontroller called BufferedSerial which can be used for this. The original Serial library that it is based on allows for serial communication, with BufferedSerial simply adding a buffer to this. The core functionality remains the same however.
-				
-				First the pins being used for serial communication need to be declared as a BufferedSerial variable, with BufferedSerial taking the TX and RX pin (in that order) of the microcontroller. 
-				\begin{lstlisting}
-				BufferedSerial lidar_device(D1, D0);
-				\end{lstlisting}
-				
-				As previously discussed in the Design, SLAMTEC has an SDK that automates most of the LIDAR functionality. The appropriate files were added to the project and made able to be used by the core program with a simple include statement at the top of the main.cpp file.
-				\begin{lstlisting}
-				RPLidar lidar;
-				\end{lstlisting}
-				
-				Following this a base lidar variable can be declared from the RPLidar class the SDK adds.
-				\begin{lstlisting}
-				RPLidar lidar;
-				\end{lstlisting}
-				
-				Once this variable has been declared, in the program's main method the DTR is set to 0 to ensure that the LIDAR won't start scanning and outputting data when we don't need it to. The LIDAR variable is then connected to the relevant serial variable (the previously declared BufferedSerial) and the start scan command is issued. Despite receiving the command to start scanning the LIDAR won't begin until the DTR gives it the go ahead, but by configuring this as soon as the program begins it's a lot easier to stop and start the LIDAR data output.
-				\begin{lstlisting}
-				dtr = 0;
-				lidar.begin(lidar_device);
-				lidar.startScan();
-				\end{lstlisting}
-				
-				From here, two different simple one-line methods are used to start and stop the lidar.
-				\begin{lstlisting}
-				static void beginScanning() {
+				void beginScanning() {
 					dtr = 1;
 				}
+				\end{lstlisting}
 				
-				static void stopScanning() {
+				...or when it had to stop, it was set to LOW.
+				\begin{lstlisting}
+				void stopScanning() {
 					dtr = 0;
 				}
 				\end{lstlisting}
-				These methods allow for quick and easy configuring of the DTR pin.
+				
+				The microcontroller didn't instantly begin recieving data once this was set up however, as simply connecting the LIDAR and microcontroller serial pins are not enough for communication. In order to interact with the serial channel it needs to be declared in the robot's core program as an appropriate variable. There exists a library for arm MBED microcontroller called BufferedSerial which can be used for this. The original Serial library that it is based on allows for serial communication, with BufferedSerial simply adding a buffer to this. The core functionality remains the same however.
+				
+				First the pins being used for serial communication need to be declared as a BufferedSerial variable, with BufferedSerial taking the TX and RX pin (in that order) of the microcontroller. It also has an optional baud rate parameter, the LIDAR documentation lists the used baud rate as 115200 so this was supplied just to be safe.
+				\begin{lstlisting}
+				BufferedSerial lidar_device(D1, D0, 115200);
+				\end{lstlisting}
+				
+				As previously discussed in \ref{sec:observation:software}, SLAMTEC has an SDK that automates most of the LIDAR functionality. The appropriate files were added to the project and made able to be used by the core program with a simple include statement at the top of the lidar.cpp file.
+				Following this a base RPLidar variable can be declared from a class the library adds.
+				\begin{lstlisting}
+				RPLidar lidar;
+				\end{lstlisting}
+				
+				Once this variable has been declared, in the class' main method the DTR is set to 0 to ensure that the LIDAR won't start scanning and outputting data when we don't need it to. The LIDAR variable is then connected to the relevant serial variable (the previously declared BufferedSerial) and the start scan command is issued. Despite receiving the command to start scanning the LIDAR won't begin until the DTR gives it the go ahead, but by configuring this as soon as the program begins it's a lot easier to stop and start the LIDAR data output.
+				\begin{lstlisting}
+				Lidar::Lidar() {
+					dtr = 0;
+					rplidar.begin(lidar_device);
+					rplidar.startScan();
+				}
+				\end{lstlisting}
 				
 				Now that the LIDAR is configured and can begin sending out data, it's time to start actually storing it within the program. First we need appropriate mediums for the storage of LIDAR data. This entails something to store a LIDAR sample that has just arrived so we can manipulate it to take what we need from it, and also a buffer to store all the total readings collect so that they can later be written to disk. 
 				
@@ -349,45 +338,27 @@
 				};
 				\end{lstlisting}
 				
-				Now we need somewhere to store the readings themselves so they can be written to disk later on. We're interested in storing a large number of angle/distance pairs, so a large two dimensional array was used.
+				Now a buffer is needed to store the readings so that they can be written to disk later on. A large number would be preferable so the robot doesn't need frequent stops to save them to the SD-Card. Initially a two dimensional array was used but there was some difficulty in supplying it as a parameter to the fileWriter class, so two large arrays of floats were used.
 				\begin{lstlisting}
-				float readingsBuffer[16000][2];
+				float angles[8000];
+				float distances[8000];
 				\end{lstlisting}
-				A two dimensional array was used to ensure an understandable format to the array. The array has 16000 spaces, with each space storing two seperate float values (angle and distance respectively). Now the actual method to take LIDAR readings and store them in the buffer needs to be made.
 				
 				Now that readings can be manipulated and stored, it's time to properly implement the method that stores them to a buffer.
 				\begin{lstlisting}
-				static void takeReadings() {
-					int arraySize = (sizeof(readingsBuffer)/sizeof(float))/2;
+				void takeReadings() {
 					struct RPLidarMeasurement measurement;
-					for(int i = 0; i < arraySize; i++) {
+					for(int i = 0; i < sizeof(angles); i++) {
 						lidar.waitPoint();
 						measurement = lidar.getCurrentPoint();
-						readingsBuffer[i][0] = measurement.angle;
-						readingsBuffer[i][1] = measurement.distance;
+						// Get angle
+						angles[i] = measurement.angle;
+						// Get distance
+						distances[i]] = measurement.distance;
 					}
 				}
 				\end{lstlisting}
-				The method iterates through the buffer and stores the angle and distance of each reading it receives.
-				
-				All of these methods can now be incorporated into the scan task.
-				\begin{lstlisting}
-				static void appTaskScan(void *pdata) {
-					uint8_t status;
-				
-					while(true) {
-						OSSemPend(readyToScan, 0, &status);
-						pc.printf("Scanning...\n");
-						beginScanning();
-						takeReadings();
-						stopScanning();
-						pc.printf("Stopping scan.\n");
-						status = OSSemPost(readyToScan);
-						OSTimeDlyHMSM(0,0,0,4);
-					}
-				}
-				\end{lstlisting}
-				Once the readyToScan semaphore has been released, the scan task acquired it and the LIDAR begins scanning. Then the readings are stored to the buffer so they can be written to the disk later and the LIDAR stops scanning. It then releases the semaphore so that the movement task can begin again.		
+				The method iterates through both buffers and stores the angle and distance of each reading it receives.		
 				
 			\subsection{Processing Observational Data}
 			Processing the observational data first involves actually finding a way to take it from the robot. It was determined that the best way to implement this would be via the use of a Micro SD-Card. Once this was done, the data itself needed to be turned into some form of map.
@@ -396,7 +367,7 @@
 				The only hardware elements that were needed to implement this functionality were the Micro SD-Card socket on the microcontroller, a Micro-SD card and a USB adapter allowing for a computer to access the files on the SD-Card. The socket was already attached to the microcontroller and no adjustments needed to be made to the hardware for the microcontroller to access it.
 				
 				\subsubsection{Software}
-				In order to access the Micro SD-Card the SDFileSystem library was used, and was incorporated into the program by simplying including the main SDFileSystem header. To use the library, an SDFileSystem variable first needs to be instantiated. This variable takes five parameters, four relevant microcontroller pins and a name. Table \ref{table:sdfilesystempins} describes each of the four pins the SDFileSystem needs, the name of the corresponding microcontroller pin and what the pin actually is.
+				A FileWriter class was created to handle the functionality of writing the data in the buffer to disk. In order to access the Micro SD-Card the SDFileSystem library was used, and was incorporated into the program by simply including the main SDFileSystem header. To use the library, an SDFileSystem variable first needs to be instantiated. This variable takes five parameters, four relevant microcontroller pins and a name. Table \ref{table:sdfilesystempins} describes each of the four pins the SDFileSystem needs, the name of the corresponding microcontroller pin and what the pin actually is.
 	
 				\begin{table}[h!]
 					\centering
@@ -420,7 +391,7 @@
 				#define MOSI		PTE3
 				#define MISO		PTE1
 				#define	SCLK		PTE2
-				#define	CS				PTE4
+				#define	CS			PTE4
 				
 				SDFileSystem sd(MOSI, MISO, SCLK, CS, "sd");
 				\end{lstlisting}
@@ -428,51 +399,87 @@
 				With this variable the file system on the Micro SD-Card is able to be accessed. The previously described scan task is what populates the readingsBuffer with data that is needed, so a method is required to iterate through the buffer and write the observational data to the Micro SD-Card.
 				
 				\begin{lstlisting}
-				static void writeReadings() {
-					int arraySize = (sizeof(readingsBuffer)/sizeof(float))/2;
-				
+				void writeReadings(float angles[], float distances[]) {
 					// Create the readings file on the Micro SD-Card
 					FILE *fp = fopen("/sd/readings.txt", "w");
-				
+					
 					// Error checking
 					if (fp == NULL) {
 						pc.printf("Unable to access/create file \n");
 					}
-				
+					
 					// Iterate through the readingsBuffer and write the angle/distance pairs
-					for(int i = 0; i < arraySize; i++) {
-						fprintf(fp, "%f,%f ", readingsBuffer[i][0], readingsBuffer[i][0]);
+					for(int i = 0; i < angles.length; i++) {
+						fprintf(fp, "%f %f", angles[i], distances[i]);
 					}
-				
+					
 					// Close file
 					fclose(fp);
 				}
+				
 				\end{lstlisting}
 				First the fopen method is called with a designated file, and the "w" parameter (meaning write) ensures that the file will be created if it doesn't already exist. Then a basic error check follows to make sure that the file is accessible, followed by an iteration through the readingsBuffer. As was previously mentioned, the buffer is populated by pairs of angle and distance measurements, so for each entry in the array the angle and distance is written to the file. These pairs were written as two values seperated by a comma, with each value being seperated by a space. This was done to make it easier to read from a program point of view. The plan was that the file can be split by spaces to get pairs, and then each pair can be split by a comma to get the individual values. Finally, the file is closed.
 				
-				This method can now be incorporated into the robot's writing task.
+				As mentioned in \ref{section:processing:intro}, a GUI would be used for the processing of map data. Tkinter is a simple Python package that is capable of quickly creating incredibly basic GUIs. All that was needed was a panel with some buttons that called methods to turn our readings file into a map.
+				% get picture of a gui with plain buttons?
+				
+				The first thing to do was begin generating a plain map. Once a simple map could be made from angle and distance measurements obtained from the robot, this process could be elaborated upon to move toward something more thorough generated by CSM. For this, matplotlib was used. matplotlib would allow the generation of a scattermap and, when supplied with x and y values, would plot appropriate points at these coordinates onto the map. The first task was to convert angles and distances into usable x and y coordinates.
+				
+				Initially dummy data was used to verify that the process worked. First, data from a .txt file had to actually be read into the program. A button was attached to a simple method that did this.
+				\begin{lstlisting}
+					# Retrieve distance-angle pairs from a text file
+					def readData(self):
+						try:
+							with open("coordinates.txt") as textFile:
+								lines = [line.split() for line in textFile]
+								# Values are read in as strings, so we convert them to ints
+								for i in lines:
+									i[0] = int(i[0])
+									i[1] = int(i[1])
+									return lines
+						
+					except IOError:
+						print("Error reading file!") 
+				\end{lstlisting}
+				Angle and distance pair values are read in from a text file. These values are separated by whitespace, so the method iterates through each line in the file and splits each line into two tokens which are kept in an array. These tokens are read in as strings so they are cast to ints.
+				
+				Once this data was being gathered from a text file it needed to be turned into a plottable x and y coordinate. This was achieved with some trigonometry.
+				\begin{lstlisting}
+					def getCoords(self, measurement):
+						x = measurement[1] * math.cos(math.radians(measurement[0]))
+						y = measurement[1] * math.sin(math.radians(measurement[0]))
+						return x, y
+				\end{lstlisting}
+				Each angle and distance pair is turned into its corresponding value on an x and y axis. Now that it was possible to read in data and turn it into a plottable point, it was time to combine this into an actual map.
 				
 				\begin{lstlisting}
-				static void appTaskWrite(void *pdata) {
-					uint8_t status;
-				
-					while(true) {
-						OSSemPend(readyToWrite, 0, &status);
-						pc.printf("Writing readings to SD card...\n");
-						writeReadings();
-						pc.printf("Done writing.\n");
-						status = OSSemPost(readyToWrite);
-						OSTimeDlyHMSM(0,0,0,5);
-					}
-				}
+					# Draw map on plot
+					def showMap(self):
+						measurements = self.readData()
+						coords = []
+						x = []
+						y = []
+						
+						# Turn distance-angle pairs into usable coordinates
+						for measurement in measurements:
+							x.append(self.getXCoord(measurement))
+							y.append(self.getYCoord(measurement))
+						
+						plt.plot(x, y)
+						plt.show()
 				\end{lstlisting}
-				The task pends on a readyToWrite semaphore which is released at the very end of the movement task once all movement and scanning has been performed. The write task acquired the semaphore, calls the method to write the readingsBuffer to disk and then posts the semaphore. Once this has finished the data can be used for mapping purposes.
+				This method was attached to a button. It uses the previously described readData() method to retrieve values from a file, turns each of the retrieved measurements into a plottable coordinate, appends it to an array and finally this array is plotted by the matplotlib scatterplot.
+				%picture of the test map here
 				
-				As mentionted before, a GUI would be used for the processing of map data. Tkinter is a simple Python package that is capable of quickly creating incredibly basic GUIs. All that was needed was a panel with some buttons that called methods to turn our readings file into a map.
+				This was as far as this component got in development unfortunately. Issues with other features cost time, and problems were encountered with getting CSM to work. These problems are explained in \ref{evaluation:processevaluation}.
 				
-				It was first necessary to be capable of standard mapping to ensure that the data being obtained from the LIDAR sensor was actually a reflection of the environment that it scanned. A simple Tkinter GUI was created consisting of a few buttons
 	
 	\chapter{Testing}
+	This chapter will discuss the testing of what was created during the project's implementation stage. The purpose of the testing is to determine how well, if at all, elements of the implemented work satisfy the requirements outlined in \ref{requirements}. Each test will have its process and purpose described, and based on the results there will be a discussion of how it affected development. These results will also be used for the product's evaluation.
+	
+	Because the project employs both software which is easy to view and understand, and hardware which in some cases only the results of inputs could be seen rather than how the inputs were actually processed, a mixture of white and black box testing was employed.
+	
+	In keeping with the developmental methodology outlined in \ref{synthesis:methodology}, tests were carried out at key functional milestones to ensure that what was implemented was robust and appropriate enough to be iterated on by the next prototype. When appropriate, it will be explained what stage of development the project was at during the test.
 	%Purpose of testing, what will happen here
 	%Nature of testing. Black/white box?
 	%Explain the importance of testing in relevance to the chosen methodology
