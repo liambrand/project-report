@@ -219,7 +219,7 @@
 			First of all the physical chassis had to be assembled. The available documentation for the chassis' construction is \ref{fig:chassisassembly} which came in the chassis box. Construction was relatively straight forward and the diagram was of help with a few parts, so it only took around thirty minutes to assemble the structure. Once it was built, the wheels where pushed onto the motors where they clicked on. The Quad Motor Shield was then installed onto the K64F microcontroller without any problems.
 				
 			\subsection{Software}
-			To speed up later development a basic Micro C OS was created and deployed onto the microcontroller. This OS resembled the pseudo code and was composed of skeleton tasks and classes with method stubs.
+			A basic Micro C OS was created and deployed onto the microcontroller. This OS resembled the pseudo code and was composed of skeleton tasks and classes with method stubs.
 			
 		\section{Implementing Requirements}
 			\subsection{Movement}
@@ -498,12 +498,21 @@
 			%These will be verified from my personal observations.
 			%Test forwards, backwards, left, right, and then do a spinny.
 			
+			%while true
+			%int direction = math.rand(0,4)
+			%if direction = 0 go forward
+			%if direction = 1 go backward, etc
+			
 		\section{Testing the Observation}
 		%To get the LIDAR SDK working, a serial terminal was used.
 			%Connect LIDAR to microcontroller and print
 			%Then the OS started the LIDAR and began printing the values to the terminal.
 			
-			%Do the same for when the LIDAR is plugged into the motor shield on top of the microcontroller?
+			%Do the same for when the LIDAR is plugged into the motor shield on top of the microcontroller? - naw, have this by default
+			
+			%Show the test code
+			%Say your observations
+				%Moved things closer, distances got lower. Moved things away, distances got higher.
 			
 		\section{Testing the File Writing}
 		%LIDAR was ran and told to print the first 10 values that it got.
