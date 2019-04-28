@@ -6,7 +6,7 @@
 		\section{Tests}
 		\label{testing:testlogs}
 			\begin{landscape}
-				\subsection{Basic Movement Tests}
+				\subsection{Movement Tests}
 				\begin{table}[h!]
 					\centering
 					\label{table:movementtestsbasic}
@@ -51,6 +51,23 @@
 						
 						Output reading & Determine ability to retrieve data from the LIDAR sensor & Terminal prints scan data & As expected & Pass \\
 						 
+						Stop sensor & Determine microcontroller's ability to stop LIDAR sensor & Sensor stops spinning & As expected & Pass   \\ [1ex] 
+						\hline
+					\end{tabular}		
+				\end{table}
+			
+				\subsection{File Writing Tests}
+				\begin{table}[h!]
+					\centering
+					\label{table:filewritingtests}
+					\begin{tabular}{| p{2.5cm} | p{5cm} | p{4cm} | p{3cm} | p{1.5cm} |} 
+						\hline
+						Test & Test Purpose & Expected Result & Actual Result & Pass/Fail \\ [0.5ex] 
+						\hline
+						Begin sensor & Determine microcontroller's ability to start LIDAR sensor & Sensor starts spinning & As expected & Pass  \\
+						
+						Output reading & Determine ability to retrieve data from the LIDAR sensor & Terminal prints scan data & As expected & Pass \\
+						
 						Stop sensor & Determine microcontroller's ability to stop LIDAR sensor & Sensor stops spinning & As expected & Pass   \\ [1ex] 
 						\hline
 					\end{tabular}		
@@ -143,5 +160,54 @@
 					OSTimeDlyHMSM(0,0,1,0);
 				}
 			}
+			\end{lstlisting}
+			
+			\subsection{SDFileSystem Testing}
+			\label{testcode:filewriting1}
+			\begin{lstlisting}
+			void writeTest() {
+				// Create the readings file on the Micro SD-Card
+				FILE *fp = fopen("/sd/readings.txt", "w");
+				
+				// Log if the file cannot be made
+				if (fp == NULL) {
+					pc.printf("Unable to access/create file \n");
+				}
+				
+				fprintf(fp, "Hello World!");
+				
+				// Close file
+				fclose(fp);
+			}
+			\end{lstlisting}
+			
+			\label{testcode:filewriting2}
+			\begin{lstlisting}
+				dtr = 1;
+				rplidar.begin(lidar_device);
+				rplidar.startScan();
+				struct RPLidarMeasurement measurement;
+				
+				static void writeTest() {
+					struct RPLidarMeasurement measurement;
+
+					// Create the readings file on the Micro SD-Card
+					FILE *fp = fopen("/sd/readings.txt", "w");
+					
+					// Log if the file cannot be made
+					if (fp == NULL) {
+						pc.printf("Unable to access/create file \n");
+					}
+
+					for(int i = 0; i < 10; i++) {
+						lidar.waitPoint();
+						measurement = lidar.getCurrentPoint();
+						pc.printf("Angle:%f Distance:%f\n", measurement.angle, measurement.distance);
+						fprintf(fp, "%f %f\r\n", measurement.angle, measurement.distance);
+					}
+					
+					// Close file
+					fclose(fp);
+				}
 			\end{lstlisting}
 			

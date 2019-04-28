@@ -531,9 +531,15 @@
 				
 				The first test was more of a proof of process with regards to LIDAR manipulation. Once the microcontroller task began, data was successfully being printed to the terminal for different angles. The frequency of the printing was significantly lower than the LIDAR's sample rate of 4000 - 8000hz, so a complete spectrum from zero to 360 degrees was not always viewable. Objects were placed around the LIDAR and moved closer to it. It was observed from that that different distance values began decreasing. When the objects were moved away, these values increased again. 
 				
-			\subsection{File Writer Tests}
-			
-				\subsubsection{Test Results}
+			\subsection{SDFileWriter Tests}
+			Tests for the SDFileWriter library concerned ensuring that the microcontroller was able to write files to the connected SD-Card utilizing the provided SDFileSystem class, otherwise there would be no way for the system to obtain scan data to construct a map out of. Once the basic implementation of the SDFileSystem had occured and it was possible to write data to a file, it needed to be tested with LIDAR values.
+				
+				\subsubsection{Test One}
+				The method at \ref{testcode:filewriting2} was created for this test. After setting up the LIDAR variables a for loop took ten LIDAR scans and wrote them to a file. As these scan values were written they were printed to a terminal via a serial connection, allowing the terminal and the generated file to be compared to ensure that the values were the same.
+				% picture comparison here?
+				
+			\subsection{Mapping Tests}
+			Once the GUI was able to process dummy coordinates and the microcontroller was able to retrieve and store observational data, it was time to bring these things together in an attempt to generate a workable map.
 			
 			\subsection{System Testing}
 			As well as each individual component being tested, it was important that the system as a whole be put through tests to ensure the individual elements were working together. This also served as a way to properly test the full system, and the results of these tests will make clear whether the project's requirements have been properly implemented.
@@ -549,37 +555,6 @@
 			The drive forward task passing at least indicates that the motors are functional, but the functional requirement of the robot being capable of movement has an implication of it being multi directional. The other movement tests failing means that the requirement for the robot to move, whilst satisfied in a literal sense, has ultimately not been met.
 			
 			The other tests that failed all pertained to the robot's capability to map areas. Whilst the GUI produced plotted points the maps did not resemble the environments that the robot was tested in. Based on this, it can be concluded that the functional requirement for the system to process scanned data into a map has not been satisfied. This has the follow on effect of the requirements for maps being accurate for different areas as well as consistent for the same area not being implemented as well.
-
-			% we can get a test table for this maybe, move stuff away and closer at different angles
-			
-		%To get the LIDAR SDK working, a serial terminal was used.
-			%Connect LIDAR to microcontroller and print
-			%Then the OS started the LIDAR and began printing the values to the terminal.
-			
-			%Do the same for when the LIDAR is plugged into the motor shield on top of the microcontroller? - naw, have this by default
-			
-			%Show the test code
-			%Say your observations
-				%Moved things closer, distances got lower. Moved things away, distances got higher.
-			
-		\section{Testing the File Writing}
-		\begin{lstlisting}
-			dtr = 0;
-			rplidar.begin(lidar_device);
-			rplidar.startScan();
-			struct RPLidarMeasurement measurement;
-		
-			for(int i = 0; i < 10; i++) {
-				rplidar.waitPoint();
-				measurement = rplidar.getCurrentPoint();
-				pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
-			}
-		
-		\end{lstlisting}
-		%LIDAR was ran and told to print the first 10 values that it got.
-		%Values were then saved to the SD card.
-		%USB adapter for the Micro-SD Card was plugged in, values were observed and compared.
-			%Were they different? Did they save? What format did they save in?
 			
 		\section{Testing the GUI}
 		%Firstly, does the GUI run?
