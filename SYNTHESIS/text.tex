@@ -499,30 +499,32 @@
 			/* Start the OS ticker -- must be done in the highest priority task */
 			SysTick_Config(SystemCoreClock / OS_TICKS_PER_SEC);
 			
-			// Random number between 0 and 3
-			
-			while (true) {
-				int r = rand() % 4;
+				// Random number between 0 and 3
 				
-				if(r == 0) {
-					pc.printf("Forward");
-					goForward();
-				}
-				if(r == 1) {
-					pc.printf("Right");
-					goRight();
-				}
-				if(r == 2) {
-					pc.printf("Back");
-					goBackward();
-				}
-				
-				if(r == 3) {
-					pc.printf("Left");
-					goLeft();
-				}
-				
-				OSTimeDlyHMSM(0,0,3,0);
+				while (true) {
+					int direction = rand() % 4;
+					
+					if(direction == 0) {
+						pc.printf("Forward");
+						goForward();
+					}
+					
+					if(direction == 1) {
+						pc.printf("Right");
+						goRight();
+					}
+					
+					if(direction == 2) {
+						pc.printf("Back");
+						goBackward();
+					}
+					
+					if(direction == 3) {
+						pc.printf("Left");
+						goLeft();
+					}
+					
+					OSTimeDlyHMSM(0,0,3,0);
 				
 				}
 			}
@@ -546,10 +548,11 @@
 				dtr = 0;
 				rplidar.begin(lidar_device);
 				rplidar.startScan();
+				struct RPLidarMeasurement measurement;
 				
 				while (true) {
-					lidar.waitPoint();
-					measurement = lidar.getCurrentPoint();
+					rplidar.waitPoint();
+					measurement = rplidar.getCurrentPoint();
 					pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
 					OSTimeDlyHMSM(0,0,1,0);
 				}
