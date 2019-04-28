@@ -3,6 +3,26 @@
 	\includepdf[pages=-]{APPENDICES/TOR.pdf}
 	
 	\chapter{Testing}
+	\section{Integration Testing}
+		\label{intergrationtestingtable}
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{|| l | l ||} 
+				\hline
+				Test & Test Purpose & Expected Result & Actual Result & Pass/Fail & Comments \\ [0.5ex] 
+				\hline
+				Drive Forward & The robot should move forwards during its operation & The robot is able to move forwards & The robot moved forwards when it was switched on & Pass & None  \\
+				Drive Right & The robot should move right during its operation & The robot is able to move right & The robot couldn't move right & Fail & Movement is hardcoded  \\
+				Drive Left & The robot should move left during its operation & The robot is able to move left & The robot couldn't move left & Fail & Movement is hardcoded  \\
+				Scanning & The robot should stop to scan & The robot stops and scans its environment & The robot scanned an area & Pass &   \\ 
+				Writing Scan Data & The robot should write scanned data to the Micro SD-Card & The Micro SD-Card will contain a file with scan data & The Micro SD-Card contained a file with scan data & Pass & None  \\ 
+				Mapping & Using the robot's scan data, the GUI should produce a basic map & (!!!!!!!!!!!) & (!!!!!!!!!!!) & (!!!!!!!!!!!) & (!!!!!!!!!!!)  \\ 
+				SLAM & The system should be capable of producing a dynamic map using multiple scans from different locations & The GUI creates a map from the robot's scan data & No such functionality & Fail & \\ [1ex] 
+				\hline
+			\end{tabular}
+			\label{table:movementtests}		
+		\end{table}
+
 	\ref{appendices:testing}
 		\section{Test Code}
 		\ref{testing:testcode}
