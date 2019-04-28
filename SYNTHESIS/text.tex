@@ -496,11 +496,7 @@
 		\section{Integration Testing}
 		Integration tests were performed to help determine the functionality of each of the system's individual elements, as well as the functionality of the system as a whole. These tests would help determine how well, if at all, certain aspects of functionality had been implemented as well as helping to detect runtime errors.
 		
-		Problems such as the motors freezing up or the microcontroller displaying its error lights will indicate flaws in the program's implementation, and further investigation will be needed to determine what is going wrong at run time.
-		
-		With regards to the tests themselves, tests were created based on the requirements outlined in \ref{requirements} as well as system robustness. Tests pertaining to things like error handling would invoke improper conditions and actions to see how the system dealt with edge cases, and tests pertaining to functionality would determine how well - if at all - the requirement had been implemented.
-		
-		During the project's development a 'bottom up' style of testing was involved. This involved fundamental bottom level units being tested for basic functionality, and then further tests taking place as these units were joined together.
+		During the project's development a 'bottom up' style of testing was involved. This involved fundamental bottom level units being tested for basic functionality, and then further tests taking place as these units were joined together. This allowed for each specific part of the system to be tested to ensure that its implementation was proper before it was joined to other system elements.
 	
 			\subsection{Basic Movement Testing}
 			One of the functional requirements of the project outlined in \ref{requirements:functional} is that robot must be able to move. To ensure the motors functioned as expected and that they could be properly manipulated by the microcontroller, a test environment had to be made that allowed for the robot's internal process to be observed as it moved in different directions. A small task within a basic Micro C OS environment was created for this. A random number was picked from zero through to three, with each of the four numbers corresponding to one of four different movement methods that drove the robot in a different direction (forwards, left, right, backwards). Once the number had been picked, a simple if statement called whichever number was tied to which method. Which number corresponds to which direction can be seen in table \ref{table:movementtestkey}.
@@ -527,8 +523,22 @@
 				\subsubsection{Test Results}
 				Table \ref{table:movementtestsbasic} has the test's results in depth. Each of the appropriate directions printed to the terminal matched the direction that the robot travelled in. This means that the fundamentals behind how to manipulate the motors to achieve movement has been understood, and that the way in which this is done has been successfully implemented into a form usable by the robot's microcontroller. This only accounts for basic movement however, nothing can be surmised about more elaborate functionality involving true omnidirectional movement. As well, the test does not allow any insight into how well the wheels function once the chassis has more components and wiring in it. .
 			
-			\section{System Testing}
+			\subsection{LIDAR Testing}
+			One of the project's functional requirements outlined in \ref{requirements:functional} is that the robot must be capable of observation. Initial testing of the sensor didn't concern accuracy, but rather ensuring basic control of the LIDAR could be achieved via the use of the microcontroller. The environment for this test took the form of a simple Micro C OS task running on the microcontroller, shown in \ref{testcode:observation1}. The task began the sensor, outputting some data to the console, then stopped the sensor. The aim of this test was to ensure the microcontroller could properly interact with the LIDAR sensor.
+			
+				\subsubsection{Test Results}
+				Observation was used to verify whether or not 
+				
+				The first test was more of a proof of process with regards to LIDAR manipulation. Once the microcontroller task began, data was successfully being printed to the terminal for different angles. The frequency of the printing was significantly lower than the LIDAR's sample rate of 4000 - 8000hz, so a complete spectrum from zero to 360 degrees was not always viewable. Objects were placed around the LIDAR and moved closer to it. It was observed from that that different distance values began decreasing. When the objects were moved away, these values increased again. 
+				
+			\subsection{File Writer Tests}
+			
+				\subsubsection{Test Results}
+			
+			\subsection{System Testing}
 			As well as each individual component being tested, it was important that the system as a whole be put through tests to ensure the individual elements were working together. This also served as a way to properly test the full system, and the results of these tests will make clear whether the project's requirements have been properly implemented.
+			
+			With regards to the tests themselves, tests were created based on the requirements outlined in \ref{requirements} as well as system robustness. Tests pertaining to things like error handling would invoke improper conditions and actions to see how the system dealt with edge cases, and tests pertaining to functionality would determine how well - if at all - the requirement had been implemented.
 			
 			It's likely that these issues will be due to an improper robot state such as deadlock or starvation, or possibly a lack of memory owing to poor memory management within the microcontroller running the program. Runtime issues with the GUI are likely to be IO problems pertaining to issues reading the file containing the scan data as well as problems processing it into usable coordinates. 
 			
@@ -540,12 +550,6 @@
 			
 			The other tests that failed all pertained to the robot's capability to map areas. Whilst the GUI produced plotted points the maps did not resemble the environments that the robot was tested in. Based on this, it can be concluded that the functional requirement for the system to process scanned data into a map has not been satisfied. This has the follow on effect of the requirements for maps being accurate for different areas as well as consistent for the same area not being implemented as well.
 
-			
-			\section{Testing the LIDAR's Implementation}
-			One of the project's functional requirements outlined in \ref{requirements:functional} is that the robot must be capable of observation. The project employed the RPLIDAR A1M8 sensor for observation. Initial testing of the sensor didn't concern accuracy, but rather ensuring basic control of the LIDAR could be achieved via the use of the microcontroller. The environment for this test took the form of a simple Micro C OS task running on the microcontroller, shown below. The microcontroller would retrieve data from the LIDAR sensor and output it to a terminal. Whether or not the distances being produced by the LIDAR sensor were of a certain metric accuracy was incredibly difficult to ascertain, but by moving things around the LIDAR sensor at different angles it was possible to observe whether or not distance measurements were increasing or decreasing at corresponding angles.
-			
-				\subsection{Test Results}
-				The first test was more of a proof of process with regards to LIDAR manipulation. Once the microcontroller task began, data was successfully being printed to the terminal for different angles. The frequency of the printing was significantly lower than the LIDAR's sample rate of 4000 - 8000hz, so a complete spectrum from zero to 360 degrees was not always viewable. Objects were placed around the LIDAR and moved closer to it. It was observed from that that different distance values began decreasing. When the objects were moved away, these values increased again. 
 			% we can get a test table for this maybe, move stuff away and closer at different angles
 			
 		%To get the LIDAR SDK working, a serial terminal was used.

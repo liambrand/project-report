@@ -10,7 +10,7 @@
 				\begin{table}[h!]
 					\centering
 					\label{table:movementtestsbasic}
-					\begin{tabular}{|| l | l ||} 
+					\begin{tabular}{| l | l |} 
 						\hline
 						Printed Direction & Direction Moved In  \\ [0.5ex] 
 						\hline
@@ -35,6 +35,23 @@
 						Right & Right   \\ 
 						Forward & Forward   \\ 
 						Backward & Backward   \\ [1ex] 
+						\hline
+					\end{tabular}		
+				\end{table}
+			
+				\subsection{LIDAR Tests}
+				\begin{table}[h!]
+					\centering
+					\label{table:lidartestbasic}
+					\begin{tabular}{| p{2.5cm} | p{5cm} | p{4cm} | p{3cm} | p{1.5cm} |} 
+						\hline
+						Test & Test Purpose & Expected Result & Actual Result & Pass/Fail \\ [0.5ex] 
+						\hline
+						Begin sensor & Determine microcontroller's ability to start LIDAR sensor & Sensor starts spinning & As expected & Pass  \\
+						
+						Output reading & Determine ability to retrieve data from the LIDAR sensor & Terminal prints scan data & As expected & Pass \\
+						 
+						Stop sensor & Determine microcontroller's ability to stop LIDAR sensor & Sensor stops spinning & As expected & Pass   \\ [1ex] 
 						\hline
 					\end{tabular}		
 				\end{table}
@@ -77,7 +94,7 @@
 
 		\section{Test Code}
 		\label{testing:testcode}
-			\subsection{Testing the Movement}
+			\subsection{Basic Movement Testing}
 			\label{testcode:movementbasic}
 			\begin{lstlisting}
 				while (true) {
@@ -108,23 +125,23 @@
 				}
 			\end{lstlisting}
 			
-			\subsection{Testing the Observation}
+			\subsection{LIDAR Testing}
 			\label{testcode:observation1}
 			\begin{lstlisting}
 			static void appTaskLidarTest(void *pdata) {
-				dtr = 1;
+				dtr = 0;
 				rplidar.begin(lidar_device);
 				rplidar.startScan();
 				struct RPLidarMeasurement measurement;
 				
 				while (true) {
+					dtr = 1;
 					rplidar.waitPoint();
 					measurement = rplidar.getCurrentPoint();
 					pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
-					OSTimeDlyHMSM(0,0,0,100);
+					dtr = 0;
+					OSTimeDlyHMSM(0,0,1,0);
 				}
 			}
-				\end{lstlisting}
+			\end{lstlisting}
 			
-		
-		\subsection{Testing the Observation}
