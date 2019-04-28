@@ -494,6 +494,39 @@
 		%Run them
 		
 		\section{Testing the Movement}
+		\begin{lstlisting}
+			static void appTaskRobot(void *pdata) {
+			/* Start the OS ticker -- must be done in the highest priority task */
+			SysTick_Config(SystemCoreClock / OS_TICKS_PER_SEC);
+			
+			// Random number between 0 and 3
+			
+			while (true) {
+				int r = rand() % 4;
+				
+				if(r == 0) {
+					pc.printf("Forward");
+					goForward();
+				}
+				if(r == 1) {
+					pc.printf("Right");
+					goRight();
+				}
+				if(r == 2) {
+					pc.printf("Back");
+					goBackward();
+				}
+				
+				if(r == 3) {
+					pc.printf("Left");
+					goLeft();
+				}
+				
+				OSTimeDlyHMSM(0,0,3,0);
+				
+				}
+			}
+		\end{lstlisting}
 		%First test that each of the motors works using vague directions.
 			%These will be verified from my personal observations.
 			%Test forwards, backwards, left, right, and then do a spinny.
@@ -504,6 +537,24 @@
 			%if direction = 1 go backward, etc
 			
 		\section{Testing the Observation}
+		\begin{lstlisting}
+			static void appTaskMain(void *pdata) {
+			
+				/* Start the OS ticker -- must be done in the highest priority task */
+				SysTick_Config(SystemCoreClock / OS_TICKS_PER_SEC);
+				
+				dtr = 0;
+				rplidar.begin(lidar_device);
+				rplidar.startScan();
+				
+				while (true) {
+					lidar.waitPoint();
+					measurement = lidar.getCurrentPoint();
+					pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
+					OSTimeDlyHMSM(0,0,1,0);
+				}
+			}
+		\end{lstlisting}
 		%To get the LIDAR SDK working, a serial terminal was used.
 			%Connect LIDAR to microcontroller and print
 			%Then the OS started the LIDAR and began printing the values to the terminal.
