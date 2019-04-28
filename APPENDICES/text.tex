@@ -1,2 +1,66 @@
 \part{Appendices}
+	\chapter{Terms of Reference}
 	\includepdf[pages=-]{APPENDICES/TOR.pdf}
+	
+	\chapter{Testing}
+	\ref{appendices:testing}
+		\section{Test Code}
+		\ref{testing:testcode}
+			\subsection{Testing the Movement}
+			\subsection{Testing the Observation}
+			\label{testcode:observation1}
+			\begin{lstlisting}
+			static void appTaskLidarTest(void *pdata) {
+				dtr = 1;
+				rplidar.begin(lidar_device);
+				rplidar.startScan();
+				struct RPLidarMeasurement measurement;
+				
+				while (true) {
+					rplidar.waitPoint();
+					measurement = rplidar.getCurrentPoint();
+					pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
+					OSTimeDlyHMSM(0,0,0,100);
+				}
+			}
+				\end{lstlisting}
+				
+				
+		\section{Test Results}
+		\ref{testing:testresults}
+		
+			\subsection{Testing the Movement}
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{|| l | l ||} 
+					\hline
+					Printed Direction & Direction Moved In &  \\ [0.5ex] 
+					\hline
+					Right & Right &  \\
+					Left & Left &  \\ 
+					Forward & Forward &  \\ 
+					Left & Left &  \\ 
+					Right & Right &  \\ 
+					Forward & Forward &  \\ 
+					Right & Right &  \\ 
+					Left & Left &  \\ 
+					Backward & Backward &  \\ 
+					Forward & Forward &  \\ 
+					Backward & Backward &  \\ 
+					Left & Left &  \\ 
+					Right & Right &  \\ 
+					Right & Right &  \\ 
+					Backward & Backward &  \\ 
+					Forward & Forward &  \\ 
+					Forward & Forward &  \\ 
+					Backward & Backward &  \\ 
+					Right & Right &  \\ 
+					Forward & Forward &  \\ 
+					Backward & Backward &  \\ [1ex] 
+					\hline
+				\end{tabular}
+				\label{table:movementtests}		
+			\end{table}
+		
+		\subsection{Testing the Observation}
+		

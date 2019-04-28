@@ -234,6 +234,7 @@
 				% LINK TO TESTING
 				
 				\subsubsection{Software}
+				\label{req:movement:software}
 				Each of the three motors were now connected to two pins on the Quad Motor Shield. One pin affected direction, the other affected the speed. Direction was a simple case of polarity. Depending on the motor, HIGH or LOW dictated whether the motor span forwards or backwards. These pins could be declared as DigitalOut variables, and assigned either a 1 or a 0 depending on what was needed.  The pins that affected speed did so via pulse width modulation, so these could be declared as PwmOut variables and floats could be assigned to them to affect their duty cycle. The motor driver's documentation has a table stating which of the pins on the shield corresponded to which motors, so whichever K64F pin was connected to the relevant shield pin was used for the variables. These variables were declared within the control header and cpp files.
 				% state specifically which pin for each motor or is that too granular?
 				\begin{lstlisting}
@@ -247,7 +248,7 @@
 				PwmOut M3_SPD(D5);
 				\end{lstlisting}
 				
-				Stubs of the methods listed in \ref{fig:classdiagram} were created for the class. Some basic movement methods were made to ensure the robot could actually navigate, making it go forwards and backwards but the ideal implementation involved movement being possible for every headings in a 360 degree radius. Some preliminary problems with calculating force values came up as an issue however. Most force calculations resulted in a raw float values between -1 and 1, but this couldn't be assigned to a speed spin because the pins only supported positive value. Forward and backward motion was dictated by the directional pin. Issues involving other project components ate up time as well, and this aspect of the project was accordingly never fully realised. These problems are explained in \ref{evaluation:processevaluation}.
+				Stubs of the methods listed in \ref{fig:classdiagram} were created for the class. Some basic movement methods were made to ensure the robot could actually navigate, making it go forwards and backwards but the ideal implementation involved movement being possible for every heading in a 360 degree radius. Some preliminary problems with calculating force values came up as an issue however. Most force calculations resulted in a raw float values between -1 and 1, but this couldn't be assigned to a speed spin because the pins only supported positive value. Forward and backward motion was dictated by the directional pin. Issues involving other project components ate up time as well, and this aspect of the project was accordingly never fully realised. These problems are explained in \ref{evaluation:processevaluation}.
 				
 			\subsection{Observation}
 			Implementation of the robot's ability to take observations about its environment first involved a hardware configuration. The LIDAR sensor needed to be connected to the microcontroller so that it could draw power from the battery, as well as communicate with the microcontroller allowing it to receive commands and send observational data. Once the hardware connection was established, software on the microcontroller had to be capable of operating the LIDAR sensor and recieving its observations.
@@ -485,7 +486,7 @@
 			%measure-mbed for write speed
 	
 	% QUESTION FOR DAVID --- Code and screenshots for testing programs?
-	This chapter will discuss the testing of what was created during the project's implementation stage. The purpose of the testing is to determine how well, if at all, elements of the implemented work satisfy the requirements outlined in \ref{requirements}. Each test will have its process and purpose described, and based on the results there will be a discussion of how it affected development. These results will also be used for the product's evaluation.
+	This chapter will discuss the testing performed on the system. The purpose of the testing is to determine how well, if at all, elements of the implemented work satisfy the requirements outlined in \ref{requirements}. Each test will have its process and purpose described, and based on the results there will be a discussion of how it affected development. These results will also be used for the product's evaluation.
 	
 	Because the project employs both software which is easy to view and understand, and hardware which in some cases only the results of inputs could be seen rather than how the inputs were actually processed, a mixture of white and black box testing was employed.
 	
@@ -495,48 +496,69 @@
 	%Explain the importance of testing in relevance to the chosen methodology
 	
 	%Iterate the tests at each design stage?
-	
-		\section{Testing the OS}
-		%Connected microcontroller to the PC
-		%Initialise task stubs with prints to the terminal
-		%Run them
-		
+			
 		\section{Testing the Movement}
+		One of the functional requirements of the project outlined in \ref{requirements:functional} is that robot must be able to move. One of the first aspects to the construction of the robot was implementing its ability to move. At this point in the project it wasn't a fully connected system, so movement ability was being tested in complete isolation. There was no destination in mind, the goal here was to see whether or not the fundamentals behind the microcontroller driving the robot via commands to the motors had been successfully established. 
+		
+		At this point in the project the robot's movement wasn't sophisticated, and four methods existed to drive the robot in basic directions (forward, backward, left and right). This still needed to be tested however, as any further implementation would be a failure if the fundamentals weren't understood. A test environment had to be created to allow an ability to view what direction the robot was told to go in whenever it moved. A small task within a basic Micro C OS environment was created for this. A random number was picked from zero through to three, with each of the four numbers corresponding to one of the four different movement methods that drove the robot in one of the four aforementioned directions. Once the number had been picked, a simple if statement called whichever number was tied to which method. Which number corresponds to which direction can be seen in table \ref{table:movementtestkey}.
+		
+		\begin{table}[h!]
+			\centering
+			\begin{tabular}{|| l | l ||} 
+				\hline
+				Number & Direction \\ [0.5ex] 
+				\hline
+				0 & Forward \\ 
+				1 & Right \\
+				2 & Backward \\
+				3 & Left \\ [1ex] 
+				\hline
+			\end{tabular}
+			\label{table:movementtestkey}		
+		\end{table}
+	
+		To verify whether or not the robot is correctly moving based on the randomly generated number, it is plugged into a terminal during the test and a terminal is used to print the randomly generated numbers as they are received over a serial connection. The testing task itself will have print statements to allow the randomly generated number to be seen by the tester.
+		
 		\begin{lstlisting}
 			static void appTaskRobot(void *pdata) {
-			/* Start the OS ticker -- must be done in the highest priority task */
-			SysTick_Config(SystemCoreClock / OS_TICKS_PER_SEC);
-			
-				// Random number between 0 and 3
-				
 				while (true) {
+					// Random number between 0 and 3
 					int direction = rand() % 4;
 					
 					if(direction == 0) {
 						pc.printf("Forward");
 						goForward();
 					}
-					
 					if(direction == 1) {
 						pc.printf("Right");
 						goRight();
 					}
-					
 					if(direction == 2) {
 						pc.printf("Back");
 						goBackward();
 					}
-					
 					if(direction == 3) {
 						pc.printf("Left");
 						goLeft();
 					}
-					
 					OSTimeDlyHMSM(0,0,3,0);
-				
 				}
 			}
 		\end{lstlisting}
+		The testing will allow a verification of whether or not the base movement functionality has been implemented properly. If the robot moves in the direction that the program tells it to every time then aspects such as wheel direction toggling, wheel speed and which robot motor pertains to which variable within the robot's code have been understood and implemented properly. If not, the understanding of how the robot's movement works is flawed and will be re-evaluation. This test would be performed for twenty different values, and for each values the printed direction and direction the robot travelled in will be observed.
+		
+			\subsection{Test One}
+			Table \ref{table:movementtestbasic} has the first test's results in depth. Each of the appropriate directions printed to the terminal matched the direction that the robot travelled in. This means that the fundamentals behind how to manipulate the motors to achieve movement has been understood, and that the way in which this is done has been successfully implemented into a form usable by the robot's microcontroller. This only accounts for basic movement however, nothing can be surmised about more elaborate functionality involving true omnidirectional movement. As well, the test does not allow any insight into how well the wheels function once the chassis has more components and wiring in it. This test should be conducted again once the robot has more elements to it to ensure the motor's operations aren't impeded by wires and such.
+		
+			\subsection{Second Test}
+			As previously mentioned and stated in the non-funtional requirements, one of the elements of the robot's build quality is ensuring that the motors operations aren't impeded by other components getting in the way. Once more components were a part of the robot such as batteries and the LIDAR sensor, another test was conducted using the same environment as the first movement test. Attention however was focused on the robot's operation itself, looking to see if it was impeded by loose wires or other elements, but it never was. This test then succeeded, and verifies one element of the robot's build quality.
+			
+			% QUESTION FOR DAVID ----- Is it worth even talking about a test that wasn't ran?
+			\subsection{Third Test}
+			The first movement test established the robot's basic movement capability, but ideally the robot would move in an omnidirectional manner. The Control class in the robot's program should feature a method capable of using an angle and speed value to calculate the appropriate force needed for each wheel to move it in that direction at the specified speed. The test environment for this will be very similar to the basic movement test, only rather than generating a single random number between zero and three there will be two randomly generated numbers. The first will be between zero and 360, and the second will be a float between 0 and 1. These randomly generated numbers will then be supplied as parameters to the drive method, as well as being printed to a terminal over a serial connection for observation by the tester. Some slight inaccuracy should be tolerated here, as long as the robot moves within five to ten degrees of the supplied angle at an observably correct speed the test will be considered a success.
+		
+			Unfortunately this method was never properly implemented, and as such it cannot be tested. This test then is a fail. This means the robot is not capable of omnidirectional movement, which could impede its ability to map an environment which is one of the core functional requirements.
+		
 		%First test that each of the motors works using vague directions.
 			%These will be verified from my personal observations.
 			%Test forwards, backwards, left, right, and then do a spinny.
@@ -546,26 +568,13 @@
 			%if direction = 0 go forward
 			%if direction = 1 go backward, etc
 			
-		\section{Testing the Observation}
-		\begin{lstlisting}
-			static void appTaskMain(void *pdata) {
+		\section{Testing the LIDAR's Implementation}
+		One of the project's functional requirements outlined in \ref{requirements:functional} is that the robot must be capable of observation. The project employed the RPLIDAR A1M8 sensor for observation. Initial testing of the sensor didn't concern accuracy, but rather ensuring basic control of the LIDAR could be achieved via the use of the microcontroller. The environment for this test took the form of a simple Micro C OS task running on the microcontroller, shown below. The microcontroller would retrieve data from the LIDAR sensor and output it to a terminal. Whether or not the distances being produced by the LIDAR sensor were of a certain metric accuracy was incredibly difficult to ascertain, but by moving things around the LIDAR sensor at different angles it was possible to observe whether or not distance measurements were increasing or decreasing at corresponding angles.
+		
+			\subsection{Test Results}
+			The first test was more of a proof of process with regards to LIDAR manipulation. Once the microcontroller task began, data was successfully being printed to the terminal for different angles. The frequency of the printing was significantly lower than the LIDAR's sample rate of 4000 - 8000hz, so a complete spectrum from zero to 360 degrees was not always viewable. Objects were placed around the LIDAR and moved closer to it. It was observed from that that different distance values began decreasing. When the objects were moved away, these values increased again. 
+			% we can get a test table for this maybe, move stuff away and closer at different angles
 			
-				/* Start the OS ticker -- must be done in the highest priority task */
-				SysTick_Config(SystemCoreClock / OS_TICKS_PER_SEC);
-				
-				dtr = 1;
-				rplidar.begin(lidar_device);
-				rplidar.startScan();
-				struct RPLidarMeasurement measurement;
-				
-				while (true) {
-					rplidar.waitPoint();
-					measurement = rplidar.getCurrentPoint();
-					pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
-					OSTimeDlyHMSM(0,0,1,0);
-				}
-			}
-		\end{lstlisting}
 		%To get the LIDAR SDK working, a serial terminal was used.
 			%Connect LIDAR to microcontroller and print
 			%Then the OS started the LIDAR and began printing the values to the terminal.
