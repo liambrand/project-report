@@ -477,114 +477,75 @@
 				
 	
 	\chapter{Testing}
+		\section{Introduction}
+		This chapter will discuss the testing performed on the system. The aim of these tests is to ascertain how well, if at all, elements of the implemented work satisfy the project requirements outlined in \ref{requirements}. The tests themselves will be explain and justified, and a discussion of what conclusions can be drawn from the test results will follow. For a detailed break down of individual tests and their results, view the test logs in \ref{testing:testlogs}. Any code used to perform tests can be viewed in \ref{testing:testcode}.
+		
+		In keeping with the developmental methodology outlined in \ref{synthesis:methodology}, tests were carried out at key functional milestones to ensure that what was implemented was robust and appropriate enough to be iterated on by the next prototype. When appropriate, it will be explained what stage of development the project was at during the test.
+		
+		
+		
+		
+						% TEST
+						% LOG
+						% APPENDIX
+		
+		
+		%%%%%%%%%%%%%%%%%%%%LETTER
+		% NAME THE APPENDIX!
+	
+		\section{Integration Testing}
+		Integration tests were performed to help determine the functionality of each of the system's individual elements, as well as the functionality of the system as a whole. These tests would help determine how well, if at all, certain aspects of functionality had been implemented as well as helping to detect runtime errors.
+		
+		Problems such as the motors freezing up or the microcontroller displaying its error lights will indicate flaws in the program's implementation, and further investigation will be needed to determine what is going wrong at run time.
+		
+		With regards to the tests themselves, tests were created based on the requirements outlined in \ref{requirements} as well as system robustness. Tests pertaining to things like error handling would invoke improper conditions and actions to see how the system dealt with edge cases, and tests pertaining to functionality would determine how well - if at all - the requirement had been implemented.
+		
+		During the project's development a 'bottom up' style of testing was involved. This involved fundamental bottom level units being tested for basic functionality, and then further tests taking place as these units were joined together.
+	
+			\subsection{Basic Movement Testing}
+			One of the functional requirements of the project outlined in \ref{requirements:functional} is that robot must be able to move. To ensure the motors functioned as expected and that they could be properly manipulated by the microcontroller, a test environment had to be made that allowed for the robot's internal process to be observed as it moved in different directions. A small task within a basic Micro C OS environment was created for this. A random number was picked from zero through to three, with each of the four numbers corresponding to one of four different movement methods that drove the robot in a different direction (forwards, left, right, backwards). Once the number had been picked, a simple if statement called whichever number was tied to which method. Which number corresponds to which direction can be seen in table \ref{table:movementtestkey}.
+			
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{| l | l |} 
+					\hline
+					Number & Direction \\ [0.5ex] 
+					\hline
+					0 & Forward \\ 
+					1 & Right \\
+					2 & Backward \\
+					3 & Left \\ [1ex] 
+					\hline
+				\end{tabular}
+				\label{table:movementtestkey}		
+			\end{table}
+			
+			To verify whether or not the robot is correctly moving based on the randomly generated number, it is plugged into a terminal during the test and a terminal is used to print the randomly generated numbers as they are received over a serial connection. The testing task itself will have print statements to allow the randomly generated number to be seen by the tester.
 
-This chapter will discuss the testing performed on the system. The purpose of the testing is to determine how well, if at all, elements of the implemented work satisfy the requirements outlined in \ref{requirements}. Each test will have its process and purpose described, and based on the results there will be a discussion of how it affected development. These results will also be used for the product's evaluation. 
-	
-	In keeping with the developmental methodology outlined in \ref{synthesis:methodology}, tests were carried out at key functional milestones to ensure that what was implemented was robust and appropriate enough to be iterated on by the next prototype. When appropriate, it will be explained what stage of development the project was at during the test.
-	
-	Discussion of tests and their respective results will be broken down into two categories in this section. Unit testing and integration testing. Unit tests are focused on testing specific pieces of code, often functions, with an already established insight on what the piece of code actually needs to do. Verifying that code works as expected ensures that source code is sound and works properly before it is modified or built on to implement new things. Integration testing is much higher level, and relates to testing the created system against outlined requirements. It will involve observing the system's behavior after performing certain actions to it to see if the response is what is expected. This requires no knowledge of the inner workings of the product, and allows for a simple comparison of what the product does verses what it should do.
-	
-	Full test plans are included as an appendix. Relevant code snippets for any programs created to test functionality are also part of the appendix. What follows is an explanation of the tests carried out and their conclusions.
-	
-	\section{Integration Testing}
-	Integration tests were used to verify the presence of key functionality which was outlined in the product's requirements. Tests will be explain and conclusions based on the test results will be discussed. Relevant code snippets and tables containing more specific tests results can be found in the appendices.
+			This allowed a verification of whether or not the base movement functionality had been implemented properly. If the robot moves in the direction that the program tells it to every time then it can be confirmed that aspects such as wheel direction and motor speed have been understood and implemented properly. If the tests fail, this implementation as flawed and more sophisticated movement cannot be implemented until it has been rectified.
 
-	%Build toward it
-		%Does movement work?
-		%Does it scan?
-			%Compare observation prints to the terminal ones
-		%Does it store the scan? How quick?
-			%Compare observation prints to the SD card ones
-			%measure-mbed for write speed
-	
-	% QUESTION FOR DAVID --- Code and screenshots for testing programs?
-	This chapter will discuss the testing performed on the system. The purpose of the testing is to determine how well, if at all, elements of the implemented work satisfy the requirements outlined in \ref{requirements}. Each test will have its process and purpose described, and based on the results there will be a discussion of how it affected development. These results will also be used for the product's evaluation.
-	
-	Because the project employs both software which is easy to view and understand, and hardware which in some cases only the results of inputs could be seen rather than how the inputs were actually processed, a mixture of white and black box testing was employed.
-	
-	In keeping with the developmental methodology outlined in \ref{synthesis:methodology}, tests were carried out at key functional milestones to ensure that what was implemented was robust and appropriate enough to be iterated on by the next prototype. When appropriate, it will be explained what stage of development the project was at during the test.
-	%Purpose of testing, what will happen here
-	%Nature of testing. Black/white box?
-	%Explain the importance of testing in relevance to the chosen methodology
-	
-	%Iterate the tests at each design stage?
+				\subsubsection{Test Results}
+				Table \ref{table:movementtestsbasic} has the test's results in depth. Each of the appropriate directions printed to the terminal matched the direction that the robot travelled in. This means that the fundamentals behind how to manipulate the motors to achieve movement has been understood, and that the way in which this is done has been successfully implemented into a form usable by the robot's microcontroller. This only accounts for basic movement however, nothing can be surmised about more elaborate functionality involving true omnidirectional movement. As well, the test does not allow any insight into how well the wheels function once the chassis has more components and wiring in it. .
 			
-		\section{Testing the Movement}
-		One of the functional requirements of the project outlined in \ref{requirements:functional} is that robot must be able to move. One of the first aspects to the construction of the robot was implementing its ability to move. At this point in the project it wasn't a fully connected system, so movement ability was being tested in complete isolation. There was no destination in mind, the goal here was to see whether or not the fundamentals behind the microcontroller driving the robot via commands to the motors had been successfully established. 
-		
-		At this point in the project the robot's movement wasn't sophisticated, and four methods existed to drive the robot in basic directions (forward, backward, left and right). This still needed to be tested however, as any further implementation would be a failure if the fundamentals weren't understood. A test environment had to be created to allow an ability to view what direction the robot was told to go in whenever it moved. A small task within a basic Micro C OS environment was created for this. A random number was picked from zero through to three, with each of the four numbers corresponding to one of the four different movement methods that drove the robot in one of the four aforementioned directions. Once the number had been picked, a simple if statement called whichever number was tied to which method. Which number corresponds to which direction can be seen in table \ref{table:movementtestkey}.
-		
-		\begin{table}[h!]
-			\centering
-			\begin{tabular}{|| l | l ||} 
-				\hline
-				Number & Direction \\ [0.5ex] 
-				\hline
-				0 & Forward \\ 
-				1 & Right \\
-				2 & Backward \\
-				3 & Left \\ [1ex] 
-				\hline
-			\end{tabular}
-			\label{table:movementtestkey}		
-		\end{table}
-	
-		To verify whether or not the robot is correctly moving based on the randomly generated number, it is plugged into a terminal during the test and a terminal is used to print the randomly generated numbers as they are received over a serial connection. The testing task itself will have print statements to allow the randomly generated number to be seen by the tester.
-		
-		\begin{lstlisting}
-			static void appTaskRobot(void *pdata) {
-				while (true) {
-					// Random number between 0 and 3
-					int direction = rand() % 4;
-					
-					if(direction == 0) {
-						pc.printf("Forward");
-						goForward();
-					}
-					if(direction == 1) {
-						pc.printf("Right");
-						goRight();
-					}
-					if(direction == 2) {
-						pc.printf("Back");
-						goBackward();
-					}
-					if(direction == 3) {
-						pc.printf("Left");
-						goLeft();
-					}
-					OSTimeDlyHMSM(0,0,3,0);
-				}
-			}
-		\end{lstlisting}
-		The testing will allow a verification of whether or not the base movement functionality has been implemented properly. If the robot moves in the direction that the program tells it to every time then aspects such as wheel direction toggling, wheel speed and which robot motor pertains to which variable within the robot's code have been understood and implemented properly. If not, the understanding of how the robot's movement works is flawed and will be re-evaluation. This test would be performed for twenty different values, and for each values the printed direction and direction the robot travelled in will be observed.
-		
-			\subsection{Test One}
-			Table \ref{table:movementtestbasic} has the first test's results in depth. Each of the appropriate directions printed to the terminal matched the direction that the robot travelled in. This means that the fundamentals behind how to manipulate the motors to achieve movement has been understood, and that the way in which this is done has been successfully implemented into a form usable by the robot's microcontroller. This only accounts for basic movement however, nothing can be surmised about more elaborate functionality involving true omnidirectional movement. As well, the test does not allow any insight into how well the wheels function once the chassis has more components and wiring in it. This test should be conducted again once the robot has more elements to it to ensure the motor's operations aren't impeded by wires and such.
-		
-			\subsection{Second Test}
-			As previously mentioned and stated in the non-funtional requirements, one of the elements of the robot's build quality is ensuring that the motors operations aren't impeded by other components getting in the way. Once more components were a part of the robot such as batteries and the LIDAR sensor, another test was conducted using the same environment as the first movement test. Attention however was focused on the robot's operation itself, looking to see if it was impeded by loose wires or other elements, but it never was. This test then succeeded, and verifies one element of the robot's build quality.
+			\section{System Testing}
+			As well as each individual component being tested, it was important that the system as a whole be put through tests to ensure the individual elements were working together. This also served as a way to properly test the full system, and the results of these tests will make clear whether the project's requirements have been properly implemented.
 			
-			% QUESTION FOR DAVID ----- Is it worth even talking about a test that wasn't ran?
-			\subsection{Third Test}
-			The first movement test established the robot's basic movement capability, but ideally the robot would move in an omnidirectional manner. The Control class in the robot's program should feature a method capable of using an angle and speed value to calculate the appropriate force needed for each wheel to move it in that direction at the specified speed. The test environment for this will be very similar to the basic movement test, only rather than generating a single random number between zero and three there will be two randomly generated numbers. The first will be between zero and 360, and the second will be a float between 0 and 1. These randomly generated numbers will then be supplied as parameters to the drive method, as well as being printed to a terminal over a serial connection for observation by the tester. Some slight inaccuracy should be tolerated here, as long as the robot moves within five to ten degrees of the supplied angle at an observably correct speed the test will be considered a success.
-		
-			Unfortunately this method was never properly implemented, and as such it cannot be tested. This test then is a fail. This means the robot is not capable of omnidirectional movement, which could impede its ability to map an environment which is one of the core functional requirements.
-		
-		%First test that each of the motors works using vague directions.
-			%These will be verified from my personal observations.
-			%Test forwards, backwards, left, right, and then do a spinny.
+			It's likely that these issues will be due to an improper robot state such as deadlock or starvation, or possibly a lack of memory owing to poor memory management within the microcontroller running the program. Runtime issues with the GUI are likely to be IO problems pertaining to issues reading the file containing the scan data as well as problems processing it into usable coordinates. 
 			
-			%while true
-			%int direction = math.rand(0,4)
-			%if direction = 0 go forward
-			%if direction = 1 go backward, etc
+			To begin with the robot's program was compiled and flashed onto the microcontroller. A fresh compile allowed for any compile time errors to be detected, and also meant it was certain that the program being tested was representative of the most current system state.
 			
-		\section{Testing the LIDAR's Implementation}
-		One of the project's functional requirements outlined in \ref{requirements:functional} is that the robot must be capable of observation. The project employed the RPLIDAR A1M8 sensor for observation. Initial testing of the sensor didn't concern accuracy, but rather ensuring basic control of the LIDAR could be achieved via the use of the microcontroller. The environment for this test took the form of a simple Micro C OS task running on the microcontroller, shown below. The microcontroller would retrieve data from the LIDAR sensor and output it to a terminal. Whether or not the distances being produced by the LIDAR sensor were of a certain metric accuracy was incredibly difficult to ascertain, but by moving things around the LIDAR sensor at different angles it was possible to observe whether or not distance measurements were increasing or decreasing at corresponding angles.
-		
-			\subsection{Test Results}
-			The first test was more of a proof of process with regards to LIDAR manipulation. Once the microcontroller task began, data was successfully being printed to the terminal for different angles. The frequency of the printing was significantly lower than the LIDAR's sample rate of 4000 - 8000hz, so a complete spectrum from zero to 360 degrees was not always viewable. Objects were placed around the LIDAR and moved closer to it. It was observed from that that different distance values began decreasing. When the objects were moved away, these values increased again. 
+			Table \ref{systemintergrationtestingtable} contains the specific test breakdown. The tests that passed mainly pertained to the gathering of observational data, with only one of the movement tests passing and the rest failing. The robot demonstrated the ability to scan data and write it to a Micro-SD card within a reasonable time frame. The successful scanning meant that the functional requirement of the robot needing to be able to perform observation was successfully met by the system, and the successful writing of the scanned data to the SD-Card within a reasonable time frame also satisfied an element of the robot's appropriate operational speed. 
+			
+			The drive forward task passing at least indicates that the motors are functional, but the functional requirement of the robot being capable of movement has an implication of it being multi directional. The other movement tests failing means that the requirement for the robot to move, whilst satisfied in a literal sense, has ultimately not been met.
+			
+			The other tests that failed all pertained to the robot's capability to map areas. Whilst the GUI produced plotted points the maps did not resemble the environments that the robot was tested in. Based on this, it can be concluded that the functional requirement for the system to process scanned data into a map has not been satisfied. This has the follow on effect of the requirements for maps being accurate for different areas as well as consistent for the same area not being implemented as well.
+
+			
+			\section{Testing the LIDAR's Implementation}
+			One of the project's functional requirements outlined in \ref{requirements:functional} is that the robot must be capable of observation. The project employed the RPLIDAR A1M8 sensor for observation. Initial testing of the sensor didn't concern accuracy, but rather ensuring basic control of the LIDAR could be achieved via the use of the microcontroller. The environment for this test took the form of a simple Micro C OS task running on the microcontroller, shown below. The microcontroller would retrieve data from the LIDAR sensor and output it to a terminal. Whether or not the distances being produced by the LIDAR sensor were of a certain metric accuracy was incredibly difficult to ascertain, but by moving things around the LIDAR sensor at different angles it was possible to observe whether or not distance measurements were increasing or decreasing at corresponding angles.
+			
+				\subsection{Test Results}
+				The first test was more of a proof of process with regards to LIDAR manipulation. Once the microcontroller task began, data was successfully being printed to the terminal for different angles. The frequency of the printing was significantly lower than the LIDAR's sample rate of 4000 - 8000hz, so a complete spectrum from zero to 360 degrees was not always viewable. Objects were placed around the LIDAR and moved closer to it. It was observed from that that different distance values began decreasing. When the objects were moved away, these values increased again. 
 			% we can get a test table for this maybe, move stuff away and closer at different angles
 			
 		%To get the LIDAR SDK working, a serial terminal was used.
