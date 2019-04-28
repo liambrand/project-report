@@ -476,6 +476,14 @@
 				
 	
 	\chapter{Testing}
+	%Build toward it
+		%Does movement work?
+		%Does it scan?
+			%Compare observation prints to the terminal ones
+		%Does it store the scan? How quick?
+			%Compare observation prints to the SD card ones
+			%measure-mbed for write speed
+	
 	% QUESTION FOR DAVID --- Code and screenshots for testing programs?
 	This chapter will discuss the testing of what was created during the project's implementation stage. The purpose of the testing is to determine how well, if at all, elements of the implemented work satisfy the requirements outlined in \ref{requirements}. Each test will have its process and purpose described, and based on the results there will be a discussion of how it affected development. These results will also be used for the product's evaluation.
 	
@@ -545,7 +553,7 @@
 				/* Start the OS ticker -- must be done in the highest priority task */
 				SysTick_Config(SystemCoreClock / OS_TICKS_PER_SEC);
 				
-				dtr = 0;
+				dtr = 1;
 				rplidar.begin(lidar_device);
 				rplidar.startScan();
 				struct RPLidarMeasurement measurement;
@@ -569,6 +577,19 @@
 				%Moved things closer, distances got lower. Moved things away, distances got higher.
 			
 		\section{Testing the File Writing}
+		\begin{lstlisting}
+			dtr = 0;
+			rplidar.begin(lidar_device);
+			rplidar.startScan();
+			struct RPLidarMeasurement measurement;
+		
+			for(int i = 0; i < 10; i++) {
+				rplidar.waitPoint();
+				measurement = rplidar.getCurrentPoint();
+				pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
+			}
+		
+		\end{lstlisting}
 		%LIDAR was ran and told to print the first 10 values that it got.
 		%Values were then saved to the SD card.
 		%USB adapter for the Micro-SD Card was plugged in, values were observed and compared.
