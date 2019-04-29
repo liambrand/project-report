@@ -1,8 +1,8 @@
 \part{Synthesis}
 	\chapter{Introduction}
-	Now that the relevant product fields are understood to a sufficient degree and the product's needs have been established we can begin to plan out how we will achieve the project's objectives. First we will established the methological approach that will structure the product's development. Then, for each of the core product requirements we will look at a high level design overview of how the requirement will be met, the actual implementation of this design, and testing to evaluate how well this requirement has been satisfied by this implementation.
+	Now that the relevant product fields are understood to a sufficient degree and the product's needs have been established we can begin to plan out how we will achieve the project's objectives. First we will established the methodological approach that will structure the product's development. Then, for each of the core product requirements we will look at a high level design overview of how the requirement will be met, the actual implementation of this design, and testing to evaluate how well this requirement has been satisfied by this implementation.
 	
-	\chapter{Methological Approach}
+	\chapter{Methodological Approach}
 	\label{synthesis:methodology}
 	The project employed a prototyping methodology for development. First, we must perform an investigation into the system requirements, which was performed in the analysis with a list of specific core requirements being outlined in the conclusion. Following this the first prototype is built, which will resemble an incredibly basic scaled down version of how the final system should ideally look. This prototype is then thoroughly evaluated, with potential changes that would bring the prototype closer to the final system being figured out. Finally, these changes are then implemented and the prototype is evaluated once again. This is repeated until the product has reached its ultimate goals.
 	\begin{figure}[h]
@@ -46,7 +46,7 @@
 				
 				\begin{table}[h]
 					\centering
-					\begin{tabular}{|| l | l | l ||} 
+					\begin{tabular}{| l | l | l |} 
 						\hline
 						Component & Voltage & Milliamp \\ [0.5ex] 
 						\hline
@@ -143,7 +143,7 @@
 				
 				\begin{table}[h!]
 					\centering
-					\begin{tabular}{|| l | l ||} 
+					\begin{tabular}{| l | l |} 
 						\hline
 						File & Purpose \\ [0.5ex] 
 						\hline
@@ -259,7 +259,7 @@
 				
 				\begin{table}[h!]
 					\centering
-					\begin{tabular}{|| l | l | l ||} 
+					\begin{tabular}{| l | l | l |} 
 						\hline
 						LIDAR Pin & K64F Pin & Pin Purpose \\ [0.5ex] 
 						\hline
@@ -373,7 +373,7 @@
 	
 				\begin{table}[h!]
 					\centering
-					\begin{tabular}{|| l | l | l ||} 
+					\begin{tabular}{| l | l | l |} 
 						\hline
 						SDFileSystem Parameter & K64F Pin & Pin Purpose \\ [0.5ex] 
 						\hline
@@ -496,16 +496,18 @@
 		\section{Integration Testing}
 		Integration tests were performed to help determine the functionality of each of the system's individual elements, as well as the functionality of the system as a whole. These tests would help determine how well, if at all, certain aspects of functionality had been implemented as well as helping to detect runtime errors.
 		
-		During the project's development a 'bottom up' style of testing was involved. This involved fundamental bottom level units being tested for basic functionality, and then further tests taking place as these units were joined together. This allowed for each specific part of the system to be tested to ensure that its implementation was proper before it was joined to other system elements.
+		During the project's development a 'bottom up' style of testing was involved. This involved fundamental bottom level units being tested for basic functionality, and then further tests taking place as these units were joined together. This allowed for a basic implementation of each individual system element to be in place 
+		
+		This allowed for each specific part of the system to be tested to ensure that its implementation was proper before it was joined to other system elements.
 	
 			\subsection{Basic Movement Testing}
-			One of the functional requirements of the project outlined in \ref{requirements:functional} is that robot must be able to move. To ensure the motors functioned as expected and that they could be properly manipulated by the microcontroller, a test environment had to be made that allowed for the robot's internal process to be observed as it moved in different directions. A small task within a basic Micro C OS environment was created for this. A random number was picked from zero through to three, with each of the four numbers corresponding to one of four different movement methods that drove the robot in a different direction (forwards, left, right, backwards). Once the number had been picked, a simple if statement called whichever number was tied to which method. Which number corresponds to which direction can be seen in table \ref{table:movementtestkey}.
+			One of the functional requirements of the project outlined in \ref{requirements:functional} is that robot must be able to move. To determine if basic movement was possible, a small test task was made within a Micro C OS environment. The task picked a random number from zero through to three, with each of the four numbers corresponding to one of four different movement methods that drove the robot in a different direction, the specifics of this are shown in table \ref{table:movementtestkey}. The direction the robot was told to move in was printed to a terminal over a serial connection, and it was recorded whether or not the instructed location was the one the robot moved in. Relevant code can be seen at \ref{testcode:movementbasic}.
 			
 			\begin{table}[h!]
 				\centering
 				\begin{tabular}{| l | l |} 
 					\hline
-					Number & Direction \\ [0.5ex] 
+					Number & Corresponding Direction \\ [0.5ex] 
 					\hline
 					0 & Forward \\ 
 					1 & Right \\
@@ -513,74 +515,48 @@
 					3 & Left \\ [1ex] 
 					\hline
 				\end{tabular}
+				\caption{Directions that each number represents}
 				\label{table:movementtestkey}		
 			\end{table}
 			
-			To verify whether or not the robot is correctly moving based on the randomly generated number, it is plugged into a terminal during the test and a terminal is used to print the randomly generated numbers as they are received over a serial connection. The testing task itself will have print statements to allow the randomly generated number to be seen by the tester.
-
-			This allowed a verification of whether or not the base movement functionality had been implemented properly. If the robot moves in the direction that the program tells it to every time then it can be confirmed that aspects such as wheel direction and motor speed have been understood and implemented properly. If the tests fail, this implementation as flawed and more sophisticated movement cannot be implemented until it has been rectified.
-
 				\subsubsection{Test Results}
-				Table \ref{table:movementtestsbasic} has the test's results in depth. Each of the appropriate directions printed to the terminal matched the direction that the robot travelled in. This means that the fundamentals behind how to manipulate the motors to achieve movement has been understood, and that the way in which this is done has been successfully implemented into a form usable by the robot's microcontroller. This only accounts for basic movement however, nothing can be surmised about more elaborate functionality involving true omnidirectional movement. As well, the test does not allow any insight into how well the wheels function once the chassis has more components and wiring in it. .
+				Table \ref{table:movementtestsbasic} has the test's results in depth. Each of the appropriate directions printed to the terminal matched the direction that the robot traveled in. This means that the fundamentals behind how to manipulate the motors to achieve movement has been understood, and that the way in which this is done has been successfully implemented into a form usable by the robot's microcontroller. This only accounts for basic movement however, nothing can be surmised about more elaborate functionality involving true omnidirectional movement. As well, the test does not allow any insight into how well the wheels function once the chassis has more components and wiring in it.
 			
 			\subsection{LIDAR Testing}
-			One of the project's functional requirements outlined in \ref{requirements:functional} is that the robot must be capable of observation. Initial testing of the sensor didn't concern accuracy, but rather ensuring basic control of the LIDAR could be achieved via the use of the microcontroller. The environment for this test took the form of a simple Micro C OS task running on the microcontroller, shown in \ref{testcode:observation1}. The task began the sensor, outputting some data to the console, then stopped the sensor. The aim of this test was to ensure the microcontroller could properly interact with the LIDAR sensor.
+			One of the project's functional requirements outlined in \ref{requirements:functional} is that the robot must be capable of observation. Initial LIDAR tests involved establishing whether or not a functional link could be made between the sensor and the microcontroller. A test task was made which began the sensor, outputted some data to a console, then stopped the sensor. This task can be seen at \ref{testcode:observation1}.
 			
 				\subsubsection{Test Results}
-				Observation was used to verify whether or not 
+				A breakdown of specific results can be seen in \ref{table:lidartestbasic}. Each of the tests passed, indicating that the microcontroller is capable of starting and stopping the LIDAR sensor as well as retrieving data from it.
 				
-				The first test was more of a proof of process with regards to LIDAR manipulation. Once the microcontroller task began, data was successfully being printed to the terminal for different angles. The frequency of the printing was significantly lower than the LIDAR's sample rate of 4000 - 8000hz, so a complete spectrum from zero to 360 degrees was not always viewable. Objects were placed around the LIDAR and moved closer to it. It was observed from that that different distance values began decreasing. When the objects were moved away, these values increased again. 
+			\subsection{File Writing Tests}
+			To obtain observational data so that it can be processed into a map, the robot must be capable of taking LIDAR data and writing it to the Micro SD-Card. To test whether this functionality was present, the test code at \ref{testcode:filewriting2} was used. The code takes a series of LIDAR readings and prints them out to the console and also writes them to a created .txt file. As well as functionality, the code was then scaled up to see if a much larger number of readings could be written.
 				
-			\subsection{SDFileWriter Tests}
-			Tests for the SDFileWriter library concerned ensuring that the microcontroller was able to write files to the connected SD-Card utilizing the provided SDFileSystem class, otherwise there would be no way for the system to obtain scan data to construct a map out of. Once the basic implementation of the SDFileSystem had occured and it was possible to write data to a file, it needed to be tested with LIDAR values.
-				
-				\subsubsection{Test One}
-				The method at \ref{testcode:filewriting2} was created for this test. After setting up the LIDAR variables a for loop took ten LIDAR scans and wrote them to a file. As these scan values were written they were printed to a terminal via a serial connection, allowing the terminal and the generated file to be compared to ensure that the values were the same.
-				% picture comparison here?
+				\subsubsection{Test Results}
+				Test results in \ref{table:filewritingtests}. Each of the tests passed meaning functionality allowing the microcontroller to create and write to files was successfully implemented, and verification that the data matched what was printed on the terminal meant what was being written was what the LIDAR sensor was outputting. Once this was established, the for loop was increased to 8000 to see if a significantly larger number of readings could be written without any program issues. The system took longer to create the file, but still ran and ended without any issues and the produced file contained the additional readings. From this, ws know it's possible for the microcontroller to receive and write the large quantity of readings that will be needed to produce an accurate map.
 				
 			\subsection{Mapping Tests}
-			Once the GUI was able to process dummy coordinates and the microcontroller was able to retrieve and store observational data, it was time to bring these things together in an attempt to generate a workable map. This test would help establish the end to end data flow of data being generated by the LIDAR, written to the SD-Card and finally processed into something visual by the GUI. This would help test the functionality of the system to process data into a map, and would reveal any runtime errors that didn't appear during the individual testing of each element.
+			Tests shown in \ref{table:mappingtests}	were conducted to determine if the LIDAR sensor, microcontroller and produced GUI program could work as a module to produce a map. The same program used in the file writing tests was used to save a few thousand readings to a .txt file that was written to the Micro-SD card, which was then plugged into a PC with a USB adapter where the GUI was ran to generate a map. 
 				
-				\subsubsection{Test One}
+				\subsubsection{Test Results}
+				The results at \ref{table:mappingtests} show that, whilst the GUI is capable of the preliminary functions of starting up and actually parsing observational data from a file, it doesn't process the data in a way that allows for an accurate map to be generated.
 			
-			\subsection{System Testing}
-			As well as each individual component being tested, it was important that the system as a whole be put through tests to ensure the individual elements were working together. This also served as a way to properly test the full system, and the results of these tests will make clear whether the project's requirements have been properly implemented.
+		\section{System Testing}		
+		As well as each individual component being tested, it was important that the system as a whole be put through tests to ultimately determine whether it had satisfied the initial project requirements.
 			
-			With regards to the tests themselves, tests were created based on the requirements outlined in \ref{requirements} as well as system robustness. Tests pertaining to things like error handling would invoke improper conditions and actions to see how the system dealt with edge cases, and tests pertaining to functionality would determine how well - if at all - the requirement had been implemented.
+		With regards to the tests themselves, tests were created based on the requirements outlined in \ref{requirements} as well as aspects like system robustness. Tests pertaining to things like error handling would invoke improper conditions and actions to see how the system dealt with edge cases, and tests pertaining to functionality would determine how well - if at all - the requirement had been implemented.
 			
-			It's likely that these issues will be due to an improper robot state such as deadlock or starvation, or possibly a lack of memory owing to poor memory management within the microcontroller running the program. Runtime issues with the GUI are likely to be IO problems pertaining to issues reading the file containing the scan data as well as problems processing it into usable coordinates. 
+		It's likely that these issues will be due to an improper robot state such as deadlock or starvation, or possibly a lack of memory owing to poor memory management within the microcontroller running the program. Runtime issues with the GUI are likely to be IO problems pertaining to issues reading the file containing the scan data as well as problems processing it into usable coordinates. 
 			
-			To begin with the robot's program was compiled and flashed onto the microcontroller. A fresh compile allowed for any compile time errors to be detected, and also meant it was certain that the program being tested was representative of the most current system state.
-			
+		To begin with the robot's program was compiled and flashed onto the microcontroller. A fresh compile allowed for any compile time errors to be detected, and also meant it was certain that the program being tested was representative of the most current system state.
+		
+			\subsection{Test Results}
 			Table \ref{systemintergrationtestingtable} contains the specific test breakdown. The tests that passed mainly pertained to the gathering of observational data, with only one of the movement tests passing and the rest failing. The robot demonstrated the ability to scan data and write it to a Micro-SD card within a reasonable time frame. The successful scanning meant that the functional requirement of the robot needing to be able to perform observation was successfully met by the system, and the successful writing of the scanned data to the SD-Card within a reasonable time frame also satisfied an element of the robot's appropriate operational speed. 
-			
+				
 			The drive forward task passing at least indicates that the motors are functional, but the functional requirement of the robot being capable of movement has an implication of it being multi directional. The other movement tests failing means that the requirement for the robot to move, whilst satisfied in a literal sense, has ultimately not been met.
-			
+				
 			The other tests that failed all pertained to the robot's capability to map areas. Whilst the GUI produced plotted points the maps did not resemble the environments that the robot was tested in. Based on this, it can be concluded that the functional requirement for the system to process scanned data into a map has not been satisfied. This has the follow on effect of the requirements for maps being accurate for different areas as well as consistent for the same area not being implemented as well.
 			
-		\section{Testing the GUI}
-		%Firstly, does the GUI run?
-		%Second, can it read files? Read some test files like the binary coords.
-			%Make a .txt file, click a button that reads it and prints it. Do this for 10 random strings.
-			%or give it some random coords and see if it maps them mathematically correctly
-				%e.g. give an angle and distance, work out what the x and y should be, see if it plots
-				%or make random shapes like squares
-		%Then, can it read the saved data from the robot?
-			%Test this 10 times as well
-			
-		\section{Testing CSM}
-		%Get it working with a test log (DDDDDDDDDDDDD:)
-		%Get it working with a test log called from the GUI (DDDDDDDDDDDDDDDD:)
-		%Get it working with a real log (DDDDDDDDD:)
-		%Get it working with a real log called from the GUI (DDDDDDDDDDDD:)
-			
-		\section{Testing the System}
-		%All of the above.
-			%Generates a random number, moves in that direction.
-			%Scans and prints data.
-			%Saves the data to a Micro SD-Card.
-			%Plug that into the PC, see what the GUI says.
-			%10 times, change the environment each time.
+			On the whole, the system has not fulfilled the outlined project requirements.
 				
 	\chapter{Blockers}
 	Any minor issues encountered during development have been touched on in the implementation. Larger problems were encountered however that caused a more significant hindrance to the product's development. Some of these issues even involved the whole developmental approach having to be reconsidered. This chapter aims to explore these issues in depth by detailing what happened and how, if at all, these issues were overcome.
