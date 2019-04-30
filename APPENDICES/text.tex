@@ -102,14 +102,15 @@
 						\label{table:mappingtests}		
 					\end{table}
 				
-				\begin{table}[h!]
 					\centering
-					\begin{tabular}{| p{2.5cm} | p{5cm} | p{4cm} | p{4cm} | p{1.5cm} | p{2cm} |} 
+					\begin{longtable}{| p{2.5cm} | p{5cm} | p{4cm} | p{4cm} | p{1.5cm} | p{2cm} |} 
+						\caption{System Tests}
+						\label{systemintergrationtestingtable} \\
 						\hline
 						Test & Test Purpose & Expected Result & Actual Result & Pass/Fail & Comments \\ [0.5ex] 
 						\hline
 						Drive Forward & The robot should move forwards during its operation & As expected & The robot moved forwards when it was switched on & Pass & Hardcoded movement  \\
-							
+	
 						Drive Right & The robot should move right during its operation & The robot is able to move right & The robot couldn't move right & Fail &   \\
 							
 						Drive Left & The robot should move left during its operation & The robot is able to move left & The robot couldn't move left & Fail &   \\
@@ -117,6 +118,8 @@
 						Obstacle Avoidance & The robot should navigate around obstacles during operation & The robot is able to avoid obstacles & The robot didn't detect obstacles & Fail &   \\
 							
 						Motor Obstructions & During the previous drive tests, there should be no obstructions to the motors from the robot's other components & As expected & The robot's motors didnt get blocked & Pass &   \\
+						
+						Power Failured & During the previous drive tests, there should be no power issues & Robot will complete operation without issue & Microcontroller battery's GND cable slips out & Fail &   \\
 							
 						Scanning & The robot should stop to scan & The robot stops and scans its environment & As predicteda & Pass &   \\ 
 							
@@ -134,10 +137,7 @@
 							
 						SLAM & The system should be capable of producing a dynamic map using multiple scans from different locations & The GUI creates a map from the robot's scan data & No such functionality & Fail &  \\ [1ex] 
 							\hline
-					\end{tabular}
-				\caption{System Tests}
-				\label{systemintergrationtestingtable}
-				\end{table}
+					\end{longtable}
 			\end{landscape}			
 
 		\section{Test Code}
