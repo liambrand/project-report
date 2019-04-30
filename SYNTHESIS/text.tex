@@ -173,13 +173,6 @@
 				\subsubsection{Hardware}
 				Once the robot is receiving data from the LIDAR sensor, it needs to be transferred to an external program where the CSM software can be ran to generate a map from it. Based on the results of the previously conducted investigation into what would be the most suitable way to store observational data, a Micro SD-Card will be used. The FRDM-K64F has a Micro SD-Card socket attached to it, shown among some of the other peripherals in fig \ref{fig:k64fperipherals}, and the microcontroller will save the observational data to this card so it can be plugged into a machine where it is able to be processed. The University's loans office can provide an 8GB card as well as an adapter allowing it to be plugged into a PC's USB slot, so this approach won't incur any extra cost. The saved data will only be angle and distance measurement pairs, so the card's (relatively) small size won't pose any memory issues. 
 				
-				\begin{figure}[h]
-					\centering
-					\includegraphics[width=.6\linewidth]{SYNTHESIS/k64fperipherals.png}
-					\caption{K64F Peripherals}
-					\label{fig:k64fperipherals}
-				\end{figure}				
-				
 				\subsubsection{Software}
 				First, the microcontroller must save this data to the connected Micro SD-Card. Mbed has a library called SDFileSystem used for interaction with connected SD cards. Using this library, a simple text file will be created on the Micro SD-Card and angle/distance measurements obtained from the LIDAR sensor will be written to it. As the LIDAR scans data it will populate a buffer, and once the buffer has been filled it will be written to the card. After this the buffer will be cleared and begin being populated again. The FRDM-K64F features 256kB of RAM, and a C float is around 4 bytes. If we quite generously assume 156kB will be taken up by task stacks and other program necessities, that still leaves around 100kB of free RAM. In 100000 bytes, we can still store 25000 floats in RAM. Given that each returned scan will probably have two floats (an angle and a distance) we can store at least 12500 readings before the robot needs to pause to write them to file, which should be more than adequate.
 				
