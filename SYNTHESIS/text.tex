@@ -93,8 +93,6 @@
 				
 				\subsubsection{Software}
 				For each motor on the shield, there are two associated pins. The first of these pins controls the motors direction (forward or backward). The second of the pins controls the motor speed,  achieved using pulse width modulation. To manipulate the motors these pins will need to be declared as variable within the robot's software and assigned different values based on what we are trying to do. The directional pins are either HIGH or LOW, so they will be declared as digital pins that are assigned a binary value. For the speed pins, mbed features a PwmOut interface with a .write() method that can be used to assign a duty cycle value to the variable. This is perfect for what we need. To actually steer the robot, methods in the control class will receive angle and speed values and perform trigonometrical calculations to find out what speed and direction values need to be sent to each of the three motors.
-				%talk about pin lineup here and declaration
-				% COME BACK TO THIS, TRIGONOMICAL NAVIGATION!
 				
 			\subsection{Observation}
 			The second of the three functional requirements outlined in \ref{requirements:functional} is that 'the robot must be capable of observation'.
@@ -228,7 +226,7 @@
 			First of all the physical chassis had to be assembled. The available documentation for the chassis' construction is \ref{fig:chassisassembly} which came in the chassis box. Construction was relatively straight forward and the diagram was of help with a few parts, so it only took around thirty minutes to assemble the structure. Once it was built, the wheels where pushed onto the motors where they clicked on. The Quad Motor Shield was then installed onto the K64F microcontroller without any problems.
 				
 			\subsection{Software}
-			A basic Micro C OS was created and deployed onto the microcontroller. This OS resembled the pseudo code and was composed of skeleton tasks and classes with method stubs.
+			A basic Micro C OS was created and deployed onto the microcontroller with a few dummy tasks.
 			
 		\section{Implementing Requirements}
 			\subsection{Movement}
@@ -236,16 +234,18 @@
 				First the dfRobot Quad Motor shield was fitted onto the K64F microcontroller and placed in the lower level of the robot. Each of the three wheel motors had a ground and a power cable attached to them, these were all fed through the hole in the centre of the lower plate and connected to the appropriate ports on the motor shield. In the interest of keeping the components tidy, the power and ground cables were fastened to the lower plate with zip ties.
 				
 				Each pair of power and ground ports are labelled with a number on the shield (e.g M1, M2 etc). From hereonn in, the motors will be referred to with these same numbers. Fig \ref{fig:robotwheels} shows the position and names of each of the wheels on the robot.
-				% FIG HERE
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=.5\linewidth]{SYNTHESIS/robotwheels.png}
+					\caption{Robot Wheel Configuration}
+					\label{fig:robotwheels}
+				\end{figure}	
 				
-				
-				At this point it was time to power the motors by connecting the 12V battery pack to the motor shield. Initially it was planned that this would be achieved from a breadboard, as the breadboard would allow the use of voltage regulators to supply lower voltages to the other components. A problem was encountered here though in the way of space. The microcontroller, motor power cables and battery pack alone already cluttered nearly all of the lower level of the robot. The additional of a breadboard with voltage regulators and additional wiring would be an incredibly difficult fit with wires potentially breaking or coming loose, and there was still the matter later on of connecting the LIDAR properly. This resulted in two decisions being made. The first was that the LIDAR would simply receive power from the microcontroller. The second decision was that the microcontroller would receive its own battery. The K64F features a VIN pin for power that takes between 5V and 9V, so a 6V battery pack was obtained. The power cable was connected to the VIN, and the ground cable shared a ground port with the motor's battery pack. Preliminary tests confirmed that the motors responded to commands sent to them by the robot's software.
-				% LINK TO TESTING
+				At this point it was time to power the motors by connecting the 12V battery pack to the motor shield. Initially it was planned that this would be achieved from a breadboard, as the breadboard would allow the use of voltage regulators to supply lower voltages to the other components. A problem was encountered here though in the way of space. The microcontroller, motor power cables and battery pack alone already cluttered nearly all of the lower level of the robot. The additional of a breadboard with voltage regulators and additional wiring would be an incredibly difficult fit with wires potentially breaking or coming loose, and there was still the matter later on of connecting the LIDAR properly. This resulted in two decisions being made. The first was that the LIDAR would simply receive power from the microcontroller. The second decision was that the microcontroller would receive its own battery. The K64F features a VIN pin for power that takes between 5V and 9V, so a 6V battery pack was obtained. The power cable was connected to the VIN, and the ground cable shared a ground port with the motor's battery pack. 
 				
 				\subsubsection{Software}
 				\label{req:movement:software}
-				Each of the three motors were now connected to two pins on the Quad Motor Shield. One pin affected direction, the other affected the speed. Direction was a simple case of polarity. Depending on the motor, HIGH or LOW dictated whether the motor span forwards or backwards. These pins could be declared as DigitalOut variables, and assigned either a 1 or a 0 depending on what was needed.  The pins that affected speed did so via pulse width modulation, so these could be declared as PwmOut variables and floats could be assigned to them to affect their duty cycle. The motor driver's documentation has a table stating which of the pins on the shield corresponded to which motors, so whichever K64F pin was connected to the relevant shield pin was used for the variables. These variables were declared within the control header and cpp files.
-				% state specifically which pin for each motor or is that too granular?
+				Each of the three motors were now connected to two pins on the Quad Motor Shield. One pin affected direction, the other affected the speed. Direction was a simple case of polarity. Depending on the motor, HIGH or LOW dictated whether the motor span forwards or backwards. These pins could be declared as DigitalOut variables, and assigned either a 1 or a 0 depending on what was needed.  The pins that affected speed did so via pulse width modulation, so these could be declared as PwmOut variables and floats could be assigned to them to affect their duty cycle. The motor driver's documentation has a table stating which of the pins on the shield corresponded to which motors, so whichever K64F pin was connected to the relevant shield pin was used for the variables.
 				\begin{lstlisting}
 DigitalOut  M1_DIR(D4);
 PwmOut      M1_SPD(D3);
@@ -292,19 +292,19 @@ PwmOut M3_SPD(D5);
 				Once this was done, the LIDAR was able to function mechanically.
 				
 				\subsubsection{Software}
-				Following the hardware setup the microcontroller needs to actually communicate with the LIDAR sensor so that it can send commands, as well as receive observational data. This was the responsibiltiy of the lidar.cpp class.
+				Following the hardware setup the microcontroller needs to actually communicate with the LIDAR sensor so that it can send commands, as well as receive observational data.
 				
 				To first of all ensure the LIDAR is ready to communicate, the previously discussed MOTOCTL pin on the LIDAR needs to be recieving a HIGH signal so that it knows the microcontroller is ready to begin recieving data. The K64F features numerous GPIO pins that can be easily configured for usage in situations like this. One such pin (D7) was declared as a basic DigitalOut allowing the microcontroller to manipulate the pin's polarity.
 				
 				\begin{lstlisting}
-				DigitalOut dtr(D7);
+DigitalOut dtr(D7);
 				\end{lstlisting}
 				
 				Simple methods were used for this manipulation. When the sensor needs to output data the pin was set to HIGH...
 				\begin{lstlisting}
-				void beginScanning() {
-					dtr = 1;
-				}
+void beginScanning() {
+	dtr = 1;
+}
 				\end{lstlisting}
 				
 				...or when it had to stop, it was set to LOW.
@@ -313,6 +313,7 @@ void stopScanning() {
 	dtr = 0;
 }
 				\end{lstlisting}
+				This code could have been written as it was, but one line functions were used to enhance code readability. It's immediately more clear what is happening when the bulk of a program's functionality is achieved through method calls rather than specific code lines each time an action must be taken.  
 				
 				The microcontroller didn't instantly begin recieving data once this was set up however, as simply connecting the LIDAR and microcontroller serial pins are not enough for communication. In order to interact with the serial channel it needs to be declared in the robot's core program as an appropriate variable. There exists a library for arm MBED microcontroller called BufferedSerial which can be used for this. The original Serial library that it is based on allows for serial communication, with BufferedSerial simply adding a buffer to this. The core functionality remains the same however.
 				
@@ -329,11 +330,9 @@ RPLidar lidar;
 				
 				Once this variable has been declared, in the class' main method the DTR is set to 0 to ensure that the LIDAR won't start scanning and outputting data when we don't need it to. The LIDAR variable is then connected to the relevant serial variable (the previously declared BufferedSerial) and the start scan command is issued. Despite receiving the command to start scanning the LIDAR won't begin until the DTR gives it the go ahead, but by configuring this as soon as the program begins it's a lot easier to stop and start the LIDAR data output.
 				\begin{lstlisting}
-Lidar::Lidar() {
-	dtr = 0;
-	rplidar.begin(lidar_device);
-	rplidar.startScan();
-}
+dtr = 0;
+rplidar.begin(lidar_device);
+rplidar.startScan();
 				\end{lstlisting}
 				
 				Now that the LIDAR is configured and can begin sending out data, it's time to start actually storing it within the program. First we need appropriate mediums for the storage of LIDAR data. This entails something to store a LIDAR sample that has just arrived so we can manipulate it to take what we need from it, and also a buffer to store all the total readings collect so that they can later be written to disk. 
@@ -349,10 +348,9 @@ struct RPLidarMeasurement
 };
 				\end{lstlisting}
 				
-				Now a buffer is needed to store the readings so that they can be written to disk later on. A large number would be preferable so the robot doesn't need frequent stops to save them to the SD-Card. Initially a two dimensional array was used but there was some difficulty in supplying it as a parameter to the fileWriter class, so two large arrays of floats were used.
+				Now a buffer is needed to store the readings so that they can be written to disk later on. A two dimensional array was used, composed of 8000 entries with each entry made up of a smaller array of two values. These would be the angle and distance values respectively.
 				\begin{lstlisting}
-float angles[8000];
-float distances[8000];
+float readingsBuffer[8000][2];
 				\end{lstlisting}
 				
 				Now that readings can be manipulated and stored, it's time to properly implement the method that stores them to a buffer.
@@ -362,10 +360,10 @@ void takeReadings() {
 	for(int i = 0; i < sizeof(angles); i++) {
 		lidar.waitPoint();
 		measurement = lidar.getCurrentPoint();
-		// Get angle
-		angles[i] = measurement.angle;
+		// Get angle and distance
+		readingsBuffer[i][0] = measurement.angle;
 		// Get distance
-		distances[i]] = measurement.distance;
+		readingsBuffer[i][1] = measurement.distance;
 	}
 }
 				\end{lstlisting}
@@ -378,7 +376,7 @@ void takeReadings() {
 				The only hardware elements that were needed to implement this functionality were the Micro SD-Card socket on the microcontroller, a Micro-SD card and a USB adapter allowing for a computer to access the files on the SD-Card. The socket was already attached to the microcontroller and no adjustments needed to be made to the hardware for the microcontroller to access it.
 				
 				\subsubsection{Software}
-				A FileWriter class was created to handle the functionality of writing the data in the buffer to disk. In order to access the Micro SD-Card the SDFileSystem library was used, and was incorporated into the program by simply including the main SDFileSystem header. To use the library, an SDFileSystem variable first needs to be instantiated. This variable takes five parameters, four relevant microcontroller pins and a name. Table \ref{table:sdfilesystempins} describes each of the four pins the SDFileSystem needs, the name of the corresponding microcontroller pin and what the pin actually is.
+				In order to access the Micro SD-Card the SDFileSystem library was used, and was incorporated into the program by simply including the main SDFileSystem header. To use the library, an SDFileSystem variable first needs to be instantiated. This variable takes five parameters, four relevant microcontroller pins and a name. Table \ref{table:sdfilesystempins} describes each of the four pins the SDFileSystem needs, the name of the corresponding microcontroller pin and what the pin actually is.
 	
 				\begin{table}[h!]
 					\centering
