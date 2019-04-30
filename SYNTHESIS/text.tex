@@ -20,7 +20,6 @@
 		A similar approach will be followed for processing the map data. It won't be developed simultaneously at first as the robot needs to be capable of storing observational data from the LIDAR before the program can actually do anything, however it will start to be put together once the robot crosses this developmental threshold.
 	
 	\chapter{Design}
-	% QUESTION FOR DAVID --- The design has been written as if the robot is self navigational. is that correct? should i change it?
 		\section{Introduction}
 		Before implementation of the specific project aims can be implemented, we first need the initial prototype that we can begin iteratively improving. Therefore, it's logical to design the initial robotic prototype first. What follows is an overview of how the initial robot prototype will be designed, followed by a breakdown of each of the individual project aims will be met.
 	
@@ -248,14 +247,14 @@
 				Each of the three motors were now connected to two pins on the Quad Motor Shield. One pin affected direction, the other affected the speed. Direction was a simple case of polarity. Depending on the motor, HIGH or LOW dictated whether the motor span forwards or backwards. These pins could be declared as DigitalOut variables, and assigned either a 1 or a 0 depending on what was needed.  The pins that affected speed did so via pulse width modulation, so these could be declared as PwmOut variables and floats could be assigned to them to affect their duty cycle. The motor driver's documentation has a table stating which of the pins on the shield corresponded to which motors, so whichever K64F pin was connected to the relevant shield pin was used for the variables. These variables were declared within the control header and cpp files.
 				% state specifically which pin for each motor or is that too granular?
 				\begin{lstlisting}
-				DigitalOut  M1_DIR(D4);
-				PwmOut      M1_SPD(D3);
+DigitalOut  M1_DIR(D4);
+PwmOut      M1_SPD(D3);
+			
+DigitalOut  M2_DIR(D12);
+PwmOut      M2_SPD(D11);
 				
-				DigitalOut  M2_DIR(D12);
-				PwmOut      M2_SPD(D11);
-				
-				DigitalOut  M3_DIR(D8);
-				PwmOut M3_SPD(D5);
+DigitalOut  M3_DIR(D8);
+PwmOut M3_SPD(D5);
 				\end{lstlisting}
 				
 				Stubs of the methods listed in \ref{fig:classdiagram} were created for the class. Some basic movement methods were made to ensure the robot could actually navigate, making it go forwards and backwards but the ideal implementation involved movement being possible for every heading in a 360 degree radius. Some preliminary problems with calculating force values came up as an issue however. Most force calculations resulted in a raw float values between -1 and 1, but this couldn't be assigned to a speed spin because the pins only supported positive value. Forward and backward motion was dictated by the directional pin. Issues involving other project components ate up time as well, and this aspect of the project was accordingly never fully realised. These problems are explained in \ref{evaluation:processevaluation}.
@@ -310,65 +309,65 @@
 				
 				...or when it had to stop, it was set to LOW.
 				\begin{lstlisting}
-				void stopScanning() {
-					dtr = 0;
-				}
+void stopScanning() {
+	dtr = 0;
+}
 				\end{lstlisting}
 				
 				The microcontroller didn't instantly begin recieving data once this was set up however, as simply connecting the LIDAR and microcontroller serial pins are not enough for communication. In order to interact with the serial channel it needs to be declared in the robot's core program as an appropriate variable. There exists a library for arm MBED microcontroller called BufferedSerial which can be used for this. The original Serial library that it is based on allows for serial communication, with BufferedSerial simply adding a buffer to this. The core functionality remains the same however.
 				
 				First the pins being used for serial communication need to be declared as a BufferedSerial variable, with BufferedSerial taking the TX and RX pin (in that order) of the microcontroller. It also has an optional baud rate parameter, the LIDAR documentation lists the used baud rate as 115200 so this was supplied just to be safe.
 				\begin{lstlisting}
-				BufferedSerial lidar_device(D1, D0, 115200);
+BufferedSerial lidar_device(D1, D0, 115200);
 				\end{lstlisting}
 				
 				As previously discussed in \ref{sec:observation:software}, SLAMTEC has an SDK that automates most of the LIDAR functionality. The appropriate files were added to the project and made able to be used by the core program with a simple include statement at the top of the lidar.cpp file.
 				Following this a base RPLidar variable can be declared from a class the library adds.
 				\begin{lstlisting}
-				RPLidar lidar;
+RPLidar lidar;
 				\end{lstlisting}
 				
 				Once this variable has been declared, in the class' main method the DTR is set to 0 to ensure that the LIDAR won't start scanning and outputting data when we don't need it to. The LIDAR variable is then connected to the relevant serial variable (the previously declared BufferedSerial) and the start scan command is issued. Despite receiving the command to start scanning the LIDAR won't begin until the DTR gives it the go ahead, but by configuring this as soon as the program begins it's a lot easier to stop and start the LIDAR data output.
 				\begin{lstlisting}
-				Lidar::Lidar() {
-					dtr = 0;
-					rplidar.begin(lidar_device);
-					rplidar.startScan();
-				}
+Lidar::Lidar() {
+	dtr = 0;
+	rplidar.begin(lidar_device);
+	rplidar.startScan();
+}
 				\end{lstlisting}
 				
 				Now that the LIDAR is configured and can begin sending out data, it's time to start actually storing it within the program. First we need appropriate mediums for the storage of LIDAR data. This entails something to store a LIDAR sample that has just arrived so we can manipulate it to take what we need from it, and also a buffer to store all the total readings collect so that they can later be written to disk. 
 				
 				In order to store a newly recieving reading, the RPLidar SDK implements a basic struct that can be filled in with a .getCurrentPoint() method. This will be used so that recieved readings can be easily manipulated.
 				\begin{lstlisting}
-				struct RPLidarMeasurement
-				{
-					float distance;
-					float angle;
-					uint8_t quality;
-					bool  startBit;
-				};
+struct RPLidarMeasurement
+{
+	float distance;
+	float angle;
+	uint8_t quality;
+	bool  startBit;
+};
 				\end{lstlisting}
 				
 				Now a buffer is needed to store the readings so that they can be written to disk later on. A large number would be preferable so the robot doesn't need frequent stops to save them to the SD-Card. Initially a two dimensional array was used but there was some difficulty in supplying it as a parameter to the fileWriter class, so two large arrays of floats were used.
 				\begin{lstlisting}
-				float angles[8000];
-				float distances[8000];
+float angles[8000];
+float distances[8000];
 				\end{lstlisting}
 				
 				Now that readings can be manipulated and stored, it's time to properly implement the method that stores them to a buffer.
 				\begin{lstlisting}
-				void takeReadings() {
-					struct RPLidarMeasurement measurement;
-					for(int i = 0; i < sizeof(angles); i++) {
-						lidar.waitPoint();
-						measurement = lidar.getCurrentPoint();
-						// Get angle
-						angles[i] = measurement.angle;
-						// Get distance
-						distances[i]] = measurement.distance;
-					}
-				}
+void takeReadings() {
+	struct RPLidarMeasurement measurement;
+	for(int i = 0; i < sizeof(angles); i++) {
+		lidar.waitPoint();
+		measurement = lidar.getCurrentPoint();
+		// Get angle
+		angles[i] = measurement.angle;
+		// Get distance
+		distances[i]] = measurement.distance;
+	}
+}
 				\end{lstlisting}
 				The method iterates through both buffers and stores the angle and distance of each reading it receives.		
 				
@@ -400,34 +399,34 @@
 				The code risks being unclear if regular pin names are always used, so the relevant pins were first defined into more understandable names. The SDFileSystem variable was then declared.
 				
 				\begin{lstlisting}
-				#define MOSI		PTE3
-				#define MISO		PTE1
-				#define	SCLK		PTE2
-				#define	CS			PTE4
+#define MOSI		PTE3
+#define MISO		PTE1
+#define	SCLK		PTE2
+#define	CS			PTE4
 				
-				SDFileSystem sd(MOSI, MISO, SCLK, CS, "sd");
+SDFileSystem sd(MOSI, MISO, SCLK, CS, "sd");
 				\end{lstlisting}
 				
 				With this variable the file system on the Micro SD-Card is able to be accessed. The previously described scan task is what populates the readingsBuffer with data that is needed, so a method is required to iterate through the buffer and write the observational data to the Micro SD-Card.
 				
 				\begin{lstlisting}
-				void writeReadings(float angles[], float distances[]) {
-					// Create the readings file on the Micro SD-Card
-					FILE *fp = fopen("/sd/readings.txt", "w");
+void writeReadings(float angles[], float distances[]) {
+	// Create the readings file on the Micro SD-Card
+	FILE *fp = fopen("/sd/readings.txt", "w");
 					
-					// Error checking
-					if (fp == NULL) {
-						pc.printf("Unable to access/create file \n");
-					}
+	// Error checking
+	if (fp == NULL) {
+		pc.printf("Unable to access/create file \n");
+	}
 					
-					// Iterate through the readingsBuffer and write the angle/distance pairs
-					for(int i = 0; i < angles.length; i++) {
-						fprintf(fp, "%f %f", angles[i], distances[i]);
-					}
+	// Iterate through the readingsBuffer and write the angle/distance pairs
+	for(int i = 0; i < angles.length; i++) {
+		fprintf(fp, "%f %f", angles[i], distances[i]);
+	}
 					
-					// Close file
-					fclose(fp);
-				}
+	// Close file
+	fclose(fp);
+}
 				
 				\end{lstlisting}
 				First the fopen method is called with a designated file, and the "w" parameter (meaning write) ensures that the file will be created if it doesn't already exist. Then a basic error check follows to make sure that the file is accessible, followed by an iteration through the readingsBuffer. As was previously mentioned, the buffer is populated by pairs of angle and distance measurements, so for each entry in the array the angle and distance is written to the file. These pairs were written as two values seperated by a comma, with each value being seperated by a space. This was done to make it easier to read from a program point of view. The plan was that the file can be split by spaces to get pairs, and then each pair can be split by a comma to get the individual values. Finally, the file is closed.
@@ -439,46 +438,46 @@
 				
 				Initially dummy data was used to verify that the process worked. First, data from a .txt file had to actually be read into the program. A button was attached to a simple method that did this.
 				\begin{lstlisting}
-					# Retrieve distance-angle pairs from a text file
-					def readData(self):
-						try:
-							with open("coordinates.txt") as textFile:
-								lines = [line.split() for line in textFile]
-								# Values are read in as strings, so we convert them to ints
-								for i in lines:
-									i[0] = int(i[0])
-									i[1] = int(i[1])
-									return lines
-						
-					except IOError:
-						print("Error reading file!") 
+# Retrieve distance-angle pairs from a text file
+def readData(self):
+	try:
+		with open("coordinates.txt") as textFile:
+			lines = [line.split() for line in textFile]
+			# Values are read in as strings, so we convert them to ints
+			for i in lines:
+				i[0] = int(i[0])
+				i[1] = int(i[1])
+				return lines
+					
+	except IOError:
+		print("Error reading file!") 
 				\end{lstlisting}
 				Angle and distance pair values are read in from a text file. These values are separated by whitespace, so the method iterates through each line in the file and splits each line into two tokens which are kept in an array. These tokens are read in as strings so they are cast to ints.
 				
 				Once this data was being gathered from a text file it needed to be turned into a plottable x and y coordinate. This was achieved with some trigonometry.
 				\begin{lstlisting}
-					def getCoords(self, measurement):
-						x = measurement[1] * math.cos(math.radians(measurement[0]))
-						y = measurement[1] * math.sin(math.radians(measurement[0]))
-						return x, y
+def getCoords(self, measurement):
+	x = measurement[1] * math.cos(math.radians(measurement[0]))
+	y = measurement[1] * math.sin(math.radians(measurement[0]))
+	return x, y
 				\end{lstlisting}
 				Each angle and distance pair is turned into its corresponding value on an x and y axis. Now that it was possible to read in data and turn it into a plottable point, it was time to combine this into an actual map.
 				
 				\begin{lstlisting}
-					# Draw map on plot
-					def showMap(self):
-						measurements = self.readData()
-						coords = []
-						x = []
-						y = []
+# Draw map on plot
+def showMap(self):
+	measurements = self.readData()
+	coords = []
+	x = []
+	y = []
 						
-						# Turn distance-angle pairs into usable coordinates
-						for measurement in measurements:
-							x.append(self.getXCoord(measurement))
-							y.append(self.getYCoord(measurement))
-						
-						plt.plot(x, y)
-						plt.show()
+	# Turn distance-angle pairs into usable coordinates
+	for measurement in measurements:
+		x.append(self.getXCoord(measurement))
+		y.append(self.getYCoord(measurement))
+				
+	plt.plot(x, y)
+	plt.show()
 				\end{lstlisting}
 				This method was attached to a button. It uses the previously described readData() method to retrieve values from a file, turns each of the retrieved measurements into a plottable coordinate, appends it to an array and finally this array is plotted by the matplotlib scatterplot.
 				%picture of the test map here
@@ -490,19 +489,9 @@
 		\section{Introduction}
 		This chapter will discuss the testing performed on the system. The aim of these tests is to ascertain how well, if at all, elements of the implemented work satisfy the project requirements outlined in \ref{requirements}. The tests themselves will be explain and justified, and a discussion of what conclusions can be drawn from the test results will follow. For a detailed break down of individual tests and their results, view the test logs in \ref{testing:testlogs}. Any code used to perform tests can be viewed in \ref{testing:testcode}.
 		
-		In keeping with the developmental methodology outlined in \ref{synthesis:methodology}, tests were carried out at key functional milestones to ensure that what was implemented was robust and appropriate enough to be iterated on by the next prototype. When appropriate, it will be explained what stage of development the project was at during the test.
+		In keeping with the developmental methodology outlined in \ref{synthesis:methodology}, tests were carried out at key functional milestones to ensure that what was implemented was robust and appropriate enough to be iterated on by the next prototype. When appropriate, it will be explained what stage of development the project was at during the test. Appendix C contains all tests and test code.
 		
 		
-		
-		
-						% TEST
-						% LOG
-						% APPENDIX
-		
-		
-		%%%%%%%%%%%%%%%%%%%%LETTER
-		% NAME THE APPENDIX!
-	
 		\section{Integration Testing}
 		Integration tests were performed to help determine the functionality of each of the system's individual elements, as well as the functionality of the system as a whole. These tests would help determine how well, if at all, certain aspects of functionality had been implemented as well as helping to detect runtime errors.
 		

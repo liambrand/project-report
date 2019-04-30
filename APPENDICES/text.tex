@@ -1,13 +1,16 @@
 \part{Appendices}
+	\begin{appendices}
 	\chapter{Terms of Reference}
 	\includepdf[pages=-]{APPENDICES/TOR.pdf}
-	\begin{landscape}
+	\chapter{Program Code}
+		\subsection{Robot Software}
+			\subsubsection{main.cpp}
+			\lstinputlisting{APPENDICES/main.cpp}
+		\subsection{GUI}
 	\chapter{Testing}
+	\begin{landscape}
 	\label{testingappendices}
-		\section{Tests}
 		\label{testing:testlogs}
-			\subsection{Integration Tests}
-					\subsection{Movement Tests}
 					\begin{table}[h!]
 						\centering
 						\begin{tabular}{| l | l | l |} 
@@ -41,7 +44,6 @@
 					\label{table:movementtestsbasic}	
 					\end{table}
 				
-					\subsection{LIDAR Tests}
 					\begin{table}[h!]
 						\centering
 						\begin{tabular}{| p{2.5cm} | p{5cm} | p{4cm} | p{3cm} | p{1.5cm} |} 
@@ -59,7 +61,6 @@
 					\label{table:lidartestbasic}
 					\end{table}
 				
-					\subsubsection{File Writing Tests}
 					\begin{table}[h!]
 						\centering
 						\begin{tabular}{| p{2.5cm} | p{5cm} | p{4cm} | p{3cm} | p{1.5cm} |} 
@@ -80,7 +81,6 @@
 					\label{table:filewritingtests}		
 					\end{table}
 				
-					\subsubsection{Mapping Tests}
 					\begin{table}[h!]
 						\centering
 						\begin{tabular}{| p{2.5cm} | p{5cm} | p{4cm} | p{3cm} | p{1.5cm} |} 
@@ -96,11 +96,10 @@
 							CSM Map Generated & Ensure the GUI can use CSM to generate a map  & GUI should output a map incorporating multiple scans & No such functionality implemented & Fail \\ [1ex] 
 							\hline
 						\end{tabular}
-						\caption{File Writing Integration Tests}
+						\caption{Mapping Integration Tests}
 						\label{table:mappingtests}		
 					\end{table}
 				
-				\subsection{System Tests}
 				\begin{table}[h!]
 					\centering
 					\begin{tabular}{| p{2.5cm} | p{5cm} | p{4cm} | p{4cm} | p{1.5cm} | p{2cm} |} 
@@ -137,89 +136,90 @@
 				\caption{System Tests}
 				\label{systemintergrationtestingtable}
 				\end{table}
-			\end{landscape}
+			\end{landscape}			
 
 		\section{Test Code}
 		\label{testing:testcode}
 			\subsection{Basic Movement Testing}
 			\label{testcode:movementbasic}
 			\begin{lstlisting}
-				while (true) {
-					// Random number between 0 and 3
-					int r = rand() % 4;
+while (true) {
+	// Random number between 0 and 3
+	int r = rand() % 4;
 					
-					if(r == 0) {
-						pc.printf("Forward");
-						goForward();
-					}
+	if(r == 0) {
+		pc.printf("Forward");
+		goForward();
+	}
 					
-					if(r == 1) {
-						pc.printf("Right");
-						goRight();
-					}
+	if(r == 1) {
+		pc.printf("Right");
+		goRight();
+	}
 					
-					if(r == 2) {
-						pc.printf("Back");
-						goBackward();
-					}
+	if(r == 2) {
+		pc.printf("Back");
+		goBackward();
+	}
 					
-					if(r == 3) {
-						pc.printf("Left");
-						goLeft();
-					}
+	if(r == 3) {
+		pc.printf("Left");
+		goLeft();
+	}
 
-					OSTimeDlyHMSM(0,0,3,0);
-				}
+	OSTimeDlyHMSM(0,0,3,0);
+}
 			\end{lstlisting}
 			
 			\subsection{LIDAR Testing}
 			\label{testcode:observation1}
 			\begin{lstlisting}
-			static void appTaskLidarTest(void *pdata) {
-				dtr = 0;
-				rplidar.begin(lidar_device);
-				rplidar.startScan();
-				struct RPLidarMeasurement measurement;
+static void appTaskLidarTest(void *pdata) {
+	dtr = 0;
+	rplidar.begin(lidar_device);
+	rplidar.startScan();
+	struct RPLidarMeasurement measurement;
 				
-				while (true) {
-					dtr = 1;
-					rplidar.waitPoint();
-					measurement = rplidar.getCurrentPoint();
-					pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
-					dtr = 0;
-					OSTimeDlyHMSM(0,0,1,0);
-				}
-			}
+	while (true) {
+		dtr = 1;
+		rplidar.waitPoint();
+		measurement = rplidar.getCurrentPoint();
+		pc.printf("Distance: %f Angle:%f\n", measurement.angle, measurement.distance);
+		dtr = 0;
+		OSTimeDlyHMSM(0,0,1,0);
+	}
+}
 			\end{lstlisting}
 			
 			\subsection{SDFileSystem Testing}
 			\label{testcode:filewriting2}
 			\begin{lstlisting}
-				dtr = 1;
-				rplidar.begin(lidar_device);
-				rplidar.startScan();
-				struct RPLidarMeasurement measurement;
+dtr = 1;
+rplidar.begin(lidar_device);
+rplidar.startScan();
+struct RPLidarMeasurement measurement;
 				
-				static void writeTest() {
-					struct RPLidarMeasurement measurement;
+static void writeTest() {
+	struct RPLidarMeasurement measurement;
 
-					// Create the readings file on the Micro SD-Card
-					FILE *fp = fopen("/sd/readings.txt", "w");
+	// Create the readings file on the Micro SD-Card
+	FILE *fp = fopen("/sd/readings.txt", "w");
 					
-					// Log if the file cannot be made
-					if (fp == NULL) {
-						pc.printf("Unable to access/create file \n");
-					}
+	// Log if the file cannot be made
+	if (fp == NULL) {
+		pc.printf("Unable to access/create file \n");
+	}
 
-					for(int i = 0; i < 10; i++) {
-						lidar.waitPoint();
-						measurement = lidar.getCurrentPoint();
-						pc.printf("Angle:%f Distance:%f\n", measurement.angle, measurement.distance);
-						fprintf(fp, "%f %f\r\n", measurement.angle, measurement.distance);
-					}
+	for(int i = 0; i < 10; i++) {
+		lidar.waitPoint();
+		measurement = lidar.getCurrentPoint();
+		pc.printf("Angle:%f Distance:%f\n", measurement.angle, measurement.distance);
+		fprintf(fp, "%f %f\r\n", measurement.angle, measurement.distance);
+	}
 					
-					// Close file
-					fclose(fp);
-				}
+	// Close file
+	fclose(fp);
+}
 			\end{lstlisting}
+		\end{appendices}
 			
