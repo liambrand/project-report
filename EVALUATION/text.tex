@@ -73,3 +73,11 @@
 		As mentioned before, memory issues plagued the software aspect of the robot when it was being broken down into the classes outlined in the class diagram. Mbed OS appears to feature relatively user friendly ways of being able to load programs onto the board and have their memory usage tracked. Micro C possess similar features but they aren't quite as elegant, and inexperience with hardware led to this being a huge blocker for implementing the software's proposed class design. This problem never really went away and resulted in the final program being only a single class, a far cry from the intended functional decomposition that could be been achieved if the class diagram had been properly implemented. In hindsight, Mbed OS was likely a better choice owing to its better documentation and syntactic sugar. Usage of an IDE supporting breakpoints of the embedded code like Keil Microvision might have helped here as well. A microcontroller with more memory potentially could have been used here as well, but given the relatively high amount of memory available on the K64F its likely this memory problem was due to a design problem somewhere rather than an insufficient board.
 	
 	\chapter{Conclusions and Recommendations}
+		\section{Conclusions}	
+		A degree of success have been enjoyed with regards to the project's aims and skills. As previously discussed, skills outlined in the Terms of Reference such as embedded engineering ability have been furthered during the project's planning and development. As well, small objectives pertaining to acquiring knowledge on fields such as SLAM and LIDAR have seen success, and at this point the project and its respective process has been evaluated against the project's aims and objectives.
+		
+		The aim of the project however was to develop a self navigational drone that made use of LIDAR technology to perform Simultaneous Localization and Mapping, and these aims have ultimately not been met.
+		
+		The existing implementation is a simple chassis composed of powered motors driven by a microcontroller, capable of only incredibly basic movement. The implementation possesses an observational capability, but due to the lack of a mapping functionality it is unknown whether or not the observations the robot takes and writes to a file are accurate.
+		
+		
