@@ -1,18 +1,8 @@
 \part{Analysis}
 		\chapter{Introduction}
-		Before creation of the main product can begin, an understanding of the relevant fields must be achieved. The first aim of the analysis is to develop this understanding by evaluating and then understanding relevant literature. Following this appropriate tools for the product will be identified, both hardware and software. Finally conclusions will be drawn based on what has been researched and evaluated, and a series of core objectives that need to be achieved for the project to be a success will be determined.
-
-		The aim of this project is to develop a mobile robot capable of utilizing Simultaneous Localization and Mapping, often referred to within robotics as SLAM. SLAM concerns the ability for a robot to move around whilst simultaneously tracking its position and generating a map of the environment it navigates around. This will entail elements of mobile robotics with regards to the construction and programming of a mobile robot as well as the actual realization of an implemented SLAM solution.
+		The aim of this project is to develop a mobile robot capable of utilizing Simultaneous Localization and Mapping, often referred to within robotics as SLAM. SLAM concerns the ability for a robot to move around whilst simultaneously tracking its position and generating a map of the environment it navigates around. This will entail elements of mobile robotics, with regards to the appropriate selection of hardware followed by the assembly of said hardware to create the robot and the development of the software that will run on the mobile platform. Alongside this will be the development of a solution to the SLAM problem to allow the mobile platform to map the environments that it navigates around.
 		
-		%When and where is SLAM an issue?
-		%Who or what does the SLAM problem affect, and in turn who could it benefit?
-		%What initiatives have been taken towards SLAM implementation for these problems?
-		
-		%Look at the objectives from the TOR, outline what the robot and the software needs to do to achieve these objectives.
-		% requirements gathering
-		% break down TOR objectives into must/could/should?
-		% reference other products?
-		
+		In order to implement this system and solve the presented problems, a clear understanding of the relevant fields needs to be established. The first aim of the analysis is to obtain just that. To do it, there will be a critical review of relevant literature. This will allow a good foundational base to build on, and will allow a greater understanding of how the problems presented by the project are to be solved. From this, solutions as to how these problems will be solved will be ascertained. Following this appropriate tools for the product will be identified, both hardware and software.
 		
 		\chapter{Mobile Robotics}
 		\label{litreview:mobilerobotics}
@@ -54,13 +44,14 @@
 				\label{fig:omnidirectionalwheels}
 			\end{figure}
 		
-		% mention rolling ball thingy!
 			The use of such wheels greatly simplifies the robot's movement. Calculated paths between points can be translated much easier into usable commands given the robot's movement freedom, and the number of manoeuvres required is reduced drastically since there is no need for repeated "backing up" movements to adjust the robot's heading.
+			
+			Watanabe also discusses ball wheels, with one well known implementation of such a wheel being ballbot by Lauwers et al\citep{lauwers2006dynamically}. The ballbot design involves a singular ball instead of any wheels, with legs that can deploy when the robot needs to be stationary. Whilst there are some potential stability issues during movement, with one experiment noting that the robot would lean in the direction of its destination as it traveled, it was still able to resist attempts to tip it over. Whilst interesting, in the context of the project the design of this is a bit too complex for it to be used for a mobile platform.
 			
 			\section{Rangefinding}
 			\label{litreview:rangefinding}
 			Used for obstacle navigation and to assist in navigation, mobile robots often feature hardware that allows the robot to observe its surrounding environment. In the context of the project, this will also serve as a way to provide relevant data to allow for mapping. 
-			%In order to efficiently map the area and detect obstacles this will need to be performed in a 360 degree manner as well. 
+
 			This section aims to explore some of the more common rangefinding techniques by briefly explaining and evaluating them.
 			
 				\subsection{Infrared}
@@ -69,12 +60,9 @@
 				
 				In a paper produced for the International Journal of Advanced Robotic Systems regarding the usage of IR in mobile robotics, Do and Kim\citep{do2013infrared} elaborate on some of the advantages of IR. First is their incredibly low cost, with a great number of IR sensors available online for very cheap prices. Websites like RobotShop and HobbyTronics list most of their sensors between \pounds{5} and \pounds{10}. Additionally, IR sensors are able to achieve very narrow beam angle. This allows for precise detection, and can mean IR sensors excel where other sensors such as Sonar encounter environmental limitations such as spaces where wave reflection might cause inaccurate readings. 
 				
-				These benefits have been enough to see IR's usage robotics projects. Malik and Yu\citep{malik1992infrared} for example utilised a ring of IR detectors for performing obstacle detection with an autonomous robot. Their implementation of it was quite successful, the robot demonstrated basic navigational abilities such as moving through doors and finding its way around unknown environments, successfully avoiding obstacles in the process. Dang and Suh\cite{dang2011human} implemented a tracker using IR. In their experiments, their created devices succeeded in tracking humans and demonstrated an error (tracking inaccuracy) of less than 1.5cm when it was used for real world applications such as following supermarket carts.
+				These benefits have been enough to see IR's usage robotics projects. Malik and Yu\citep{malik1992infrared} for example utilised a ring of IR detectors for performing obstacle detection with an autonomous robot. Their implementation of it was quite successful, the robot demonstrated basic navigational abilities such as moving through doors and finding its way around unknown environments, successfully avoiding obstacles in the process. Dang and Suh\citep{dang2011human} implemented a tracker using IR. In their experiments, their created devices succeeded in tracking humans and demonstrated an error (tracking inaccuracy) of less than 1.5cm when it was used for real world applications such as following supermarket carts.
 				
-				IR has some downsides however. First, infrared sensors have both a maximum and a minimum range. Not only does the maximum range need to be factored in as sensor will struggle to pinpoint the location of light that has been reflected at a large range, but the sensor will also struggle to 'see' very close obstacles. Lee and Chong \cite{lee2011low} in their discussion of the different rangefinding techniques touch on IR's faults and mention that IR can have trouble with object detection depending on the colour of the object reflecting the IR light.
-				
-				% https://ieeexplore.ieee.org/abstract/document/271330
-				%
+				IR has some downsides however. First, infrared sensors have both a maximum and a minimum range. Not only does the maximum range need to be factored in as sensor will struggle to pinpoint the location of light that has been reflected at a large range, but the sensor will also struggle to 'see' very close obstacles. Lee and Chongp\cite{lee2011low} in their discussion of the different rangefinding techniques touch on IR's faults and mention that IR can have trouble with object detection depending on the colour of the object reflecting the IR light.
 				
 				\subsection{Ultrasonic}
 				\label{litreview:ultrasonic}
@@ -82,7 +70,7 @@
 				
 				Like IR, Sonar sensors tout a relatively low price range towards the low end, with sites like HobbyTronics and RoboShop featuring sensors as cheap as \pounds{6}.  This would allow for a cheap way to implement coverage around the entirety of a robot, as multiple sensors could be attached and configured on the outside of the robot's chassis. Sonar's sound based nature means it isn't negatively affected by aspect such as heat or colour. 
 				
-				Sonar isn't without problems however. In an article for IEEE, Borenstein and Koren\citep{borenstein1988obstacle} discuss some of the drawbacks of ultrasonic range finders during their foray into using it for obstacle detection. The first issue was that detection could be very unreliable depending on the angle the sonar energy hit the surface at. Parallel surfaces were detected without issue but more perpendicular surfaces caused a lot more of the sonar energy to be scattered and resulted in the detection being less reliable. This issue appears to get worse the smoother a surface is, with things like polished wood and plastics giving the worst results. Another problem was accuracy. Depending on the sensor's orientation and the angle at which an obstacle reflected the sonar energy, the received readings could be incredibly noisy. As well, sensors sending and receives pulses in close proximity to each other can have issues with interference. Whilst the article is 30 years old, the papers mentioned previously in the discussion of IR - despite being significantly more recent - still noted similar drawbacks to the use of sonar in their discussion of it\citep{do2013infrared}\cite{lee2011low}.
+				Sonar isn't without problems however. In an article for IEEE, Borenstein and Koren\citep{borenstein1988obstacle} discuss some of the drawbacks of ultrasonic range finders during their foray into using it for obstacle detection. The first issue was that detection could be very unreliable depending on the angle the sonar energy hit the surface at. Parallel surfaces were detected without issue but more perpendicular surfaces caused a lot more of the sonar energy to be scattered and resulted in the detection being less reliable. This issue appears to get worse the smoother a surface is, with things like polished wood and plastics giving the worst results. Another problem was accuracy. Depending on the sensor's orientation and the angle at which an obstacle reflected the sonar energy, the received readings could be incredibly noisy. As well, sensors sending and receives pulses in close proximity to each other can have issues with interference. Whilst the article is 30 years old, the papers mentioned previously in the discussion of IR - despite being significantly more recent - still noted similar drawbacks to the use of sonar in their discussion of it\citep{do2013infrared}\cite{lee2011low}. We can infer from this that these issues are most likely due to the way in which sonar works, rather than the technological ability of the sensors used in the experiments.
 				
 				\subsection{LIDAR}
 				\label{litreview:lidar}
@@ -90,7 +78,6 @@
 				
 				LIDAR's biggest strength is arguably the accuracy that can be achieved compared to other rangefinding techniques, which has led to its adoption for projects where accurate measurements are needed. One field that LIDAR enjoys much usage in because of this strength is forestry. Dubayah and Drake\citep{dubayah2000lidar} mention the strengths of LIDAR for measuring forest features such as canopy heights, with similar praises for the accuracy are given by Lim et al\citep{lim2003lidar} investigation into LIDAR's effectiveness for measuring forest structure. Some commercially available sensors boast very impressive statistics, with some ranges exceeding 10 metres whilst providing several thousand samples per second with 360 degree coverage \citep{slamtecA1M8}. Some of these sensors also feature SDKs (Source Development Kits), meaning the core sensor functionality will be accessible straight away allowing development to focus on the robot's logic rather than being bogged down in the belt and braces implementation of preliminary functionality. 
 				
-				% source prices?
 				All of these features come with an expected financial downside however. These features are expensive, with some sensors being as high as \pounds{350}. Even lower end options with much smaller sensors that don't offer full 360 degree cover can cost up to \pounds{40}.
 				
 		

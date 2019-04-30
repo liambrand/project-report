@@ -139,6 +139,16 @@
 				
 				This could be implemented through the use of data structres in the robot's program. For example, a scan request data structure with two fields (start flag and command) could be initialized and then sent to the LIDAR sensor via the serial connection. Data structures resembling the response descriptors could be populated with information sent back from the sensor as well, allowing for easy processing and manipulation of retrieved data.
 				
+				Once data is received from the LIDAR, the protocol documentation states how it can be understood. In each byte returned by the LIDAR, the protocol states a binary breakdown of what each chunk of bits represents. An example of this can be seen in fig \ref{fig:protocolbreakdown}, which is an illustration of the response to a scan request.
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=.8\linewidth]{SYNTHESIS/protocolbreakdown.png}
+					\caption{Scan Response Breakdown}
+					\label{fig:protocolbreakdown}
+				\end{figure}
+				So for example here, the first 6 bits of the first byte pertains to the readings quality attribute. The 16 bits from the final two bytes are the first and second halves of an overall value which is the distance value, etc. The bytes will need to be changed into their binary representation for this to separate out individual bits that mean different things.
+				
+				
 				This may not be needed however. SLAMTEC provide an SDK for the LIDAR sensor which comes in the form of header files which will automatically implement this functionality. Table \ref{table:sdkbreakdown} has a manifest of the SDK and the functionality that it provides.
 				
 				\begin{table}[h!]
