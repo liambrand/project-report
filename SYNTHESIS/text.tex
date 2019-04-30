@@ -203,7 +203,7 @@
 		\begin{itemize}
 			\item \textbf{Initialize} - Setup of variables and tasks once the robot receives power.
 			\item \textbf{Scan} - Retrieving observations from the LIDAR and populating buffer.
-			\item \textbf{Obstacle Detected} - Recieved measurement has a very low distance.
+			\item \textbf{Obstacle Detected} - Received measurement has a very low distance.
 			\item \textbf{Save Data} - Once the buffer is full it's written to a file.
 			\item \textbf{Move} - Moving away from obstacles.
 		\end{itemize}
@@ -233,7 +233,7 @@
 				\subsubsection{Hardware}
 				First the dfRobot Quad Motor shield was fitted onto the K64F microcontroller and placed in the lower level of the robot. Each of the three wheel motors had a ground and a power cable attached to them, these were all fed through the hole in the centre of the lower plate and connected to the appropriate ports on the motor shield. In the interest of keeping the components tidy, the power and ground cables were fastened to the lower plate with zip ties.
 				
-				Each pair of power and ground ports are labelled with a number on the shield (e.g M1, M2 etc). From hereonn in, the motors will be referred to with these same numbers. Fig \ref{fig:robotwheels} shows the position and names of each of the wheels on the robot.
+				Each pair of power and ground ports are labelled with a number on the shield (e.g M1, M2 etc). From hereon in, the motors will be referred to with these same numbers. Fig \ref{fig:robotwheels} shows the position and names of each of the wheels on the robot.
 				\begin{figure}[h]
 					\centering
 					\includegraphics[width=.5\linewidth]{SYNTHESIS/robotwheels.png}
@@ -287,7 +287,7 @@ PwmOut M3_SPD(D5);
 			
 				Due to the dfRobot Quad Motor shield being plugged into the K64F microcontroller, these LIDAR pins need to be connected to ports on the robot shield that are plugged into the appropriate microcontroller pins. Essentially, we look at what port needs to be used on the underlying microcontroller, then plug it into the motor shield port that is sitting on top of it. The LIDAR pins and shield ports were connected using simple male to female connector wires.
 				
-				With regards to power, it was previously mentioned in the movement implementation that due to spacial constraints the LIDAR would recieve power from the microcontroller. The microcontroller features two pins that can supply a voltage, a 5V pin and a 3V3 pin. Both pins would ideally recieve 5V, but to save room and ensure a simpler robot the scanner motor was connected to the lower voltage pin. It was decided that the scanner motor should recieve the lower voltage because it only appeared to make the scanner move a bit slower, whereas there was a concern that supplying the actual LIDAR core with a lower voltage might result in problems performing the actual scanning. 
+				With regards to power, it was previously mentioned in the movement implementation that due to spacial constraints the LIDAR would receive power from the microcontroller. The microcontroller features two pins that can supply a voltage, a 5V pin and a 3V3 pin. Both pins would ideally receive 5V, but to save room and ensure a simpler robot the scanner motor was connected to the lower voltage pin. It was decided that the scanner motor should receive the lower voltage because it only appeared to make the scanner move a bit slower, whereas there was a concern that supplying the actual LIDAR core with a lower voltage might result in problems performing the actual scanning. 
 				
 				Once this was done, the LIDAR was able to function mechanically.
 				

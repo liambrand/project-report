@@ -24,11 +24,14 @@ class MapGUI:
     # Retrieve distance-angle pairs from a text file
     def readData(self):
         coords = []
+				# Open file and iterate through eachline
         with open("./readings.txt", "rt") as f:
           for line in f:
             try:
+							# Each line split into 2 tokens seperated by whitespace
               reading = line.split()
 
+							# Get coordinates
               coord = [float(reading[0]), float(reading[1])]
               coords.append(coord)
 
@@ -48,22 +51,18 @@ class MapGUI:
           x.append(self.getXCoord(measurement))
           y.append(self.getYCoord(measurement))
 
+				# Apply coordinates to scatterplot
         plt.scatter(x, y)
         plt.show()
         print('Map Generated')
 
-
-    # Convert angles and measurements into a plot coordinate
-    def getCoords(self, measurement):
-        x = measurement[0] * math.cos(math.radians(measurement[0]))
-        y = measurement[1] * math.sin(math.radians(measurement[0]))
-        return x, y
-
     def getXCoord(self, measurement):
+				# Distance * cos(angle)
         x = measurement[0] * math.cos(math.radians(measurement[0]))
         return x
 
     def getYCoord(self, measurement):
+				# Distance * sin(angle)
         y = measurement[1] * math.sin(math.radians(measurement[0]))
         return y
 
