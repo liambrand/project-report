@@ -88,6 +88,9 @@ static void writeReadings(void);
 
 /* Movement methods */
 static void drive(int angle, float speed);
+static int getMotor1Force(int angle, float speed);
+static int getMotor2Force(int angle, float speed);
+static int getMotor3Force(int angle, float speed);
 static void stopMoving(void);
 static void goForward(void);
 static void goBackward(void);
@@ -194,7 +197,19 @@ static void appTaskWrite(void *pdata) {
 /*************** CONTROL METHODS **********************/
 /******************************************************/
 static void drive(int angle, float speed) {
-  // method stub
+	// method stub
+}
+
+static int getMotor1Force(int angle, float speed) {
+	// method stub
+}
+
+static int getMotor2Force(int angle, float speed) {
+	// method stub
+}
+
+static int getMotor2Force(int angle, float speed) {
+	// method stub
 }
 
 // Bring the robot to a stop
