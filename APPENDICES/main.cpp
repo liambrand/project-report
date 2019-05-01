@@ -87,6 +87,8 @@ static void takeReadings(void);
 static void writeReadings(void);
 
 /* Movement methods */
+static void drive(int angle, float speed);
+static void stopMoving(void);
 static void goForward(void);
 static void goBackward(void);
 static void goLeft(void);
@@ -144,7 +146,7 @@ static void appTaskMovement(void *pdata) {
   while (true) {
 		// Move forward for a duration
 		goForward();
-		OSTimeDlyHMSM(0,0,6,0); // how long it moves for
+		OSTimeDlyHMSM(0,0,6,0);
 		stopMoving();
 
     // Take scans
@@ -165,10 +167,12 @@ static void appTaskScan(void *pdata) {
 	
 	while(true) {
 		OSSemPend(readyToScan, 0, &status);
+    // Start LIDAR and fill buffer
 		beginScanning();
 		takeReadings();
+    // Stop LIDAR
 		stopScanning();
-		pc.printf("Stopping scan.\n");
+    
 		status = OSSemPost(readyToScan);
 		OSTimeDlyHMSM(0,0,0,4);
 	}
@@ -177,16 +181,11 @@ static void appTaskScan(void *pdata) {
 // Task for writing data to the Micro-SD Card
 static void appTaskWrite(void *pdata) {
 	uint8_t status;
-	// Have to half the calculated array size due to its 2 dimensional nature
-	int arraySize = (sizeof(readingsBuffer)/sizeof(float))/2;
 
 	while(true) {
 		OSSemPend(readyToWrite, 0, &status);
-		pc.printf("Writing readings to SD card...\n");
 		writeReadings();
-		pc.printf("Done writing.\n");
 		status = OSSemPost(readyToWrite);
-		pc.printf("Releasing write semaphore...");
 		OSTimeDlyHMSM(0,0,0,5);
 	}
 }
